@@ -34,25 +34,23 @@ sub depends {
 sub spin {
   my $self = shift;
   my $message = shift // "Configuring $self->{'name'}";
-  my $s = Term::Spinner::Color->new();
-  print $message . " " x (80 - $message - $s{'frame_length'});
-  $s->auto_start();
+  $self->{s} = Term::Spinner::Color->new();
+  print $message . " " x (80 - $message - $self->{s}->{'frame_length'});
+  $self->{s}->auto_start();
 }
 
 sub done {
   my $self = shift;
   my $res = shift;
-  if $res {
+  if ($res) {
     # Success!
-    $s->auto_done();
-    $s->ok();
-    print "\n";
+    $self->{s}->auto_done();
+    $self->{s}->ok();
   }
   else {
     # Failure!
-    $s->auto_done();
-    $s->nok();
-    print "\n";
+    $self->{s}->auto_done();
+    $self->{s}->nok();
   }
 }
 1;

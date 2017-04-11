@@ -1,7 +1,11 @@
 package Virtualmin::Config::Plugin::Webmin;
 use strict;
 use warnings;
+no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
+
+our $config_directory;
+our (%gconfig, %miniserv);
 
 sub new {
   my $class = shift;
@@ -31,8 +35,9 @@ sub actions {
   }
   or do { # catch
     $self->done(0); # Something failed
-  }
+  };
   $self->done(1); # OK!
-
   1;
 }
+
+1;
