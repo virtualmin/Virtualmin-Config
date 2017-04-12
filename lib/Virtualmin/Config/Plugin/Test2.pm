@@ -1,12 +1,13 @@
-package Virtualmin::Config::Plugin::Test;
+package Virtualmin::Config::Plugin::Test2;
 use strict;
 use warnings;
+use 5.010;
 use parent qw(Virtualmin::Config::Plugin);
 
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER->new(name => 'Test');
+  my $self = $class->SUPER::new(name => 'Test2', depends => ['Test']);
 
   return $self;
 }
@@ -16,7 +17,7 @@ sub new {
 sub actions {
   my $self = shift;
 
-  $self->spin("Configuring Test");
+  $self->spin("Configuring Test2");
   eval { # try
     sleep 5;
   }

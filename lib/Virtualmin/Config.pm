@@ -19,12 +19,23 @@ sub new {
   my ($class, %args) = @_;
   my $self = {};
 
+  $self->{bundle} = $args{bundle};
+  $self->{include} = $args{include};
+  $self->{exclude} = $args{exclude};
 	# Guesstimate our terminal size.
-	my ($lines, $cols) = `stty size`=~/(\d+)\s+(\d+)/?($1,$2):(25,80);
-	unless ($cols <= 80) { $cols = 80 };
+	#my ($lines, $cols) = `stty size`=~/(\d+)\s+(\d+)/?($1,$2):(25,80);
+	#unless ($cols <= 80) { $cols = 80 };
+
+	return bless $self, $class;
+}
+
+# Gathered plugins are processed
+sub run {
+	my $self = shift;
 
 	$|=1; # No line buffering.
 
+	# setup Webmin
 	# XXX This should really just be "use Webmin::Core"
 	# Setup Webmin environment
 	$no_acl_check++;
@@ -52,33 +63,6 @@ sub new {
 
 	$error_must_die = 1;
 
-	return bless $self, $class;
-}
-
-# Set the config bundle to configure (LAMP, LEMP, maybe others?)
-sub bundle {
-	my $self = shift;
-	if(@_) { $self->{'bundle'} = shift }
-	return $self->{'bundle'};
-}
-
-# Array ref of plugins to include
-sub include {
-	my $self = shift;
-	if(@_) { $self->{'include'} = shift }
-	return $self->{'include'};
-}
-
-# Array ref of plugins to exclude
-sub exclude {
-	my $self = shift;
-	if(@_) { $self->{'exclude'} = shift }
-	return $self->{'exclude'};
-}
-
-# Gathered plugins are processed
-sub run {
-	my $self = shift;
 	my @plugins = $self->_gather_plugins();
 	@plugins = $self->_topo_sort(@plugins);
 	for (@plugins) {
@@ -92,19 +76,24 @@ sub run {
 # Merges the selected bundle, with any extra includes, and removes excludes
 sub _gather_plugins {
 	my $self = shift;
+  my @plugins;
 
-  my $pkg = "Virtualmin::Config::$self->{'bundle'}";
-	load $pkg;
-	my $bundle = $pkg->new();
+  # If bundle specified, load it up.
+  if ($self->{bundle}) {
+    my $pkg = "Virtualmin::Config::$self->{bundle}";
+	  load $pkg;
+    my $bundle = $pkg->new();
+    # Ask the bundle for a list of plugins
+    @plugins = $bundle->plugins();
+  }
 
-	# Ask the bundle for a list of plugins
-	my @plugins = $bundle->plugins();
 	# Check with the command arguments
 	if ($self->{'include'}) {
 		for my $include ($self->{'include'}) {
 			push (@plugins, $include) unless grep( /^$include$/, @plugins );
 		}
 	}
+
 	# Check for excluded plugins
 	if ($self->{'exclude'}) {
 		for my $exclude ($self->{'exclude'}) {
@@ -114,6 +103,7 @@ sub _gather_plugins {
 			}
 		}
 	}
+
 	return @plugins;
 }
 

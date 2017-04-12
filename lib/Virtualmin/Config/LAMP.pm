@@ -9,7 +9,7 @@ sub new {
 }
 
 sub plugins {
-  return [
+  return (
     "Webmin"
-  ];
+  );
 }

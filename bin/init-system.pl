@@ -9,7 +9,6 @@ sub main {
   my ( $argv ) = @_;
   my %opt;
   my (@include, @exclude);
-  my $bundle;
   GetOptions( \%opt,
     'help|h',
     'bundle|b=s',
@@ -19,19 +18,20 @@ sub main {
   pod2usage(0) if $opt{help};
   $opt{bundle} ||= "LAMP";
 
-  #my $bundle = Virtualmin::Config->new(
-  #  bundle    => $opt{bundle},
-  #  include   => $opt{include},
-  #  exclude   => $opt{exclude},
-  #);
+  my $bundle = Virtualmin::Config->new(
+    bundle    => $opt{bundle},
+    include   => \@include,
+    exclude   => \@exclude,
+  );
 
-  use Data::Dumper;
-  if (@include) { print Dumper(@include)};
-  if (@exclude) { print Dumper(@exclude)};
+  $bundle->run();
+
   return 0;
 }
 
 exit main( \@ARGV );
+
+=pod
 
 =head1 NAME
 
@@ -39,37 +39,41 @@ init-system
 
 =head1 SYNOPSIS
 
-    # virtualmin init-system --bundle LEMP
+virtualmin init-system [options]
 
-=head1 ARGUMENTS
+  Options:
+    --help      Print this summaery of options and exit
+    --bundle    A bundle of plugins to execute
+    --include   One or more extra plugins to include
+    --exclude   One or more plugins to exclude
+
+=head1 OPTIONS
+
+=over
 
 =item --bundle
 
 A set of confguraion options, to initialize the system for use as a Virtualmin
 system. Default plugin bundle is "LAMP", which configures Apache, as well as
-a variety of other components.
-
-The other commonly used bundle is "LEMP", which replaces Apache with nginx.
+a variety of other components. "LEMP" replaces Apache with nginx.
 
 =item --include
 
-Include an additional plugin. Works with or without a bundle specified.
+Include one or more additional plugins. Works with or without a bundle
+specified. It will only change the configuration options that the plugin
+specifies...it does not "reset" the component to a default state.
 
-If you are re-configuring a component after a system is in production, beware
-that it may break configuration. It will only change the configuration options
-that the plugin specifies...it does not "reset" the component to a default
-state.
-
-Multiple plugins can be included, but using multiple C<--include> options.
+Multiple plugins can be provided with this option, separated by spaces.
 
 If not bundle is specified, only the included plugins will be used. Plugins
-other than those specified may be installed to resolve dependencies. Dependency
-resolution cannot be overriden.
+other than those specified may be installed to resolve dependencies.
 
 =item --exclude
 
-Exclude a plugin from either the default bundle, if no  bundle is specified,
-or from the bundle specified.
+Exclude one or more plugins from either the default bundle, if no  bundle is
+specified, or from the bundle specified.
+
+=back
 
 =head1 EXIT CODES
 
