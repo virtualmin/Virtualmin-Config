@@ -1,5 +1,7 @@
 package Virtualmin::Config::Dummy;
-# A list of plugins for configuring a LAMP stack
+# A list of plugins for testing
+use strict;
+use warnings;
 
 sub new {
   my ($class, %args) = @_;
@@ -9,7 +11,10 @@ sub new {
 }
 
 sub plugins {
-  return [
-    "Test"
-  ];
+  return (
+    "Test",
+    "Test2",
+  );
 }
+
+1;

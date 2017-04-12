@@ -55,7 +55,7 @@ sub run {
 	$root ||= "/usr/libexec/webmin";
 	chdir($root);
 	# Make program appear by name, instead of 'perl' in ps/top
-	$0 = "virtualmin-config";
+	$0 = "$root/init-system.pl";
 	push(@INC, $root);
 	eval "use WebminCore";
 	init_config();

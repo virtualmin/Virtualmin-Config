@@ -1,7 +1,6 @@
 package Virtualmin::Config::Plugin::Test2;
 use strict;
 use warnings;
-use 5.010;
 use parent qw(Virtualmin::Config::Plugin);
 
 sub new {
