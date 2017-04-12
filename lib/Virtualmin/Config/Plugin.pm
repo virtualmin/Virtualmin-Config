@@ -1,16 +1,21 @@
 package Virtualmin::Config::Plugin;
 use strict;
 use warnings;
+use 5.010;
 
 # Plugin base class, just runs stuff with spinner and status
 use Virtualmin::Config;
 use Term::Spinner::Color;
 
+# XXX I don't like this, but can't figure out how to put it into
+# $self->{spinner}
+our $spinner;
+
 sub new {
   my ($class, %args) = @_;
   my $self = {
     name    => $args{'name'} || '',
-    depends => $args{'depends'} || '',
+    depends => $args{'depends'} || [],
   };
 
   return bless $self, $class;
@@ -34,23 +39,24 @@ sub depends {
 sub spin {
   my $self = shift;
   my $message = shift // "Configuring $self->{'name'}";
-  $self->{s} = Term::Spinner::Color->new();
-  print $message . " " x (80 - $message - $self->{s}->{'frame_length'});
-  $self->{s}->auto_start();
+  $spinner = Term::Spinner::Color->new();
+  #print $message . " " x (80 - length($message) - $spinner->{'frame_length'});
+  print $message . " " x (80 - length($message));
+  $spinner->auto_start();
 }
 
 sub done {
   my $self = shift;
   my $res = shift;
+  $spinner->auto_done();
   if ($res) {
     # Success!
-    $self->{s}->auto_done();
-    $self->{s}->ok();
+    $spinner->ok();
   }
   else {
     # Failure!
-    $self->{s}->auto_done();
-    $self->{s}->nok();
+    $spinner->nok();
   }
 }
+
 1;

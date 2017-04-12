@@ -1,6 +1,7 @@
 package Virtualmin::Config::Plugin::Test2;
 use strict;
 use warnings;
+use 5.010;
 use parent qw(Virtualmin::Config::Plugin);
 
 sub new {
@@ -18,12 +19,13 @@ sub actions {
 
   $self->spin("Configuring Test2");
   eval { # try
-    sleep 5;
+    sleep 1;
   }
   or do { # catch
     $self->done(0); # Something failed
   };
   $self->done(1); # OK!
 }
+
 
 1;

@@ -39,38 +39,37 @@ sub run {
 	# XXX This should really just be "use Webmin::Core"
 	# Setup Webmin environment
 	$no_acl_check++;
-	$ENV{'WEBMIN_CONFIG'} ||= "/etc/webmin";
-	$ENV{'WEBMIN_VAR'} ||= "/var/webmin";
-	$ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
-	$trust_unknown_referers = 1;
-	open(my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf") ||
-	die RED, "Failed to open miniserv.conf", RESET;
-	my $root;
-	while(<$CONF>) {
-		if (/^root=(.*)/) {
-			$root = $1;
-		}
-	}
-	close($CONF);
-	$root ||= "/usr/libexec/webmin";
-	chdir($root);
-	# Make program appear by name, instead of 'perl' in ps/top
-	$0 = "$root/init-system.pl";
-	push(@INC, $root);
-	eval "use WebminCore";
-	init_config();
-	# XXX Somehow get init_config() into $self->config, or something.
+	#$ENV{'WEBMIN_CONFIG'} ||= "/etc/webmin";
+	#$ENV{'WEBMIN_VAR'} ||= "/var/webmin";
+	#$ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
+	#$trust_unknown_referers = 1;
+	#open(my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf") ||
+	#die RED, "Failed to open miniserv.conf", RESET;
+	#my $root;
+	#while(<$CONF>) {
+	#	if (/^root=(.*)/) {
+	#		$root = $1;
+	#	}
+	#}
+	#close($CONF);
+	#$root ||= "/usr/libexec/webmin";
+	#chdir($root);
+	#push(@INC, $root);
+	#eval "use WebminCore";
+  # XXX Somehow get init_config() into $self->config, or something.
+	#init_config();
 
 	$error_must_die = 1;
 
 	my @plugins = $self->_gather_plugins();
-	@plugins = $self->_topo_sort(@plugins);
+	@plugins = $self->_order_plugins(@plugins);
 	for (@plugins) {
 		my $pkg = "Virtualmin::Config::Plugin::$_";
-		load $pkg;
+		load $pkg || die "Loading Plugin failed: $_";
 		my $plugin = $pkg->new();
 		$pkg->actions();
 	}
+  return 1;
 }
 
 # Merges the selected bundle, with any extra includes, and removes excludes
@@ -117,7 +116,7 @@ sub _order_plugins {
 		my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
 		load $pkg;
 		my $plugin = $pkg->new();
-		$plugin_details{$plugin->{'name'}} = $plugin->{'depends'};
+		$plugin_details{$plugin->{'name'}} = $plugin->{'depends'} // [];
 	}
 	return _topo_sort(%plugin_details);
 }

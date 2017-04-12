@@ -43,3 +43,4 @@ failed_script=/etc/webmin/failed.pl
 login_script=/etc/webmin/login.pl
 cipher_list_def=1
 logout_script=/etc/webmin/logout.pl
+webprefix=

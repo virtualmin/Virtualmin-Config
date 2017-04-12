@@ -1,7 +1,7 @@
 package Virtualmin::Config::Plugin::Webmin;
 use strict;
 use warnings;
-no warnings qw(once);
+no warnings (once);
 use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
