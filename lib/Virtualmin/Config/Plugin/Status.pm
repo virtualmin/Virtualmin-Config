@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::Status;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +10,7 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(name => 'Status');
 
   return $self;
 }
@@ -30,16 +30,12 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
+  foreign_require("status", "status-lib.pl");
+	$status::config{'sched_mode'} = 1;
+	$status::config{'sched_int'} ||= 5;
+	$status::config{'sched_offset'} ||= 0;
+	save_module_config(\%status::config, 'status');
+	status::setup_cron_job();
   $self->done(1); # OK!
 }
 

@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::Webalizer;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +10,7 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(name => 'Webalizer');
 
   return $self;
 }
@@ -30,16 +30,12 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
+  foreign_require("webalizer", "webalizer-lib.pl");
+	my $conf = &webalizer::get_config();
+	webalizer::save_directive($conf, "IncrementalName", "webalizer.current");
+	webalizer::save_directive($conf, "HistoryName", "webalizer.hist");
+	webalizer::save_directive($conf, "DNSCache", "dns_cache.db");
+	flush_file_lines($webalizer::config{'webalizer_conf'});
   $self->done(1); # OK!
 }
 

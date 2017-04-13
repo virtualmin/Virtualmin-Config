@@ -11,6 +11,8 @@ use Term::Spinner::Color;
 # XXX I don't like this, but can't figure out how to put it into
 # $self->{spinner}
 our $spinner;
+our $trust_unknown_referers++;
+our $error_must_die = 1;
 
 sub new {
   my ($class, %args) = @_;

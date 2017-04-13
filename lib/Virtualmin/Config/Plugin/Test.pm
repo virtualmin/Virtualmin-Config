@@ -5,12 +5,6 @@ use 5.010;
 use Term::ANSIColor qw(:constants);
 use parent 'Virtualmin::Config::Plugin';
 
-our $config_directory;
-our %gconfig;
-our $error_must_die;
-our $trust_unknown_referers;
-our $root;
-
 sub new {
   my $class = shift;
   # inherit from Plugin
@@ -23,7 +17,6 @@ sub new {
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
-  $trust_unknown_referers = 1;
   use Cwd;
   my $cwd = getcwd();
   my $root = $self->root();
@@ -38,10 +31,9 @@ sub actions {
   # XXX Somehow get init_config() into $self->config, or something.
   init_config();
 
-  $error_must_die = 1;
-
   $self->spin("Configuring Test");
   foreign_require("webmin", "webmin-lib.pl");
+  my %gconfig;
   get_miniserv_config(\%gconfig);
   $gconfig{'theme'} = "dummy-theme";
   put_miniserv_config(\%gconfig);

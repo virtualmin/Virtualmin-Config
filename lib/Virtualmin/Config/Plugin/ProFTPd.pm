@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::ProFTPd;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +10,7 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(name => 'ProFTPd');
 
   return $self;
 }
@@ -30,16 +30,18 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
+  init::enable_at_boot("proftpd");
+	init::restart_action("proftpd");
+	if ($gconfig{'os_type'} eq 'freebsd') {
+	# This directory is missing on FreeBSD
+	make_dir("/var/run/proftpd", 0755);
+
+	# UseIPv6 doesn't work on FreeBSD
+	foreign_require("proftpd", "proftpd-lib.pl");
+	my $conf = &proftpd::get_config();
+	proftpd::save_directive("UseIPv6", [ ], $conf, $conf);
+	flush_file_lines();
+
   $self->done(1); # OK!
 }
 

@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::AWStats;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +10,7 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(name => 'AWStats');
 
   return $self;
 }
@@ -30,16 +30,16 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
+  foreign_require("cron");
+	my @jobs = &cron::list_cron_jobs();
+	my @dis = grep { $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic).sh/ && $_->{'active'} } @jobs;
+	if (@dis) {
+		foreach my $job (@dis) {
+			$job->{'active'} = 0;
+			&cron::change_cron_job($job);
+		}
+  }
+
   $self->done(1); # OK!
 }
 

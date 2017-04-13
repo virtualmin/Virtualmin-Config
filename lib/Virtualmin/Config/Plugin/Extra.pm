@@ -1,4 +1,5 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::Extra;
+# Some extra functions that don't really fit into any other plugins
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +11,9 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(
+    name    => 'Extra',
+    depends => ['Virtualmin', 'Webmin'] );
 
   return $self;
 }
@@ -30,16 +33,20 @@ sub actions {
   init_config();
 
   $self->spin();
+  # Attempt to sync clock
+  if (&has_command("ntpdate-debian")) {
+  	system("ntpdate-debian >/dev/null 2>&1 </dev/null &");
+  }
   foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
+	webmin::build_installed_modules(1);
+
+  # Turn on caching for downloads by Virtualmin
+  if (!$gconfig{'cache_size'}) {
+  	$gconfig{'cache_size'} = 50*1024*1024;
+  	$gconfig{'cache_mods'} = "virtual-server";
+  	write_file("$config_directory/config", \%gconfig);
+  }
+
   $self->done(1); # OK!
 }
 
