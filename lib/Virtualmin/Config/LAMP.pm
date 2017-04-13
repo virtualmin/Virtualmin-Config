@@ -1,4 +1,7 @@
 package Virtualmin::Config::LAMP;
+use strict;
+use warnings;
+use 5.010;
 # A list of plugins for configuring a LAMP stack
 
 sub new {
@@ -13,3 +16,5 @@ sub plugins {
     "Webmin"
   );
 }
+
+1;

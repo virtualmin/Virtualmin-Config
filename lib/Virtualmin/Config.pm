@@ -1,4 +1,5 @@
 package Virtualmin::Config;
+# ABSTRACT: Configure a system for use by Virtualmin
 use strict;
 use warnings;
 no warnings qw(once); # We've got some globals that effect Webmin behavior
@@ -35,29 +36,8 @@ sub run {
 
 	$|=1; # No line buffering.
 
-	# setup Webmin
 	# XXX This should really just be "use Webmin::Core"
-	# Setup Webmin environment
 	$no_acl_check++;
-	#$ENV{'WEBMIN_CONFIG'} ||= "/etc/webmin";
-	#$ENV{'WEBMIN_VAR'} ||= "/var/webmin";
-	#$ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
-	#$trust_unknown_referers = 1;
-	#open(my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf") ||
-	#die RED, "Failed to open miniserv.conf", RESET;
-	#my $root;
-	#while(<$CONF>) {
-	#	if (/^root=(.*)/) {
-	#		$root = $1;
-	#	}
-	#}
-	#close($CONF);
-	#$root ||= "/usr/libexec/webmin";
-	#chdir($root);
-	#push(@INC, $root);
-	#eval "use WebminCore";
-  # XXX Somehow get init_config() into $self->config, or something.
-	#init_config();
 
 	$error_must_die = 1;
 

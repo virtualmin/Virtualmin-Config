@@ -1,19 +1,24 @@
 package Virtualmin::Config::Plugin::Test;
 use strict;
 use warnings;
-use parent qw(Virtualmin::Config::Plugin);
 use 5.010;
 use Term::ANSIColor qw(:constants);
+use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
 our %gconfig;
 our $error_must_die;
 our $trust_unknown_referers;
+our $root;
 
 sub new {
   my $class = shift;
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test');
+
+  #$ENV{'WEBMIN_CONFIG'} = "t/data/etc/webmin";
+	#$ENV{'WEBMIN_VAR'} ||= "t/data/var/webmin";
+	#$ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
 
   return $self;
 }
@@ -23,15 +28,14 @@ sub new {
 sub actions {
   my $self = shift;
   $trust_unknown_referers = 1;
-	open(my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf") ||
-	die RED, "Failed to open miniserv.conf", RESET;
-  use Cwd;
-  my $cwd = getcwd();
-	my $root = "/usr/libexec/webmin";
+  my $root = $self->root();
 	chdir($root);
 	push(@INC, $root);
-	eval "use WebminCore";
-  $0 = "$root/init-system.pl";
+  #use lib $root;
+	eval 'use WebminCore'; ## no critic
+  use Cwd;
+  my $cwd = getcwd();
+  $0 = $cwd . "/init-system.pl";
   # XXX Somehow get init_config() into $self->config, or something.
 	init_config();
 
@@ -40,8 +44,6 @@ sub actions {
   $self->spin("Configuring Test");
   foreign_require("webmin", "webmin-lib.pl");
   get_miniserv_config(\%gconfig);
-  use Data::Dumper;
-  say Dumper(%gconfig);
   $gconfig{'theme'} = "dummy-theme";
   put_miniserv_config(\%gconfig);
   $self->done(1);
