@@ -16,9 +16,9 @@ sub new {
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test');
 
-  #$ENV{'WEBMIN_CONFIG'} = "t/data/etc/webmin";
-	#$ENV{'WEBMIN_VAR'} ||= "t/data/var/webmin";
-	#$ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
+  $ENV{'WEBMIN_CONFIG'} = "t/data/etc/webmin";
+  $ENV{'WEBMIN_VAR'} ||= "t/data/var/webmin";
+  $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
 
   return $self;
 }
@@ -29,17 +29,17 @@ sub actions {
   my $self = shift;
   $trust_unknown_referers = 1;
   my $root = $self->root();
-	chdir($root);
-	push(@INC, $root);
+  chdir($root);
+  push(@INC, $root);
   #use lib $root;
-	eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore'; ## no critic
   use Cwd;
   my $cwd = getcwd();
   $0 = $cwd . "/init-system.pl";
   # XXX Somehow get init_config() into $self->config, or something.
-	init_config();
+  init_config();
 
-	$error_must_die = 1;
+  $error_must_die = 1;
 
   $self->spin("Configuring Test");
   foreign_require("webmin", "webmin-lib.pl");
