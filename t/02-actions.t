@@ -1,4 +1,4 @@
-use Test::More;
+use Test::More skip_all => "Needs Webmin installed";
 use 5.010;
 # Test actions in the Dummy bundle, on a test data set
 require_ok( 'Virtualmin::Config' );
