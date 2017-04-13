@@ -16,10 +16,6 @@ sub new {
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test');
 
-  $ENV{'WEBMIN_CONFIG'} = "t/data/etc/webmin";
-  $ENV{'WEBMIN_VAR'} ||= "t/data/var/webmin";
-  $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
-
   return $self;
 }
 
@@ -28,14 +24,17 @@ sub new {
 sub actions {
   my $self = shift;
   $trust_unknown_referers = 1;
+  use Cwd;
+  my $cwd = getcwd();
+  $0 = $cwd . "/bin/init-system.pl";
   my $root = $self->root();
   chdir($root);
   push(@INC, $root);
   #use lib $root;
   eval 'use WebminCore'; ## no critic
-  use Cwd;
-  my $cwd = getcwd();
-  $0 = $cwd . "/init-system.pl";
+  $ENV{'WEBMIN_CONFIG'} = $cwd . "/t/data/etc/webmin";
+  $ENV{'WEBMIN_VAR'} ||= $cwd . "/t/data/var/webmin";
+  $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
   # XXX Somehow get init_config() into $self->config, or something.
   init_config();
 
