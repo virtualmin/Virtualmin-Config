@@ -26,9 +26,9 @@ sub actions {
   $trust_unknown_referers = 1;
   use Cwd;
   my $cwd = getcwd();
-  $0 = $cwd . "/bin/init-system.pl";
   my $root = $self->root();
   chdir($root);
+  $0 = "$root/init-system.pl";
   push(@INC, $root);
   #use lib $root;
   eval 'use WebminCore'; ## no critic
