@@ -39,13 +39,13 @@ sub actions {
 	my ($vardir) = mount::filesystem_for_dir("/var");
 	if ($homedir ne $vardir) {
 		if (!-d "/var/lib") {
-			make_dir("/var/lib", 0755);
+			make_dir("/var/lib", oct(755));
 		}
 		if (!-d "/var/lib/dovecot-virtualmin") {
-			make_dir("/var/lib/dovecot-virtualmin", 0755);
+			make_dir("/var/lib/dovecot-virtualmin", oct(755));
 		}
-		make_dir("/var/lib/dovecot-virtualmin/index", 0777);
-		make_dir("/var/lib/dovecot-virtualmin/control", 0777);
+		make_dir("/var/lib/dovecot-virtualmin/index", oct(777));
+		make_dir("/var/lib/dovecot-virtualmin/control", oct(777));
 		$indexes = ":INDEX=/var/lib/dovecot-virtualmin/index/%u".
 			":CONTROL=/var/lib/dovecot-virtualmin/control/%u";
 	}

@@ -33,8 +33,9 @@ sub actions {
   init::enable_at_boot("proftpd");
 	init::restart_action("proftpd");
 	if ($gconfig{'os_type'} eq 'freebsd') {
-	# This directory is missing on FreeBSD
-	make_dir("/var/run/proftpd", 0755);
+    # This directory is missing on FreeBSD
+    make_dir("/var/run/proftpd", oct(755));
+  }
 
 	# UseIPv6 doesn't work on FreeBSD
 	foreign_require("proftpd", "proftpd-lib.pl");

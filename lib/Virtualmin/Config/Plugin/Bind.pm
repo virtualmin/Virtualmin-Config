@@ -47,23 +47,23 @@ sub actions {
 		# Make sure all directories used by BIND exist
 		my $chroot = bind8::get_chroot();
 		if ($chroot && !-d $chroot) {
-			mkdir($chroot, 0755);
+			mkdir($chroot, oct(755));
 		}
 		if (!-d bind8::make_chroot($conf_directory)) {
-			mkdir(bind8::make_chroot($conf_directory), 0755);
+			mkdir(bind8::make_chroot($conf_directory), oct(755));
 		}
 		if ($bind8::config{'master_dir'} &&
 				!-d bind8::make_chroot($bind8::config{'master_dir'})) {
-			mkdir(bind8::make_chroot($bind8::config{'master_dir'}), 0755);
+			mkdir(bind8::make_chroot($bind8::config{'master_dir'}), oct(755));
 		}
 		if ($bind8::config{'slave_dir'} &&
 				!-d bind8::make_chroot($bind8::config{'slave_dir'})) {
-			mkdir(bind8::make_chroot($bind8::config{'slave_dir'}), 0777);
+			mkdir(bind8::make_chroot($bind8::config{'slave_dir'}), oct(777));
 		}
 		if ($pid_file =~ /^(.*)\//) {
 			$pid_dir = $1;
 		if (!-d bind8::make_chroot($pid_dir)) {
-			mkdir(bind8::make_chroot($pid_dir), 0777);
+			mkdir(bind8::make_chroot($pid_dir), oct(777));
 		}
 	}
 

@@ -129,7 +129,7 @@ sub actions {
 		}
 		flush_file_lines($fn);
 		# Load mod_fcgid
-		open(my $FCGID, ">/usr/local/etc/apache22/Includes/fcgid.conf");
+		open(my $FCGID, ">", "/usr/local/etc/apache22/Includes/fcgid.conf");
 		print $FCGID "LoadModule fcgid_module libexec/apache22/mod_fcgid.so\n";
 		print $FCGID "<IfModule mod_fcgid.c>\n";
 		print $FCGID "  AddHandler fcgid-script .fcgi\n";
