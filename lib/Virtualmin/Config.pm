@@ -132,3 +132,82 @@ sub _uniq {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=for html <a href="https://travis-ci.org/virtualmin/Virtualmin-Config">
+<img src="https://travis-ci.org/virtualmin/Virtualmin-Config.svg?branch=master">
+</a>
+
+=head1 NAME
+
+Virtualmin::Config - A collection of plugins to initialize the configuration
+of sevrices that Virtualmin manages, and a command line tool called init-system
+to run them.
+
+=head1 SYNOPSIS
+
+    my $bundle = Virtualmin::Config->new(bundle	=> 'LAMP');
+    $bundle->run();
+
+You can also call it with specific plugins, rather than a whole bundle of
+plugins.
+
+    my $plugin = Virtualmin::Config->new(include => 'Apache');
+    $plugin->run();
+
+Adding new features to the installer, or modifying installer features, should
+be done by creating new plugins or by adding to existing ones.
+
+=head1 DESCRIPTION
+
+This is a mini-framework for configuring elements of a Virtualmin system. It
+uses Webmin as a library to abstract common configuration tasks, provides a
+friendly status indicator, and makes it easy to pick and choose the kind of
+configuration you want (should you choose to go that route). The Virtualmin
+install script chooses either the LAMP (with Apache) or LEMP (with nginx)
+bundle, and performs the configuration for the whole stack.
+
+It includes plugins for all of the common tasks in a Virtualmin system, such
+as Apache, MySQL/MariaDB, Postfix, SpamAssassin, etc.
+
+=head1 ATTRIBUTES
+
+=over
+
+=item bundle
+
+Selects the plugin bundle to be installed. A bundle is a list of plugins
+configured in a C<Virtualmin::Config::*> class.
+
+=item include
+
+One or more additional plugins to include in the C<run()>. This can be
+used alongside C<bundle> or by itself. Dependencies will also be run, and
+there is no way to disable dependencies (because they're depended on!).
+
+=item exclude
+
+One or more plugins to remove from the selected C<bundle>. Plugins that are
+needed to resolve dependencies will be re-added automatically.
+
+=back
+
+=head1 METHODS
+
+=over
+
+=item run
+
+This method figures out which plugins to run (based on the C<bundle>,
+C<include>, and C<exclude> attributes.
+
+=back
+
+=head1 LICENSE AND COPYRIGHT
+
+Licensed under the GPLv3. Copyright 2017 Virtualmin, Inc. <joe@virtualmin.com>
