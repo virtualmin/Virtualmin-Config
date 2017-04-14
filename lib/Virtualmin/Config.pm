@@ -141,7 +141,11 @@ __END__
 
 =for html <a href="https://travis-ci.org/virtualmin/Virtualmin-Config">
 <img src="https://travis-ci.org/virtualmin/Virtualmin-Config.svg?branch=master">
-</a>
+</a>&nbsp;
+<a href='https://coveralls.io/github/virtualmin/Virtualmin-Config?branch=master'>
+<img src='https://coveralls.io/repos/github/virtualmin/Virtualmin-Config/badge.svg?branch=master'
+alt='Coverage Status' /></a>
+
 
 =head1 NAME
 
