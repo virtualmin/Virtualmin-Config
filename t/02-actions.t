@@ -14,7 +14,7 @@ $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
 use File::Copy;
 copy ("$cwd/t/data/etc/webmin/miniserv.conf.orig", "$cwd/t/data/etc/webmin/miniserv.conf");
 
-s
+my $bundle = Virtualmin::Config->new(bundle	=> 'Dummy');
 ok( $bundle->{bundle} eq 'Dummy', "Bundle is Dummy" );
 
 ok( $bundle->run(), "Config->run()" );
