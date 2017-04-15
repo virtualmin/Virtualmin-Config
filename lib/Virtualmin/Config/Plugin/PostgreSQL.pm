@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Webmin;
+package Virtualmin::Config::Plugin::PostgreSQL;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -10,7 +10,7 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Webmin');
+  my $self = $class->SUPER::new(name => 'PostgreSQL');
 
   return $self;
 }
@@ -29,18 +29,19 @@ sub actions {
   eval 'use WebminCore'; ## no critic
   init_config();
 
-  $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  $gconfig{'theme'} = "authentic-theme";
-  $gconfig{'logfiles'} = 1;
-  write_file("$config_directory/config", \%gconfig);
-  get_miniserv_config(\%miniserv);
-  $miniserv{'preroot'} = "authentic-theme";
-  $miniserv{'ssl'} = 1;
-  $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-  put_miniserv_config(\%miniserv);
-  restart_miniserv();
-  $self->done(1); # OK!
+  if (foreign_check("postgresql")) {
+    $self->spin();
+		foreign_require("postgresql", "postgresql-lib.pl");
+		if (!-r $postgresql::config{'hba_conf'}) {
+			# Needs to be initialized
+			my $err = postgresql::setup_postgresql();
+		}
+		if (postgresql::is_postgresql_running() == 0) {
+			my $err = postgresql::start_postgresql();
+		}
+    if ($err) { $self->done(0); } # Something went wrong
+    else { $self->done(1); } # OK!
+  }
 }
 
 1;

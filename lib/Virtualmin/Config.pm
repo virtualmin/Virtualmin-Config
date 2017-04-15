@@ -36,7 +36,7 @@ sub run {
 
 	$|=1; # No line buffering.
 
-	# XXX This should really just be "use Webmin::Core"
+	# TODO This should really just be "use Webmin::Core"
 	$no_acl_check++;
 
 	$error_must_die = 1;

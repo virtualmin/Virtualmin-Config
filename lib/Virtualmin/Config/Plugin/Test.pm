@@ -14,7 +14,7 @@ sub new {
 }
 
 # actions method performs whatever configuration is needed for this
-# plugin. XXX Needs to make a backup so changes can be reverted.
+# plugin. TODO Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
   use Cwd;
@@ -28,7 +28,7 @@ sub actions {
   $ENV{'WEBMIN_CONFIG'} = $cwd . "/t/data/etc/webmin";
   $ENV{'WEBMIN_VAR'} ||= $cwd . "/t/data/var/webmin";
   $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
-  # XXX Somehow get init_config() into $self->config, or something.
+  # TODO Somehow get init_config() into $self->config, or something.
   init_config();
 
   $self->spin("Configuring Test");
