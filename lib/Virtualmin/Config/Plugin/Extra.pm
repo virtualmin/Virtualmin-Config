@@ -7,6 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
 our (%gconfig, %miniserv);
+our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
