@@ -27,5 +27,4 @@ sub actions {
   $self->done(1); # OK!
 }
 
-
 1;
