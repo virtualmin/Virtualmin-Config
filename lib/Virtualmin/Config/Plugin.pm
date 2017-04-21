@@ -48,7 +48,7 @@ sub depends {
 
 sub spin {
   my $self = shift;
-  my $message = shift // "Configuring $self->{'name'}";
+  my $message = shift // "Configuring " . $self->name();
   $spinner = Term::Spinner::Color->new();
   print $message . " " x (79 - length($message) - $spinner->{'last_size'});
   $spinner->auto_start();
