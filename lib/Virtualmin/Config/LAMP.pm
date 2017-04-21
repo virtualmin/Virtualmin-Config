@@ -29,6 +29,7 @@ sub plugins {
     "Shells",
     "Status",
     "Upgrade",
+    "Quotas",
     "Usermin",
     "Webalizer",
     "Virtualmin",
