@@ -87,8 +87,7 @@ sub _gather_plugins {
 
 # Take the gathered list of plugins and sort them to resolve deps
 sub _order_plugins {
-	my $self = shift;
-	my @plugins = shift;
+	my ($self, @plugins) = @_;
 	my %plugin_details; # Will hold an array of hashes containing name/depends
 	# Load up @plugin_details with name and dependency list
 	for my $plugin_name (@plugins) {
