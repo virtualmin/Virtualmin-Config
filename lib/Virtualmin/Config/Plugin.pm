@@ -19,7 +19,7 @@ sub new {
 
   my $self = {
     name    => $args{name},
-    depends => $args{depends},
+    depends => $args{depends} // [],
   };
   bless $self, $class;
 
@@ -37,13 +37,14 @@ sub name {
 # Dep resolution is very stupid. Don't do anything complicated.
 sub depends {
   my ($self, $name) = @_;
-  if ( $name ) { $self->{'depends'} = shift }
-  return $self->{'depends'};
+  if ( $name ) { $self->{depends} = shift }
+  return $self->{depends};
 }
 
 sub spin {
   my $self = shift;
-  my $message = shift // "Configuring " . $self->name();
+  my $name = $self->name();
+  my $message = shift // "Configuring " . $name;
   $spinner = Term::Spinner::Color->new();
   print $message . " " x (79 - length($message) - $spinner->{'last_size'});
   $spinner->auto_start();

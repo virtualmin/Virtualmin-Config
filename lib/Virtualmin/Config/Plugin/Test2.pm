@@ -17,7 +17,7 @@ sub new {
 sub actions {
   my $self = shift;
 
-  $self->spin("Configuring Test2");
+  $self->spin();
   eval { # try
     sleep 1;
   }

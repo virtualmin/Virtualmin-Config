@@ -42,6 +42,7 @@ sub actions {
   put_miniserv_config(\%miniserv);
   restart_miniserv();
   $self->done(1); # OK!
+  return 1;
 }
 
 1;

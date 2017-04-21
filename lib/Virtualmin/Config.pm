@@ -46,7 +46,7 @@ sub run {
 		my $pkg = "Virtualmin::Config::Plugin::$_";
 		load $pkg || die "Loading Plugin failed: $_";
 		my $plugin = $pkg->new();
-		$pkg->actions();
+		$plugin->actions();
 	}
   return 1;
 }

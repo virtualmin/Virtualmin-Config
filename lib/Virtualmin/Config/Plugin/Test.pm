@@ -9,7 +9,6 @@ sub new {
   my $class = shift;
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test');
-
   return $self;
 }
 
@@ -31,7 +30,7 @@ sub actions {
   # TODO Somehow get init_config() into $self->config, or something.
   init_config();
 
-  $self->spin("Configuring Test");
+  $self->spin();
   foreign_require("webmin", "webmin-lib.pl");
   my %gconfig;
   get_miniserv_config(\%gconfig);
