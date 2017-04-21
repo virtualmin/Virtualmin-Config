@@ -33,6 +33,7 @@ sub actions {
   $self->spin();
   foreign_require("webmin", "webmin-lib.pl");
   $gconfig{'theme'} = "authentic-theme";
+  $gconfig{'mobile_theme'} = "authentic-theme";
   $gconfig{'logfiles'} = 1;
   write_file("$config_directory/config", \%gconfig);
   get_miniserv_config(\%miniserv);
@@ -42,7 +43,6 @@ sub actions {
   put_miniserv_config(\%miniserv);
   restart_miniserv();
   $self->done(1); # OK!
-  return 1;
 }
 
 1;

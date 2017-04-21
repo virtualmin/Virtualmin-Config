@@ -13,7 +13,26 @@ sub new {
 
 sub plugins {
   return (
-    "Webmin"
+    "Webmin",
+    "Apache",
+    "Bind",
+    "Dovecot",
+    "Net",
+    "AWStats",
+    "Postfix",
+    "MySQL",
+    "Firewall",
+    "Procmail",
+    "ProFTPd",
+    "Quotas",
+    "SASL",
+    "Shells",
+    "Status",
+    "Upgrade",
+    "Usermin",
+    "Webalizer",
+    "Virtualmin",
+    "Extra",
   );
 }
 

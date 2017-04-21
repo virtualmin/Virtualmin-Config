@@ -10,7 +10,10 @@ our (%gconfig, %miniserv);
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'AWStats');
+  my $self = $class->SUPER::new(
+    name    => 'AWStats'
+    depends => 'Apache'
+  );
 
   return $self;
 }
