@@ -17,15 +17,11 @@ our $error_must_die = 1;
 sub new {
   my ($class, %args) = @_;
 
-  my $self = {};
+  my $self = {
+    name => $args{name},
+    depends => $args{depends},
+  };
   bless $self, $class;
-
-  if ($args{name}) {
-    $self->name($args{name});
-  }
-  if ($args{depends}) {
-    $self->depends($args{depends});
-  }
 
   return $self;
 }
@@ -34,7 +30,7 @@ sub new {
 sub name {
   my $self = shift;
   my $name = shift;
-  if($name) { $self->{name} = $name }
+  if ( $name ) { $self->{name} = $name }
   return $self->{name};
 }
 
