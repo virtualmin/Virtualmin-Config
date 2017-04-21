@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   foreign_require("postfix", "postfix-lib.pl");
   # Debian doesn't get a default main.cf unless apt-get is run
   # interactively.

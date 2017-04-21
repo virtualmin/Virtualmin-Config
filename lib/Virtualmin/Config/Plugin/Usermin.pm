@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   foreign_require("usermin", "usermin-lib.pl");
 	usermin::get_usermin_config(\%uconfig);
 	$uconfig{'theme'} = "authentic-theme";

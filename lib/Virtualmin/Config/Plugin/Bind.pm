@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   if (init::action_status("named")) {
 		init::enable_at_boot("named");
 	}

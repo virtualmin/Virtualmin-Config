@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   foreign_require("dovecot", "dovecot-lib.pl");
 
 	# Work out dirs for control and index files

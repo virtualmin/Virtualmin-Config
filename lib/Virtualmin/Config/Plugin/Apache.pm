@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   foreign_require("apache", "apache-lib.pl");
 	if (-e "/etc/init.d/httpd") { init::enable_at_boot("httpd"); }
 	elsif (-e "/etc/init.d/apache2") { init::enable_at_boot("apache2"); }

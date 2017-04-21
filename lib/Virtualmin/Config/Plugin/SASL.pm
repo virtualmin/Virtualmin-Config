@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   init::enable_at_boot("saslauthd");
 	my ($saslinit, $cf, $libdir);
 	if ($gconfig{'os_type'} eq "debian-linux" or $gconfig{'os_type'} eq "ubuntu-linux") {

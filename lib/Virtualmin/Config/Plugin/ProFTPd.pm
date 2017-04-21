@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   init::enable_at_boot("proftpd");
 	init::restart_action("proftpd");
 	if ($gconfig{'os_type'} eq 'freebsd') {

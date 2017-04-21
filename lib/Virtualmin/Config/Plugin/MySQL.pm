@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  foreign_require("init", "init-lib.pl");
   if ($gconfig{'os_type'} eq "freebsd" ||
       init::action_status("mysql")) {
     init::enable_at_boot("mysql");
