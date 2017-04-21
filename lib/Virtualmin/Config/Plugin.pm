@@ -11,7 +11,7 @@ use Term::Spinner::Color;
 # TODO I don't like this, but can't figure out how to put it into
 # $self->{spinner}
 our $spinner;
-our $trust_unknown_referers++;
+our $trust_unknown_referers = 1;
 our $error_must_die = 1;
 
 sub new {
@@ -33,8 +33,9 @@ sub new {
 # Plugin short name, used in config definitions
 sub name {
   my $self = shift;
-  if(@_) { $self->{'name'} = shift }
-  return $self->{'name'};
+  my $name = shift;
+  if($name) { $self->{name} = $name }
+  return $self->{name};
 }
 
 # Return a ref to an array of plugins that have to run before this one.
