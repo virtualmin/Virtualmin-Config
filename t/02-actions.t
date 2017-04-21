@@ -1,10 +1,14 @@
-use Test::More skip_all => "Needs Webmin installed";
+use Test::More;
 use 5.010;
 # Test actions in the Dummy bundle, on a test data set
 require_ok( 'Virtualmin::Config' );
 
 use Cwd;
 my $cwd = getcwd();
+
+SKIP: {
+skip "Webmin isn't installed.", 3
+  if (! -e "/usr/libexec/webmin/web-lib-funcs.pl");
 
 $ENV{'WEBMIN_CONFIG'} = $cwd . "/t/data/etc/webmin";
 $ENV{'WEBMIN_VAR'} = $cwd . "/t/data/var/webmin";
@@ -30,4 +34,5 @@ sub file_changed {
   }
 }
 
+}
 done_testing();
