@@ -10,12 +10,12 @@ my @plugins = $bundle->_gather_plugins();
 ok(grep {/Test/} @plugins);
 ok(grep {/Test2/} @plugins);
 
-my $include = Virtualmin::Config->new(include => ('Test'));
+my $include = Virtualmin::Config->new(include => ['Test']);
 my @plugins2 = $include->_gather_plugins();
-ok(grep {/^Test$/} @plugins2);
+ok(map { grep {/^Test$/} @{$_}} @plugins2);
 ok(scalar @plugins2 == 1);
 
-my $depends = Virtualmin::Config->new(include => ('Test2'));
+my $depends = Virtualmin::Config->new(include => ['Test2']);
 my @plugins3 = $depends->_gather_plugins();
 my @resolved = $depends->_order_plugins(@plugins3);
 ok(grep {/^Test2$/} @resolved);

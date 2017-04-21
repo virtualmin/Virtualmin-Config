@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use 5.10.1;
 use Getopt::Long;
 use Pod::Usage;
 use Virtualmin::Config;

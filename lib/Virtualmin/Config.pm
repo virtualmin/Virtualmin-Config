@@ -4,8 +4,6 @@ use strict;
 use warnings;
 no warnings qw(once); # We've got some globals that effect Webmin behavior
 use 5.010_001; # Version shipped with CentOS 6. Nothing older.
-use Getopt::Long qw( GetOptionsFromArray );
-use Pod::Usage;
 use Module::Load;
 use Term::ANSIColor qw(:constants);
 use Term::Spinner::Color;
@@ -66,14 +64,14 @@ sub _gather_plugins {
   }
 
 	# Check with the command arguments
-	if ( defined $self->{include} ) {
+	if ( ref($self->{include}) eq 'ARRAY' || ref($self->{include}) eq 'STRING' ) {
 		for my $include ($self->{'include'}) {
-			push (@plugins, $include) unless grep( /^$include$/, @plugins );
+			push (@plugins, $include) unless ( map { grep( /^$include$/, @{$_} ) } @plugins);
 		}
 	}
 
 	# Check for excluded plugins
-	if ( defined $self->{exclude} ) {
+	if ( ref($self->{exclude}) eq 'ARRAY' || ref($self->{exclude}) eq 'STRING' ) {
 		for my $exclude ($self->{'exclude'}) {
 			my @dix = reverse(grep { $plugins[$_] eq $exclude } 0..$#plugins);
 			for (@dix) {
@@ -88,23 +86,26 @@ sub _gather_plugins {
 # Take the gathered list of plugins and sort them to resolve deps
 sub _order_plugins {
 	my ($self, @plugins) = @_;
-	my $plugin_details = {}; # Will hold an array of hashes containing name/depends
+	my %plugin_details; # Will hold an array of hashes containing name/depends
 	# Load up @plugin_details with name and dependency list
+  if (ref($plugins[0]) eq 'ARRAY') { # XXX Why is this so stupid?
+    @plugins = map{@$_} @plugins; # Flatten the array of refs into list.
+  }
 	for my $plugin_name (@plugins) {
 		my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
 		load $pkg;
 		my $plugin = $pkg->new();
-		$plugin_details->{$plugin->{'name'}} = $plugin->{'depends'} // [];
+		$plugin_details{$plugin->{'name'}} = $plugin->{'depends'} // [];
 	}
-	return _topo_sort($plugin_details);
+	return _topo_sort(%plugin_details);
 }
 
 # Topological sort on dependencies
 sub _topo_sort {
-	my ($deps) = @_;
+	my (%deps) = @_;
 
 	my %ba;
-	while ( my ( $before, $afters_aref ) = each %{$deps} ) {
+	while ( my ( $before, $afters_aref ) = each %deps ) {
 		unless ( @{$afters_aref} ) {
 			$ba{$before} = {};
 		}
