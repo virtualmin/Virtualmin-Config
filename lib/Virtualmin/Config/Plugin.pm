@@ -18,7 +18,7 @@ sub new {
   my ($class, %args) = @_;
 
   my $self = {
-    name => $args{name},
+    name    => $args{name},
     depends => $args{depends},
   };
   bless $self, $class;
@@ -28,8 +28,7 @@ sub new {
 
 # Plugin short name, used in config definitions
 sub name {
-  my $self = shift;
-  my $name = shift;
+  my ($self. $name) = @_;
   if ( $name ) { $self->{name} = $name }
   return $self->{name};
 }
@@ -37,8 +36,8 @@ sub name {
 # Return a ref to an array of plugins that have to run before this one.
 # Dep resolution is very stupid. Don't do anything complicated.
 sub depends {
-  my $self = shift;
-  if (@_) { $self->{'depends'} = shift }
+  my ($self, $name) = @_;
+  if ( $name ) { $self->{'depends'} = shift }
   return $self->{'depends'};
 }
 

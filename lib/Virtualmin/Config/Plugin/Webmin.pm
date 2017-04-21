@@ -16,7 +16,7 @@ sub new {
   return $self;
 }
 
-# actions method performs whatever configuration is needed for this
+# Actions method performs whatever configuration is needed for this
 # plugin. TODO Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
