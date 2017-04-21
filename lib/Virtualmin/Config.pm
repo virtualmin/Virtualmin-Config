@@ -66,14 +66,14 @@ sub _gather_plugins {
   }
 
 	# Check with the command arguments
-	if ($self->{'include'}) {
+	if (scalar(@{$self->{'include'}} > 0) {
 		for my $include ($self->{'include'}) {
 			push (@plugins, $include) unless grep( /^$include$/, @plugins );
 		}
 	}
 
 	# Check for excluded plugins
-	if ($self->{'exclude'}) {
+	if (scalar(@{$self->{'exclude'}} > 0) {
 		for my $exclude ($self->{'exclude'}) {
 			my @dix = reverse(grep { $plugins[$_] eq $exclude } 0..$#plugins);
 			for (@dix) {

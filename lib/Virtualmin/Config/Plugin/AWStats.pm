@@ -11,7 +11,7 @@ sub new {
   my $class = shift;
   # inherit from Plugin
   my $self = $class->SUPER::new(
-    name    => 'AWStats'
+    name    => 'AWStats',
     depends => 'Apache'
   );
 

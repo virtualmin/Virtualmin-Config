@@ -19,7 +19,7 @@ sub new {
 
   my $self = {
     name    => $args{name},
-    depends => $args{depends} // [],
+    depends => $args{depends}
   };
   bless $self, $class;
 

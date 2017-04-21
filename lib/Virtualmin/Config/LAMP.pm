@@ -32,7 +32,7 @@ sub plugins {
     "Usermin",
     "Webalizer",
     "Virtualmin",
-    "Extra",
+    "Extra"
   );
 }
 
