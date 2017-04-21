@@ -12,7 +12,7 @@ sub new {
   # inherit from Plugin
   my $self = $class->SUPER::new(
     name    => 'AWStats',
-    depends => 'Apache'
+    depends => ['Apache']
   );
 
   return $self;

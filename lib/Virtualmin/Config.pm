@@ -66,14 +66,14 @@ sub _gather_plugins {
   }
 
 	# Check with the command arguments
-	if ( defined $self->{include} ) {
+	if ( $#{$self->{include}} > 0 ) {
 		for my $include ($self->{'include'}) {
 			push (@plugins, $include) unless grep( /^$include$/, @plugins );
 		}
 	}
 
 	# Check for excluded plugins
-	if ( defined $self->{exclude} ) {
+	if ( $#{$self->{exclude}} > 0 ) {
 		for my $exclude ($self->{'exclude'}) {
 			my @dix = reverse(grep { $plugins[$_] eq $exclude } 0..$#plugins);
 			for (@dix) {
@@ -88,23 +88,23 @@ sub _gather_plugins {
 # Take the gathered list of plugins and sort them to resolve deps
 sub _order_plugins {
 	my ($self, @plugins) = @_;
-	my %plugin_details; # Will hold an array of hashes containing name/depends
+	my $plugin_details = {}; # Will hold an array of hashes containing name/depends
 	# Load up @plugin_details with name and dependency list
 	for my $plugin_name (@plugins) {
 		my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
 		load $pkg;
 		my $plugin = $pkg->new();
-		$plugin_details{$plugin->{'name'}} = $plugin->{'depends'} // [];
+		$plugin_details->{$plugin->{'name'}} = $plugin->{'depends'} // [];
 	}
-	return _topo_sort(%plugin_details);
+	return _topo_sort($plugin_details);
 }
 
 # Topological sort on dependencies
 sub _topo_sort {
-	my %deps = @_;
+	my ($deps) = @_;
 
 	my %ba;
-	while ( my ( $before, $afters_aref ) = each %deps ) {
+	while ( my ( $before, $afters_aref ) = each %{$deps} ) {
 		unless ( @{$afters_aref} ) {
 			$ba{$before} = {};
 		}
