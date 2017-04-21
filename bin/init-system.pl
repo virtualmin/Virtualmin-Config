@@ -60,13 +60,9 @@ a variety of other components. "LEMP" replaces Apache with nginx.
 =item --include
 
 Include one or more additional plugins. Works with or without a bundle
-specified. It will only change the configuration options that the plugin
-specifies...it does not "reset" the component to a default state.
-
-Multiple plugins can be provided with this option, separated by spaces.
-
-If not bundle is specified, only the included plugins will be used. Plugins
-other than those specified may be installed to resolve dependencies.
+specified. Multiple plugins can be provided with this option, separated by
+spaces. If no bundle is specified, only the included plugins, and dependencies
+will be installed.
 
 =item --exclude
 

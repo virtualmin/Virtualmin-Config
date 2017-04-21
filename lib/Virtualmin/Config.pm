@@ -7,7 +7,6 @@ use 5.010_001; # Version shipped with CentOS 6. Nothing older.
 use Getopt::Long qw( GetOptionsFromArray );
 use Pod::Usage;
 use Module::Load;
-use List::Util qw(all);
 use Term::ANSIColor qw(:constants);
 use Term::Spinner::Color;
 
