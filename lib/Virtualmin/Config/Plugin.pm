@@ -28,7 +28,7 @@ sub new {
 
 # Plugin short name, used in config definitions
 sub name {
-  my ($self. $name) = @_;
+  my ($self, $name) = @_;
   if ( $name ) { $self->{name} = $name }
   return $self->{name};
 }
