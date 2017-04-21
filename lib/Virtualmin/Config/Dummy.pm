@@ -11,10 +11,10 @@ sub new {
 }
 
 sub plugins {
-  return (
+  return [
     "Test",
     "Test2",
-  );
+  ];
 }
 
 1;

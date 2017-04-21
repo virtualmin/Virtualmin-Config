@@ -12,7 +12,7 @@ sub new {
 }
 
 sub plugins {
-  return (
+  return [
     "Webmin",
     "Apache",
     "Bind",
@@ -33,7 +33,7 @@ sub plugins {
     "Webalizer",
     "Virtualmin",
     "Extra"
-  );
+  ];
 }
 
 1;
