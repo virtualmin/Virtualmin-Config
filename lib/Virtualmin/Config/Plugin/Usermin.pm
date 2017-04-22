@@ -45,7 +45,12 @@ sub actions {
     $uminiserv{'domainuser'} = 1;
     $uminiserv{'domainstrip'} = 1;
     usermin::put_usermin_miniserv_config(\%uminiserv);
-    usermin::restart_usermin_miniserv();
+    if (init::status_action("usermin")) {
+      usermin::restart_usermin_miniserv();
+    }
+    else {
+      usermin::start_usermin();
+    }
 
     # Start Usermin at boot
     foreign_require("init", "init-lib.pl");

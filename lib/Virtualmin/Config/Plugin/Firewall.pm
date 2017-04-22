@@ -34,9 +34,6 @@ sub actions {
   eval {
     my @tcpports = qw(ssh smtp submission domain ftp ftp-data pop3 pop3s imap imaps http https 2222 10000 20000);
   	my @udpports = qw(domain);
-  	if ($gconfig{'os_type'} =~ /-linux$/) {
-  		print "Configuring firewall rules\n";
-  	}
   	# And another thing (the Right Thing) for RHEL/CentOS/Fedora/Mandriva/Debian/Ubuntu
   	foreign_require("firewall", "firewall-lib.pl");
   	my @tables = &firewall::get_iptables_save();
@@ -51,7 +48,7 @@ sub actions {
   					'FORWARD' => 'ACCEPT' } };
   		}
   		foreach ( @tcpports ) {
-  			print "  Allowing traffic on TCP port: $_\n";
+  			#print "  Allowing traffic on TCP port: $_\n";
   			my $newrule = { 'chain' => 'INPUT',
   				'm' => [ [ '', 'tcp' ] ],
   				'p' => [ [ '', 'tcp' ] ],
@@ -61,7 +58,7 @@ sub actions {
   			splice(@{$filter->{'rules'}}, 0, 0, $newrule);
   		}
   		foreach ( @udpports ) {
-  			print "  Allowing traffic on UDP port: $_\n";
+  			#print "  Allowing traffic on UDP port: $_\n";
   			my $newrule = { 'chain' => 'INPUT',
   				'm' => [ [ '', 'udp' ] ],
   				'p' => [ [ '', 'udp' ] ],
