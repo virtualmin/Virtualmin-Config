@@ -25,12 +25,20 @@ ok( $bundle->run(), "Config->run()" );
 
 ok( file_changed(), "Config file changed" );
 
+clean_up();
+
 # Check to be sure the change within the actions in Test.pm plugin were applied
 sub file_changed {
   open(my $miniserv, "<", "$cwd/t/data/etc/webmin/miniserv.conf") ||
     die "Cannot open miniserv.conf";
   while (<$miniserv>) {
     return $_ if /dummy-theme/;
+  }
+}
+
+sub clean_up {
+  if ( -e "$cwd/t/data/etc/webmin/miniserv.conf" ) {
+    unlink "$cwd/t/data/etc/webmin/miniserv.conf";
   }
 }
 
