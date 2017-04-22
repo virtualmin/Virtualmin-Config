@@ -79,11 +79,11 @@ sub actions {
   		&dovecot::save_directive($conf, "auth_mechanisms", $am);
   	}
   	flush_file_lines();
-  	print "Enabling Dovecot POP3 and IMAP servers\n";
+  	#print "Enabling Dovecot POP3 and IMAP servers\n";
   	init::enable_at_boot("dovecot");
   	if (!dovecot::is_dovecot_running()) {
   		my $err = dovecot::start_dovecot();
-  		print STDERR "Failed to start Dovecot POP3/IMAP server!\n" if ($err);
+  		#print STDERR "Failed to start Dovecot POP3/IMAP server!\n" if ($err);
   	}
     $self->done(1); # OK!
   };

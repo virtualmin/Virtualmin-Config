@@ -37,7 +37,7 @@ sub actions {
 	my ($dir, $dev, $type, $opts) = mount::filesystem_for_dir("/home");
 	mount::parse_options($type, $opts);
 	if (running_in_zone() || &running_in_vserver()) {
-		print STDERR "Skipping quotas for Vserver or Zones systems\n";
+		#print STDERR "Skipping quotas for Vserver or Zones systems\n";
 		return;
 	}
 	elsif ($gconfig{'os_type'} =~ /-linux$/) {
@@ -53,7 +53,7 @@ sub actions {
 			$mount::options{'groupquota'} = '';
 		}
 		else {
-			print "Skipping quotas: Required kernel support is not enabled.\n";
+			#print "Skipping quotas: Required kernel support is not enabled.\n";
 			return;
 		}
 	}
@@ -61,7 +61,7 @@ sub actions {
 		$mount::options{'quota'} = '';
 	}
 	else {
-		print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
+		#print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
 	}
 	$opts = mount::join_options($type);
 	my @mounts = mount::list_mounts();
@@ -77,7 +77,7 @@ sub actions {
 			$mounts[$idx]->[5]);
 	my $err = mount::remount_dir($dir, $dev, $type, $opts);
 	if ($err) {
-		print STDERR "The filesystem $dir could not be remounted with quotas enabled. You may need to reboot your system, and then enable quotas in the Disk Quotas module.\n";
+		print STDERR "\nThe filesystem $dir could not be remounted with quotas enabled. You may need to reboot your system, and then enable quotas in the Disk Quotas module.\n";
 	}
 	else {
   # Activate quotas

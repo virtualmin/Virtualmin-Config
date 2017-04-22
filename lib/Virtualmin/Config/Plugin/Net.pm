@@ -33,7 +33,7 @@ sub actions {
   $self->spin();
   eval {
     if (foreign_check("net")) {
-  		print "Configuring resolv.conf to use my DNS server\n";
+  		#print "Configuring resolv.conf to use my DNS server\n";
   		foreign_require("net", "net-lib.pl");
   		my $dns = net::get_dns_config();
   		if (indexof("127.0.0.1", @{$dns->{'nameserver'}}) < 0) {

@@ -36,12 +36,14 @@ sub actions {
 	my @recipes = procmail::get_procmailrc();
 	my ($defrec, $orgrec);
 	foreach my $r (@recipes) {
-		if ($r->{'name'} eq "DEFAULT") {
-			$defrec = $r;
-		}
-		elsif ($r->{'name'} eq "ORGMAIL") {
-			$orgrec = $r;
-		}
+    if ($r->{'name'}) {
+		  if ($r->{'name'} eq "DEFAULT") {
+			  $defrec = $r;
+		  }
+		  elsif ($r->{'name'} eq "ORGMAIL") {
+			  $orgrec = $r;
+		  }
+    }
 	}
 	if ($defrec) {
 		# Fix up this DEFAULT entry
