@@ -44,7 +44,7 @@ sub actions {
     put_miniserv_config(\%miniserv);
     restart_miniserv();
     $self->done(1); # OK!
-  }
+  };
   if ($@) {
     $self->done(0); # NOK!
   }
