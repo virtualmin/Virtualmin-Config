@@ -7,8 +7,8 @@ require_ok('Virtualmin::Config');
 my $bundle = Virtualmin::Config->new(bundle => 'Dummy');
 
 my @plugins = $bundle->_gather_plugins();
-ok(grep {/Test/} @plugins);
-ok(grep {/Test2/} @plugins);
+ok(map { grep {/Test/} @{$_}} @plugins);
+ok(map { grep {/Test2/} @{$_}} @plugins);
 
 my $include = Virtualmin::Config->new(include => ['Test']);
 my @plugins2 = $include->_gather_plugins();
