@@ -36,10 +36,11 @@ sub actions {
     if ($gconfig{'os_type'} eq "freebsd" ||
         init::action_status("mysql")) {
       init::enable_at_boot("mysql");
+    } elsif (init::action_status("mariadb")) {
+      init::enable_at_boot("mariadb");
     } else {
       init::enable_at_boot("mysqld");
     }
-    init::enable_at_boot("postgresql");
     foreign_require("mysql", "mysql-lib.pl");
     if (mysql::is_mysql_running()) {
       mysql::stop_mysql();
