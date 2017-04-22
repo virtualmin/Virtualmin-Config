@@ -54,14 +54,8 @@ sub actions {
   	}
 
   	my $conf = dovecot::get_config();
-  	if (dovecot::get_dovecot_version() >= 2) {
-  		dovecot::save_directive($conf, "protocols",
-  				"imap pop3");
-  	}
-  	else {
-  		dovecot::save_directive($conf, "protocols",
-  				"imap imaps pop3 pop3s");
-  	}
+		dovecot::save_directive($conf, "protocols",
+			"imap pop3");
   	if (dovecot::find("mail_location", $conf, 2)) {
   		dovecot::save_directive($conf, "mail_location",
   				"maildir:~/Maildir".$indexes);
