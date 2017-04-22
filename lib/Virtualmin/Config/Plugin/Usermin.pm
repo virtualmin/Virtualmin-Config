@@ -54,7 +54,7 @@ sub actions {
     "$usermin::config{'usermin_dir'}/stop");
 
     $self->done(1); # OK!
-  }
+  };
   if ($@) {
     $self->done(0); # NOK!
   }
