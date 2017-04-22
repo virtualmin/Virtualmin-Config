@@ -32,17 +32,22 @@ sub actions {
 
   if (foreign_check("postgresql")) {
     $self->spin();
-    my $err; # We should handle errors better here.
-		foreign_require("postgresql", "postgresql-lib.pl");
-		if (!-r $postgresql::config{'hba_conf'}) {
-			# Needs to be initialized
-			$err = postgresql::setup_postgresql();
-		}
-		if (postgresql::is_postgresql_running() == 0) {
-			$err = postgresql::start_postgresql();
-		}
-    if ($err) { $self->done(0); } # Something went wrong
-    else { $self->done(1); } # OK!
+    eval {
+      my $err; # We should handle errors better here.
+  		foreign_require("postgresql", "postgresql-lib.pl");
+  		if (!-r $postgresql::config{'hba_conf'}) {
+  			# Needs to be initialized
+  			$err = postgresql::setup_postgresql();
+  		}
+  		if (postgresql::is_postgresql_running() == 0) {
+  			$err = postgresql::start_postgresql();
+  		}
+      #if ($err) { # Log an error } # Something went wrong
+      $self->done(0);
+    };
+    if ($@) {
+      $self->done(1);
+    }
   }
 }
 

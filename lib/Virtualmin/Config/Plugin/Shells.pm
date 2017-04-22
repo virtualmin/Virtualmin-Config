@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   my $lref = &read_file_lines("/etc/shells");
 	my $idx = &indexof("/bin/false", @$lref);
 	if ($idx < 0) {
@@ -39,6 +40,10 @@ sub actions {
 		flush_file_lines("/etc/shells");
 	}
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

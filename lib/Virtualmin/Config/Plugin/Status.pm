@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("status", "status-lib.pl");
 	$status::config{'sched_mode'} = 1;
 	$status::config{'sched_int'} ||= 5;
@@ -38,6 +39,10 @@ sub actions {
 	save_module_config(\%status::config, 'status');
 	status::setup_cron_job();
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

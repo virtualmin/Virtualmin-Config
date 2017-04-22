@@ -31,20 +31,25 @@ sub actions {
   init_config();
 
   $self->spin();
-  if (foreign_check("net")) {
-		print "Configuring resolv.conf to use my DNS server\n";
-		foreign_require("net", "net-lib.pl");
-		my $dns = net::get_dns_config();
-		if (indexof("127.0.0.1", @{$dns->{'nameserver'}}) < 0) {
-			unshift(@{$dns->{'nameserver'}}, "127.0.0.1");
-			net::save_dns_config($dns);
-		}
-		# Restart Postfix so that it picks up the new resolv.conf
-		foreign_require("virtual-server");
-		virtual_server::stop_service_mail();
-		virtual_server::start_service_mail();
-	}
-  $self->done(1); # OK!
+  eval {
+    if (foreign_check("net")) {
+  		print "Configuring resolv.conf to use my DNS server\n";
+  		foreign_require("net", "net-lib.pl");
+  		my $dns = net::get_dns_config();
+  		if (indexof("127.0.0.1", @{$dns->{'nameserver'}}) < 0) {
+  			unshift(@{$dns->{'nameserver'}}, "127.0.0.1");
+  			net::save_dns_config($dns);
+  		}
+  		# Restart Postfix so that it picks up the new resolv.conf
+  		foreign_require("virtual-server");
+  		virtual_server::stop_service_mail();
+  		virtual_server::start_service_mail();
+  	}
+    $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

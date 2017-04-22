@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("init", "init-lib.pl");
   init::enable_at_boot("proftpd");
 	init::restart_action("proftpd");
@@ -46,6 +47,10 @@ sub actions {
 	flush_file_lines();
 
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0); # NOK!
+  }
 }
 
 1;

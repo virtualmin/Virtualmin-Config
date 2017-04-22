@@ -34,21 +34,26 @@ sub actions {
   init_config();
 
   $self->spin();
-  # Attempt to sync clock
-  if (&has_command("ntpdate-debian")) {
-  	system("ntpdate-debian >/dev/null 2>&1 </dev/null &");
-  }
-  foreign_require("webmin", "webmin-lib.pl");
-	webmin::build_installed_modules(1);
+  eval {
+    # Attempt to sync clock
+    if (&has_command("ntpdate-debian")) {
+    	system("ntpdate-debian >/dev/null 2>&1 </dev/null &");
+    }
+    foreign_require("webmin", "webmin-lib.pl");
+  	webmin::build_installed_modules(1);
 
-  # Turn on caching for downloads by Virtualmin
-  if (!$gconfig{'cache_size'}) {
-  	$gconfig{'cache_size'} = 50*1024*1024;
-  	$gconfig{'cache_mods'} = "virtual-server";
-  	write_file("$config_directory/config", \%gconfig);
-  }
+    # Turn on caching for downloads by Virtualmin
+    if (!$gconfig{'cache_size'}) {
+    	$gconfig{'cache_size'} = 50*1024*1024;
+    	$gconfig{'cache_mods'} = "virtual-server";
+    	write_file("$config_directory/config", \%gconfig);
+    }
 
-  $self->done(1); # OK!
+    $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

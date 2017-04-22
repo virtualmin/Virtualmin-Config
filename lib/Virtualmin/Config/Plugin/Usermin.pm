@@ -31,28 +31,33 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("init", "init-lib.pl");
-  foreign_require("usermin", "usermin-lib.pl");
-	usermin::get_usermin_config(\%uconfig);
-	$uconfig{'theme'} = "authentic-theme";
-	$uconfig{'gotomodule'} = 'mailbox';
-	usermin::put_usermin_config(\%uconfig);
-	usermin::get_usermin_miniserv_config(\%uminiserv);
-	$uminiserv{'preroot'} = "authentic-theme";
-	$uminiserv{'ssl'} = "1";
-	$uminiserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
-	$uminiserv{'domainuser'} = 1;
-	$uminiserv{'domainstrip'} = 1;
-	usermin::put_usermin_miniserv_config(\%uminiserv);
-	usermin::restart_usermin_miniserv();
+  eval {
+    foreign_require("init", "init-lib.pl");
+    foreign_require("usermin", "usermin-lib.pl");
+    usermin::get_usermin_config(\%uconfig);
+    $uconfig{'theme'} = "authentic-theme";
+    $uconfig{'gotomodule'} = 'mailbox';
+    usermin::put_usermin_config(\%uconfig);
+    usermin::get_usermin_miniserv_config(\%uminiserv);
+    $uminiserv{'preroot'} = "authentic-theme";
+    $uminiserv{'ssl'} = "1";
+    $uminiserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
+    $uminiserv{'domainuser'} = 1;
+    $uminiserv{'domainstrip'} = 1;
+    usermin::put_usermin_miniserv_config(\%uminiserv);
+    usermin::restart_usermin_miniserv();
 
-	# Start Usermin at boot
-	foreign_require("init", "init-lib.pl");
-	init::enable_at_boot("usermin", "Start the Usermin webserver",
-		"$usermin::config{'usermin_dir'}/start",
-		"$usermin::config{'usermin_dir'}/stop");
+    # Start Usermin at boot
+    foreign_require("init", "init-lib.pl");
+    init::enable_at_boot("usermin", "Start the Usermin webserver",
+    "$usermin::config{'usermin_dir'}/start",
+    "$usermin::config{'usermin_dir'}/stop");
 
-  $self->done(1); # OK!
+    $self->done(1); # OK!
+  }
+  if ($@) {
+    $self->done(0); # NOK!
+  }
 }
 
 1;

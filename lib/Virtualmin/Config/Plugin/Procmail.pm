@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("procmail", "procmail-lib.pl");
 	my @recipes = procmail::get_procmailrc();
 	my ($defrec, $orgrec);
@@ -75,6 +76,10 @@ sub actions {
 		}
 	}
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

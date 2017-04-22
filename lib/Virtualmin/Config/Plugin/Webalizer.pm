@@ -1,6 +1,7 @@
 package Virtualmin::Config::Plugin::Webalizer;
 use strict;
 use warnings;
+use 5.010;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
 
@@ -31,6 +32,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("webalizer", "webalizer-lib.pl");
 	my $conf = &webalizer::get_config();
 	webalizer::save_directive($conf, "IncrementalName", "webalizer.current");
@@ -38,6 +40,10 @@ sub actions {
 	webalizer::save_directive($conf, "DNSCache", "dns_cache.db");
 	flush_file_lines($webalizer::config{'webalizer_conf'});
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

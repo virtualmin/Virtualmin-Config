@@ -20,6 +20,7 @@ sub new {
   $self->{bundle} = $args{bundle};
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
+  $self->{log} = $args{log};
 	# Guesstimate our terminal size.
 	#my ($lines, $cols) = `stty size`=~/(\d+)\s+(\d+)/?($1,$2):(25,80);
 	#unless ($cols <= 80) { $cols = 80 };

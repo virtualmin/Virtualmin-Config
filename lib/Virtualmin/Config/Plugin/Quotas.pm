@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("mount", "mount-lib.pl");
 	mkdir("/home", 0755) if (!-d "/home");
 	my ($dir, $dev, $type, $opts) = mount::filesystem_for_dir("/home");
@@ -84,6 +85,10 @@ sub actions {
 		quota::quotaon($dir, 3);
 	}
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

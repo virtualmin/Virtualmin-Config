@@ -31,28 +31,32 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("init", "init-lib.pl");
-  if ($gconfig{'os_type'} eq "freebsd" ||
-      init::action_status("mysql")) {
-    init::enable_at_boot("mysql");
-  } else {
-    init::enable_at_boot("mysqld");
+  eval {
+    foreign_require("init", "init-lib.pl");
+    if ($gconfig{'os_type'} eq "freebsd" ||
+        init::action_status("mysql")) {
+      init::enable_at_boot("mysql");
+    } else {
+      init::enable_at_boot("mysqld");
+    }
+    init::enable_at_boot("postgresql");
+    foreign_require("mysql", "mysql-lib.pl");
+    if (mysql::is_mysql_running()) {
+      mysql::stop_mysql();
+    }
+    my $conf = mysql::get_mysql_config();
+    my ($sect) = grep { $_->{'name'} eq 'mysqld' } @$conf;
+    if ($sect) {
+      mysql::save_directive($conf, $sect,
+          "innodb_file_per_table", [ 1 ]);
+      flush_file_lines($sect->{'file'});
+    }
+    my $err = mysql::start_mysql();
+    $self->done(1);
+  };
+  if ($@) {
+    $self->done(0);
   }
-  init::enable_at_boot("postgresql");
-  foreign_require("mysql", "mysql-lib.pl");
-  if (mysql::is_mysql_running()) {
-    mysql::stop_mysql();
-  }
-  my $conf = mysql::get_mysql_config();
-  my ($sect) = grep { $_->{'name'} eq 'mysqld' } @$conf;
-  if ($sect) {
-    mysql::save_directive($conf, $sect,
-        "innodb_file_per_table", [ 1 ]);
-    flush_file_lines($sect->{'file'});
-  }
-  my $err = mysql::start_mysql();
-  if ($err) { $self->done(0); } # Something went wrong.
-  else { $self->done(1); } # OK!
 }
 
 1;

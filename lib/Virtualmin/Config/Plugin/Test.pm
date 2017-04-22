@@ -31,12 +31,17 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("webmin", "webmin-lib.pl");
-  my %gconfig;
-  get_miniserv_config(\%gconfig);
-  $gconfig{'theme'} = "dummy-theme";
-  put_miniserv_config(\%gconfig);
-  $self->done(1);
+  eval {
+    foreign_require("webmin", "webmin-lib.pl");
+    my %gconfig;
+    get_miniserv_config(\%gconfig);
+    $gconfig{'theme'} = "dummy-theme";
+    put_miniserv_config(\%gconfig);
+    $self->done(1);
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

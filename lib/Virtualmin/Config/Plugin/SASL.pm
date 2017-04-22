@@ -31,6 +31,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  eval {
   foreign_require("init", "init-lib.pl");
   init::enable_at_boot("saslauthd");
 	my ($saslinit, $cf, $libdir);
@@ -94,6 +95,10 @@ sub actions {
   }
 
   $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

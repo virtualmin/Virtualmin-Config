@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use 5.10.1;
+use 5.010_001;
 use Getopt::Long;
 use Pod::Usage;
 use Virtualmin::Config;
@@ -13,6 +13,7 @@ sub main {
   GetOptions( \%opt,
     'help|h',
     'bundle|b=s',
+    'log|l=s',
     'include|i=s{1,}' => \@include,
     'exclude|x=s{1,}' => \@exclude,
   );
@@ -21,6 +22,7 @@ sub main {
 
   my $bundle = Virtualmin::Config->new(
     bundle    => $opt{bundle},
+    log       => $opt{log},
     include   => \@include,
     exclude   => \@exclude,
   );
@@ -45,6 +47,7 @@ virtualmin init-system [options]
   Options:
     --help      Print this summaery of options and exit
     --bundle    A bundle of plugins to execute
+    --log       Path to a file for logging actions
     --include   One or more extra plugins to include
     --exclude   One or more plugins to exclude
 

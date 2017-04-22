@@ -31,11 +31,16 @@ sub actions {
   init_config();
 
   $self->spin();
-  my %wacl = ( 'disallow' => 'upgrade' );
-  save_module_acl(\%wacl, 'root', 'webmin');
-  my %uacl = ( 'upgrade' => 0 );
-  save_module_acl(\%uacl, 'root', 'usermin');
-  $self->done(1); # OK!
+  eval {
+    my %wacl = ( 'disallow' => 'upgrade' );
+    save_module_acl(\%wacl, 'root', 'webmin');
+    my %uacl = ( 'upgrade' => 0 );
+    save_module_acl(\%uacl, 'root', 'usermin');
+    $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

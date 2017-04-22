@@ -34,17 +34,22 @@ sub actions {
   init_config();
 
   $self->spin();
-  foreign_require("cron");
-	my @jobs = &cron::list_cron_jobs();
-	my @dis = grep { $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic).sh/ && $_->{'active'} } @jobs;
-	if (@dis) {
-		foreach my $job (@dis) {
-			$job->{'active'} = 0;
-			&cron::change_cron_job($job);
-		}
-  }
+  eval {
+    foreign_require("cron");
+  	my @jobs = &cron::list_cron_jobs();
+  	my @dis = grep { $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic).sh/ && $_->{'active'} } @jobs;
+  	if (@dis) {
+  		foreach my $job (@dis) {
+  			$job->{'active'} = 0;
+  			&cron::change_cron_job($job);
+  		}
+    }
 
-  $self->done(1); # OK!
+    $self->done(1); # OK!
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;

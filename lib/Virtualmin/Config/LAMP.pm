@@ -1,7 +1,7 @@
 package Virtualmin::Config::LAMP;
 use strict;
 use warnings;
-use 5.010;
+use 5.010_001;
 # A list of plugins for configuring a LAMP stack
 
 sub new {
