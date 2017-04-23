@@ -81,7 +81,10 @@ sub actions {
   			$mounts[$idx]->[5]);
   	my $err = mount::remount_dir($dir, $dev, $type, $opts);
   	if ($dir eq "/" || $err) {
-  		print STDERR "\nThe filesystem $dir could not be remounted with quotas enabled. You may need to reboot your system, and then enable quotas in the Disk Quotas module.\n";
+  		print STDERR "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
+      print STDERR "You may need to reboot your system, and then enable quotas in the Disk\n";
+      print STDERR "Quotas module.";
+      print STDERR " " x 71;
   	}
   	else {
     # Activate quotas
