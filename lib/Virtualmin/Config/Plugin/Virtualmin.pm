@@ -11,7 +11,7 @@ our $trust_unknown_referers = 1;
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Virtualmin');
+  my $self = $class->SUPER::new(name => 'Virtualmin', depends => 'Usermin');
 
   return $self;
 }
@@ -77,6 +77,7 @@ sub actions {
   	save_module_config(\%mconfig, "mailboxes");
 
   	# Setup the Usermin read mail module
+    foreign_require("usermin", "usermin-lib.pl");
   	my $cfile = "$usermin::config{'usermin_dir'}/mailbox/config";
   	my %mailconfig;
   	read_file($cfile, \%mailconfig);

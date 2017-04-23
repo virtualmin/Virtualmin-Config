@@ -4,6 +4,8 @@ use warnings;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
 
+$| = 1;
+
 our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
@@ -32,6 +34,7 @@ sub actions {
 
   $self->spin();
   eval {
+    my $res = 1;
     foreign_require("mount", "mount-lib.pl");
   	mkdir("/home", 0755) if (!-d "/home");
   	my ($dir, $dev, $type, $opts) = mount::filesystem_for_dir("/home");
@@ -81,17 +84,18 @@ sub actions {
   			$mounts[$idx]->[5]);
   	my $err = mount::remount_dir($dir, $dev, $type, $opts);
   	if ($dir eq "/" || $err) {
-  		print STDERR "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
-      print STDERR "You may need to reboot your system, and then enable quotas in the Disk\n";
-      print STDERR "Quotas module.";
-      print STDERR " " x 71;
+  		print "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
+      print "You may need to reboot your system, and enable quotas in the Disk\n";
+      print "Quotas module.";
+      print " " x 65;
+      $res=0;
   	}
   	else {
     # Activate quotas
   		foreign_require("quota", "quota-lib.pl");
   		quota::quotaon($dir, 3);
   	}
-    $self->done(1); # OK!
+    $self->done($res); # OK!
   };
   if ($@) {
     $self->done(0);
