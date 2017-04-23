@@ -37,8 +37,6 @@ sub actions {
     if (has_command("ntpdate-debian")) {
     	system("ntpdate-debian >/dev/null 2>&1 </dev/null &");
     }
-    foreign_require("webmin", "webmin-lib.pl");
-  	webmin::build_installed_modules(1);
 
     # Turn on caching for downloads by Virtualmin
     if (!$gconfig{'cache_size'}) {
