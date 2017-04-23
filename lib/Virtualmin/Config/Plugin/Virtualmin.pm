@@ -11,7 +11,7 @@ our $trust_unknown_referers = 1;
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Virtualmin', depends => 'Usermin');
+  my $self = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin']);
 
   return $self;
 }
@@ -81,6 +81,7 @@ sub actions {
   	my $cfile = "$usermin::config{'usermin_dir'}/mailbox/config";
   	my %mailconfig;
   	read_file($cfile, \%mailconfig);
+    foreign_require("postfix", "postfix-lib.pl");
   	my ($map) = postfix::get_maps_files(postfix::get_real_value(
   				$postfix::virtual_maps));
   	$map ||= "/etc/postfix/virtual";
