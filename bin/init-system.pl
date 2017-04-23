@@ -18,7 +18,9 @@ sub main {
     'exclude|x=s{1,}' => \@exclude,
   );
   pod2usage(0) if $opt{help};
-  pod2usage(0) if !@{$argv};
+  unless ($opt{bundle} || @include) {
+    pod2usage(0);
+  }
 
   my $bundle = Virtualmin::Config->new(
     bundle    => $opt{bundle},
