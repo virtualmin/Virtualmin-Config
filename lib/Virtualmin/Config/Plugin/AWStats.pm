@@ -3,6 +3,7 @@ use strict;
 use warnings;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
+use Time::HiRes qw( sleep );
 
 our $config_directory;
 our (%gconfig, %miniserv);
@@ -34,6 +35,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  sleep 0.2; # XXX Pause to allow spin to start.
   eval {
     foreign_require("cron");
   	my @jobs = &cron::list_cron_jobs();
@@ -44,7 +46,6 @@ sub actions {
   			&cron::change_cron_job($job);
   		}
     }
-
     $self->done(1); # OK!
   };
   if ($@) {
