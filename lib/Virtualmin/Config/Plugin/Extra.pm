@@ -12,9 +12,7 @@ our $trust_unknown_referers = 1;
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(
-    name    => 'Extra',
-    depends => ['Virtualmin', 'Webmin'] );
+  my $self = $class->SUPER::new(name => 'Extra');
 
   return $self;
 }
@@ -36,7 +34,7 @@ sub actions {
   $self->spin();
   eval {
     # Attempt to sync clock
-    if (&has_command("ntpdate-debian")) {
+    if (has_command("ntpdate-debian")) {
     	system("ntpdate-debian >/dev/null 2>&1 </dev/null &");
     }
     foreign_require("webmin", "webmin-lib.pl");

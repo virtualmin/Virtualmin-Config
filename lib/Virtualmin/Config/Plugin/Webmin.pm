@@ -42,6 +42,7 @@ sub actions {
     $miniserv{'ssl'} = 1;
     $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
     put_miniserv_config(\%miniserv);
+  	webmin::build_installed_modules(1);
     restart_miniserv();
     $self->done(1); # OK!
   };
