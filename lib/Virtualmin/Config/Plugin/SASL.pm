@@ -73,7 +73,7 @@ sub actions {
 			if ( -e "/usr/lib64" && -e "/usr/lib64/perl" ) { $libdir = "/usr/lib64"; }
 			else { $libdir = "/usr/lib"; }
 		}
-    if ( -e "/etc/sasl2/smtpd.conf" { $cf="/etc/sasl2/smtpd.conf"; }
+    if ( -e "/etc/sasl2/smtpd.conf" ) { $cf="/etc/sasl2/smtpd.conf"; }
 		elsif ( -e "$libdir/sasl2" ) { $cf="$libdir/sasl2/smtpd.conf"; }
 		elsif ( -e "$libdir/sasl" ) { $cf="$libdir/sasl/smtpd.conf"; }
 		else {
