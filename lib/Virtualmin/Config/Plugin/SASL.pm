@@ -32,6 +32,7 @@ sub actions {
 
   $self->spin();
   eval {
+  my $res = 1;
   foreign_require("init", "init-lib.pl");
   init::enable_at_boot("saslauthd");
 	my ($saslinit, $cf, $libdir);
@@ -72,9 +73,13 @@ sub actions {
 			if ( -e "/usr/lib64" && -e "/usr/lib64/perl" ) { $libdir = "/usr/lib64"; }
 			else { $libdir = "/usr/lib"; }
 		}
-		if ( -e "$libdir/sasl2" ) { $cf="$libdir/sasl2/smtpd.conf"; }
+    if ( -e "/etc/sasl2/smtpd.conf" { $cf="/etc/sasl2/smtpd.conf"; }
+		elsif ( -e "$libdir/sasl2" ) { $cf="$libdir/sasl2/smtpd.conf"; }
 		elsif ( -e "$libdir/sasl" ) { $cf="$libdir/sasl/smtpd.conf"; }
-		else { print "No sasl library directory found.  SASL authentication probably won't work"; }
+		else {
+      #print "No sasl library directory found.  SASL authentication probably won't work";
+      $res = 0;
+    }
 		if ( $gconfig{'os_type'} eq 'freebsd' ) { $saslinit = "/usr/local/etc/rc.d/saslauthd"; }
 		else { $saslinit = "/etc/init.d/saslauthd"; }
 	}
@@ -82,7 +87,7 @@ sub actions {
 		if (! -e $cf ) {
 			system("touch $cf");
 		}
-		my $smtpdconf= read_file_lines($cf) or die "Failed to open $cf!";
+		my $smtpdconf = read_file_lines($cf) or die "Failed to open $cf!";
 		my $idx = indexof("", @$smtpdconf);
 		if ($idx < 0) {
 			push(@$smtpdconf, "pwcheck_method: saslauthd");
