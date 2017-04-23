@@ -32,8 +32,8 @@ sub actions {
   init_config();
 
   $self->spin();
+  sleep 0.2;
   eval {
-
     my $lref = read_file_lines("/etc/shells");
   	my $idx = indexof("/bin/false", @$lref);
   	if ($idx < 0) {
