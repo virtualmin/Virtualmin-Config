@@ -1,9 +1,10 @@
 package Virtualmin::Config;
+
 # ABSTRACT: Configure a system for use by Virtualmin
 use strict;
 use warnings;
-no warnings qw(once); # We've got some globals that effect Webmin behavior
-use 5.010_001; # Version shipped with CentOS 6. Nothing older.
+no warnings qw(once);    # We've got some globals that effect Webmin behavior
+use 5.010_001;           # Version shipped with CentOS 6. Nothing older.
 use Module::Load;
 use Term::ANSIColor qw(:constants);
 use Term::Spinner::Color;
@@ -18,23 +19,23 @@ sub new {
   my ($class, %args) = @_;
   my $self = {};
 
-  $self->{bundle} = $args{bundle};
+  $self->{bundle}  = $args{bundle};
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
-  $self->{log} = $args{log} // "/root/virtualmin-install.log";
+  $self->{log}     = $args{log} // "/root/virtualmin-install.log";
 
-	return bless $self, $class;
+  return bless $self, $class;
 }
 
 # Gathered plugins are processed
 sub run {
-	my $self = shift;
+  my $self = shift;
 
-	$|=1; # No line buffering.
+  $| = 1;    # No line buffering.
 
-	# TODO This should really just be "use Webmin::Core"
-	$no_acl_check = 1;
-	$error_must_die = 1;
+  # TODO This should really just be "use Webmin::Core"
+  $no_acl_check   = 1;
+  $error_must_die = 1;
 
   # Initialize logger
   my $log_conf = qq(
@@ -45,94 +46,96 @@ sub run {
   	log4perl.appender.FileApp.layout.ConversionPattern = %d %p - %m%n
   	log4perl.appender.FileApp.mode	= append
   );
-  Log::Log4perl->init( \$log_conf );
+  Log::Log4perl->init(\$log_conf);
   my $log = Log::Log4perl->get_logger();
   $log->info("Starting init-system log...");
 
-	my @plugins = $self->_gather_plugins();
-	@plugins = $self->_order_plugins(@plugins);
-	for (@plugins) {
-		my $pkg = "Virtualmin::Config::Plugin::$_";
-		load $pkg || die "Loading Plugin failed: $_";
-		my $plugin = $pkg->new();
-		$plugin->actions();
-	}
+  my @plugins = $self->_gather_plugins();
+  @plugins = $self->_order_plugins(@plugins);
+  for (@plugins) {
+    my $pkg = "Virtualmin::Config::Plugin::$_";
+    load $pkg || die "Loading Plugin failed: $_";
+    my $plugin = $pkg->new();
+    $plugin->actions();
+  }
   return 1;
 }
 
 # Merges the selected bundle, with any extra includes, and removes excludes
 sub _gather_plugins {
-	my $self = shift;
+  my $self = shift;
   my @plugins;
 
   # If bundle specified, load it up.
   if ($self->{bundle}) {
     my $pkg = "Virtualmin::Config::$self->{bundle}";
-	  load $pkg;
+    load $pkg;
     my $bundle = $pkg->new();
+
     # Ask the bundle for a list of plugins
     @plugins = $bundle->plugins();
   }
 
-	# Check with the command arguments
-	if ( ref($self->{include}) eq 'ARRAY' || ref($self->{include}) eq 'STRING' ) {
-		for my $include ($self->{'include'}) {
-			push (@plugins, $include) unless ( map { grep( /^$include$/, @{$_} ) } @plugins);
-		}
-	}
+  # Check with the command arguments
+  if (ref($self->{include}) eq 'ARRAY' || ref($self->{include}) eq 'STRING') {
+    for my $include ($self->{'include'}) {
+      push(@plugins, $include)
+        unless (map { grep(/^$include$/, @{$_}) } @plugins);
+    }
+  }
 
-	# Check for excluded plugins
-	if ( ref($self->{exclude}) eq 'ARRAY' || ref($self->{exclude}) eq 'STRING' ) {
-		for my $exclude ($self->{'exclude'}) {
-			my @dix = reverse(grep { $plugins[$_] eq $exclude } 0..$#plugins);
-			for (@dix) {
-				splice(@plugins, $_, 1);
-			}
-		}
-	}
+  # Check for excluded plugins
+  if (ref($self->{exclude}) eq 'ARRAY' || ref($self->{exclude}) eq 'STRING') {
+    for my $exclude ($self->{'exclude'}) {
+      my @dix = reverse(grep { $plugins[$_] eq $exclude } 0 .. $#plugins);
+      for (@dix) {
+        splice(@plugins, $_, 1);
+      }
+    }
+  }
 
-	return @plugins;
+  return @plugins;
 }
 
 # Take the gathered list of plugins and sort them to resolve deps
 sub _order_plugins {
-	my ($self, @plugins) = @_;
-	my %plugin_details; # Will hold an array of hashes containing name/depends
-	# Load up @plugin_details with name and dependency list
-  if (ref($plugins[0]) eq 'ARRAY') { # XXX Why is this so stupid?
-    @plugins = map{@$_} @plugins; # Flatten the array of refs into list.
+  my ($self, @plugins) = @_;
+  my %plugin_details;    # Will hold an array of hashes containing name/depends
+                         # Load up @plugin_details with name and dependency list
+  if (ref($plugins[0]) eq 'ARRAY') {    # XXX Why is this so stupid?
+    @plugins = map {@$_} @plugins;      # Flatten the array of refs into list.
   }
-	for my $plugin_name (@plugins) {
-		my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
-		load $pkg;
-		my $plugin = $pkg->new();
-		$plugin_details{$plugin->{'name'}} = $plugin->{'depends'} // [];
-	}
-	return _topo_sort(%plugin_details);
+  for my $plugin_name (@plugins) {
+    my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
+    load $pkg;
+    my $plugin = $pkg->new();
+    $plugin_details{$plugin->{'name'}} = $plugin->{'depends'} // [];
+  }
+  return _topo_sort(%plugin_details);
 }
 
 # Topological sort on dependencies
 sub _topo_sort {
-	my (%deps) = @_;
+  my (%deps) = @_;
 
-	my %ba;
-	while ( my ( $before, $afters_aref ) = each %deps ) {
-		unless ( @{$afters_aref} ) {
-			$ba{$before} = {};
-		}
-		for my $after ( @{ $afters_aref } ) {
-			$ba{$before}{$after} = 1 if $before ne $after;
-			$ba{$after} ||= {};
-		}
-	}
-	my @rv;
-	while ( my @afters = sort grep { ! %{ $ba{$_} } } keys %ba ) {
-		push @rv, @afters;
-		delete @ba{@afters};
-		delete @{$_}{@afters} for values %ba;
-	}
+  my %ba;
+  while (my ($before, $afters_aref) = each %deps) {
+    unless (@{$afters_aref}) {
+      $ba{$before} = {};
+    }
+    for my $after (@{$afters_aref}) {
+      $ba{$before}{$after} = 1 if $before ne $after;
+      $ba{$after} ||= {};
+    }
+  }
+  my @rv;
+  while (my @afters = sort grep { !%{$ba{$_}} } keys %ba) {
+    push @rv, @afters;
+    delete @ba{@afters};
+    delete @{$_}{@afters} for values %ba;
+  }
 
-	return _uniq(@rv);
+  return _uniq(@rv);
 }
 
 # uniq so we don't have to import List::MoreUtils

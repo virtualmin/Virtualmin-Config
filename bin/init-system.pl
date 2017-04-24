@@ -7,13 +7,11 @@ use Pod::Usage;
 use Virtualmin::Config;
 
 sub main {
-  my ( $argv ) = @_;
+  my ($argv) = @_;
   my %opt;
   my (@include, @exclude);
-  GetOptions( \%opt,
-    'help|h',
-    'bundle|b=s',
-    'log|l=s',
+  GetOptions(
+    \%opt, 'help|h', 'bundle|b=s', 'log|l=s',
     'include|i=s{1,}' => \@include,
     'exclude|x=s{1,}' => \@exclude,
   );
@@ -23,10 +21,10 @@ sub main {
   }
 
   my $bundle = Virtualmin::Config->new(
-    bundle    => $opt{bundle},
-    log       => $opt{log},
-    include   => \@include,
-    exclude   => \@exclude,
+    bundle  => $opt{bundle},
+    log     => $opt{log},
+    include => \@include,
+    exclude => \@exclude,
   );
 
   $bundle->run();
@@ -34,7 +32,7 @@ sub main {
   return 0;
 }
 
-exit main( \@ARGV );
+exit main(\@ARGV);
 
 =pod
 
@@ -84,3 +82,5 @@ Returns 0 on success, 1 on failure.
 =head1 LICENSE AND COPYRIGHT
 
 Licensed under the GPLv3. Copyright 2017, Joe Cooper <joe@virtualmin.com>
+
+=cut
