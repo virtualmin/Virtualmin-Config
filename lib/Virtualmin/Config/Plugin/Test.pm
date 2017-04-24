@@ -4,6 +4,7 @@ use warnings;
 use 5.010;
 use Term::ANSIColor qw(:constants);
 use parent 'Virtualmin::Config::Plugin';
+use Log::Log4perl;
 
 sub new {
   my $class = shift;
@@ -20,6 +21,8 @@ sub actions {
   use Cwd;
   my $cwd  = getcwd();
   my $root = $self->root();
+  my $log = Log::Log4perl->get_logger();
+  $log->info("This is logging from the test plugin.");
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
