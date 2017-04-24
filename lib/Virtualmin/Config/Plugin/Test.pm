@@ -7,6 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test');
   return $self;
@@ -17,16 +18,18 @@ sub new {
 sub actions {
   my $self = shift;
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
+
   #use lib $root;
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   $ENV{'WEBMIN_CONFIG'} = $cwd . "/t/data/etc/webmin";
   $ENV{'WEBMIN_VAR'} ||= $cwd . "/t/data/var/webmin";
-  $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'}."/miniserv.conf";
+  $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'} . "/miniserv.conf";
+
   # TODO Somehow get init_config() into $self->config, or something.
   init_config();
 

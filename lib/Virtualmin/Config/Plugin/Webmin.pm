@@ -10,6 +10,7 @@ our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Webmin');
 
@@ -22,32 +23,32 @@ sub actions {
   my $self = shift;
 
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   init_config();
 
   $self->spin();
   eval {
     foreign_require("webmin", "webmin-lib.pl");
-    $gconfig{'theme'} = "authentic-theme";
+    $gconfig{'theme'}        = "authentic-theme";
     $gconfig{'mobile_theme'} = "authentic-theme";
-    $gconfig{'logfiles'} = 1;
+    $gconfig{'logfiles'}     = 1;
     write_file("$config_directory/config", \%gconfig);
     get_miniserv_config(\%miniserv);
-    $miniserv{'preroot'} = "authentic-theme";
-    $miniserv{'ssl'} = 1;
+    $miniserv{'preroot'}         = "authentic-theme";
+    $miniserv{'ssl'}             = 1;
     $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
     put_miniserv_config(\%miniserv);
-  	webmin::build_installed_modules(1);
+    webmin::build_installed_modules(1);
     restart_miniserv();
-    $self->done(1); # OK!
+    $self->done(1);    # OK!
   };
   if ($@) {
-    $self->done(0); # NOK!
+    $self->done(0);    # NOK!
   }
 }
 

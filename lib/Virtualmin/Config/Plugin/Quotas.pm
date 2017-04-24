@@ -12,6 +12,7 @@ our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Quotas');
 
@@ -24,79 +25,87 @@ sub actions {
   my $self = shift;
 
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   init_config();
 
   $self->spin();
   eval {
     my $res = 1;
     foreign_require("mount", "mount-lib.pl");
-  	mkdir("/home", 0755) if (!-d "/home");
-  	my ($dir, $dev, $type, $opts) = mount::filesystem_for_dir("/home");
-    # Remove noquota, if it is present
-    $opts = join(',', grep {! /noquota/ } (split(/,/, $opts)));
+    mkdir("/home", 0755) if (!-d "/home");
+    my ($dir, $dev, $type, $opts) = mount::filesystem_for_dir("/home");
 
-  	mount::parse_options($type, $opts);
-  	if (running_in_zone() || running_in_vserver()) {
-  		#print STDERR "Skipping quotas for Vserver or Zones systems\n";
-  		return;
-  	}
-  	elsif ($gconfig{'os_type'} =~ /-linux$/) {
-  		$mount::options{'usrquota'} = '';
-  		$mount::options{'grpquota'} = '';
+    # Remove noquota, if it is present
+    $opts = join(',', grep { !/noquota/ } (split(/,/, $opts)));
+
+    mount::parse_options($type, $opts);
+    if (running_in_zone() || running_in_vserver()) {
+
+      #print STDERR "Skipping quotas for Vserver or Zones systems\n";
+      return;
+    }
+    elsif ($gconfig{'os_type'} =~ /-linux$/) {
+      $mount::options{'usrquota'} = '';
+      $mount::options{'grpquota'} = '';
+      $mount::options{'quota'}    = '';
+    }
+    elsif ($gconfig{'os_type'} =~ /freebsd|netbsd|openbsd|macos/) {
+
+      # Skip if quotas are not enabled--requires a kernel rebuild
+      my $quotav = `quota -v`;
+      if (!$quotav =~ /none$/) {
+        $mount::options{'rw'}         = '';
+        $mount::options{'userquota'}  = '';
+        $mount::options{'groupquota'} = '';
+      }
+      else {
+        #print "Skipping quotas: Required kernel support is not enabled.\n";
+        return;
+      }
+    }
+    elsif ($gconfig{'os_type'} =~ /solaris/) {
       $mount::options{'quota'} = '';
-  	}
-  	elsif ($gconfig{'os_type'} =~ /freebsd|netbsd|openbsd|macos/) {
-  		# Skip if quotas are not enabled--requires a kernel rebuild
-  		my $quotav = `quota -v`;
-  		if ( ! $quotav =~ /none$/ ) {
-  			$mount::options{'rw'} = '';
-  			$mount::options{'userquota'} = '';
-  			$mount::options{'groupquota'} = '';
-  		}
-  		else {
-  			#print "Skipping quotas: Required kernel support is not enabled.\n";
-  			return;
-  		}
-  	}
-  	elsif ($gconfig{'os_type'} =~ /solaris/) {
-  		$mount::options{'quota'} = '';
-  	}
-  	else {
-  		#print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
-  	}
-  	$opts = mount::join_options($type);
-  	my @mounts = mount::list_mounts();
-  	my $idx;
-  	for($idx=0; $idx<@mounts; $idx++) {
-  		last if ($mounts[$idx]->[0] eq $dir);
-  	}
-  	mount::change_mount($idx, $mounts[$idx]->[0],
-  			$mounts[$idx]->[1],
-  			$mounts[$idx]->[2],
-  			$opts,
-  			$mounts[$idx]->[4],
-  			$mounts[$idx]->[5]);
-  	my $err = mount::remount_dir($dir, $dev, $type, $opts);
-  	if ($dir eq "/" || $err) {
+    }
+    else {
+#print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
+    }
+    $opts = mount::join_options($type);
+    my @mounts = mount::list_mounts();
+    my $idx;
+    for ($idx = 0; $idx < @mounts; $idx++) {
+      last if ($mounts[$idx]->[0] eq $dir);
+    }
+    mount::change_mount(
+      $idx,
+      $mounts[$idx]->[0],
+      $mounts[$idx]->[1],
+      $mounts[$idx]->[2],
+      $opts,
+      $mounts[$idx]->[4],
+      $mounts[$idx]->[5]
+    );
+    my $err = mount::remount_dir($dir, $dev, $type, $opts);
+    if ($dir eq "/" || $err) {
       print "\b" x 7 . " " x 7;
-  		print "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
-      print "You may need to reboot your system, and enable quotas in the Disk\n";
+      print
+        "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
+      print
+        "You may need to reboot your system, and enable quotas in the Disk\n";
       print "Quotas module.";
       print " " x 65;
-      $res=0;
-  	}
-  	else {
-    # Activate quotas
-  		foreign_require("quota", "quota-lib.pl");
-  		quota::quotaon($dir, 3);
-  	}
-    $self->done($res); # OK!
+      $res = 0;
+    }
+    else {
+      # Activate quotas
+      foreign_require("quota", "quota-lib.pl");
+      quota::quotaon($dir, 3);
+    }
+    $self->done($res);    # OK!
   };
   if ($@) {
     $self->done(0);

@@ -6,6 +6,7 @@ use parent qw(Virtualmin::Config::Plugin);
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Test2', depends => ['Test']);
 
@@ -18,13 +19,12 @@ sub actions {
   my $self = shift;
 
   $self->spin();
-  eval { # try
+  eval {    # try
     sleep 1;
-  }
-  or do { # catch
-    $self->done(0); # Something failed
+  } or do {    # catch
+    $self->done(0);    # Something failed
   };
-  $self->done(1); # OK!
+  $self->done(1);      # OK!
 }
 
 1;

@@ -10,6 +10,7 @@ our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'ProFTPd');
 
@@ -22,34 +23,35 @@ sub actions {
   my $self = shift;
 
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   init_config();
 
   $self->spin();
   eval {
-  foreign_require("init", "init-lib.pl");
-  init::enable_at_boot("proftpd");
-	init::restart_action("proftpd");
-	if ($gconfig{'os_type'} eq 'freebsd') {
-    # This directory is missing on FreeBSD
-    make_dir("/var/run/proftpd", oct(755));
-  }
+    foreign_require("init", "init-lib.pl");
+    init::enable_at_boot("proftpd");
+    init::restart_action("proftpd");
+    if ($gconfig{'os_type'} eq 'freebsd') {
 
-	# UseIPv6 doesn't work on FreeBSD
-	foreign_require("proftpd", "proftpd-lib.pl");
-	my $conf = &proftpd::get_config();
-	proftpd::save_directive("UseIPv6", [ ], $conf, $conf);
-	flush_file_lines();
+      # This directory is missing on FreeBSD
+      make_dir("/var/run/proftpd", oct(755));
+    }
 
-  $self->done(1); # OK!
+    # UseIPv6 doesn't work on FreeBSD
+    foreign_require("proftpd", "proftpd-lib.pl");
+    my $conf = &proftpd::get_config();
+    proftpd::save_directive("UseIPv6", [], $conf, $conf);
+    flush_file_lines();
+
+    $self->done(1);    # OK!
   };
   if ($@) {
-    $self->done(0); # NOK!
+    $self->done(0);    # NOK!
   }
 }
 

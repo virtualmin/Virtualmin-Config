@@ -10,6 +10,7 @@ our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'MySQL');
 
@@ -22,23 +23,24 @@ sub actions {
   my $self = shift;
 
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   init_config();
 
   $self->spin();
   eval {
     foreign_require("init", "init-lib.pl");
-    if ($gconfig{'os_type'} eq "freebsd" ||
-        init::action_status("mysql")) {
+    if ($gconfig{'os_type'} eq "freebsd" || init::action_status("mysql")) {
       init::enable_at_boot("mysql");
-    } elsif (init::action_status("mariadb")) {
+    }
+    elsif (init::action_status("mariadb")) {
       init::enable_at_boot("mariadb");
-    } else {
+    }
+    else {
       init::enable_at_boot("mysqld");
     }
     foreign_require("mysql", "mysql-lib.pl");
@@ -48,8 +50,7 @@ sub actions {
     my $conf = mysql::get_mysql_config();
     my ($sect) = grep { $_->{'name'} eq 'mysqld' } @$conf;
     if ($sect) {
-      mysql::save_directive($conf, $sect,
-          "innodb_file_per_table", [ 1 ]);
+      mysql::save_directive($conf, $sect, "innodb_file_per_table", [1]);
       flush_file_lines($sect->{'file'});
     }
     my $err = mysql::start_mysql();

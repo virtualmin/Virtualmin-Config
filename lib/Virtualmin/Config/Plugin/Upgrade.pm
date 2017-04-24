@@ -10,6 +10,7 @@ our $trust_unknown_referers = 1;
 
 sub new {
   my $class = shift;
+
   # inherit from Plugin
   my $self = $class->SUPER::new(name => 'Upgrade');
 
@@ -22,21 +23,21 @@ sub actions {
   my $self = shift;
 
   use Cwd;
-  my $cwd = getcwd();
+  my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
   $0 = "$root/init-system.pl";
   push(@INC, $root);
-  eval 'use WebminCore'; ## no critic
+  eval 'use WebminCore';    ## no critic
   init_config();
 
   $self->spin();
   eval {
-    my %wacl = ( 'disallow' => 'upgrade' );
+    my %wacl = ('disallow' => 'upgrade');
     save_module_acl(\%wacl, 'root', 'webmin');
-    my %uacl = ( 'upgrade' => 0 );
+    my %uacl = ('upgrade' => 0);
     save_module_acl(\%uacl, 'root', 'usermin');
-    $self->done(1); # OK!
+    $self->done(1);         # OK!
   };
   if ($@) {
     $self->done(0);
