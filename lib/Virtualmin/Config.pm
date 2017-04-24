@@ -21,7 +21,7 @@ sub new {
   $self->{bundle} = $args{bundle};
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
-  $self->{log} = $args{log};
+  $self->{log} = $args{log} // "/root/virtualmin-install.log";
 
 	return bless $self, $class;
 }
@@ -37,10 +37,10 @@ sub run {
 	$error_must_die = 1;
 
   # Initialize logger
-  my $log_conf = q(
+  my $log_conf = qq(
   	log4perl.logger 		= ERROR, FileApp
   	log4perl.appender.FileApp	= Log::Log4perl::Appender::File
-  	log4perl.appender.FileApp.filename = /root/virtualmin-install.log
+  	log4perl.appender.FileApp.filename = $self->{log}
   	log4perl.appender.FileApp.layout   = PatternLayout
   	log4perl.appender.FileApp.layout.ConversionPattern = %d %p - %m%n
   	log4perl.appender.FileApp.mode	= append
