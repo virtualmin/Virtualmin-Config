@@ -7,6 +7,7 @@ use 5.010_001; # Version shipped with CentOS 6. Nothing older.
 use Module::Load;
 use Term::ANSIColor qw(:constants);
 use Term::Spinner::Color;
+use Log::Log4perl qw(:easy);
 
 # globals
 our (%gconfig, %uconfig, %miniserv, %uminiserv);
@@ -21,9 +22,6 @@ sub new {
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
   $self->{log} = $args{log};
-	# Guesstimate our terminal size.
-	#my ($lines, $cols) = `stty size`=~/(\d+)\s+(\d+)/?($1,$2):(25,80);
-	#unless ($cols <= 80) { $cols = 80 };
 
 	return bless $self, $class;
 }
@@ -35,9 +33,21 @@ sub run {
 	$|=1; # No line buffering.
 
 	# TODO This should really just be "use Webmin::Core"
-	$no_acl_check++;
-
+	$no_acl_check = 1;
 	$error_must_die = 1;
+
+  # Initialize logger
+  my $log_conf = q(
+  	log4perl.logger 		= ERROR, FileApp
+  	log4perl.appender.FileApp	= Log::Log4perl::Appender::File
+  	log4perl.appender.FileApp.filename = /root/virtualmin-install.log
+  	log4perl.appender.FileApp.layout   = PatternLayout
+  	log4perl.appender.FileApp.layout.ConversionPattern = %d %p - %m%n
+  	log4perl.appender.FileApp.mode	= append
+  );
+  Log::Log4perl->init( \$log_conf );
+  my $log = Log::Log4perl->get_logger();
+  $log->info("Starting init-system log...");
 
 	my @plugins = $self->_gather_plugins();
 	@plugins = $self->_order_plugins(@plugins);
