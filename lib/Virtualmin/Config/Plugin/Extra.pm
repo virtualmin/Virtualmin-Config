@@ -12,7 +12,9 @@ our $trust_unknown_referers = 1;
 sub new {
   my $class = shift;
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Extra');
+  my $self = $class->SUPER::new(
+    name      => 'Extra',
+    depennds  => 'Apache', 'Webmin', 'Virtualmin');
 
   return $self;
 }
@@ -32,6 +34,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  sleep 0.2;
   eval {
     # Attempt to sync clock
     if (has_command("ntpdate-debian")) {
