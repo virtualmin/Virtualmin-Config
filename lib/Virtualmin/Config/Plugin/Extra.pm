@@ -4,6 +4,7 @@ use strict;
 use warnings;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
+use Time::HiRes qw(sleep);
 
 our $config_directory;
 our (%gconfig, %miniserv);
