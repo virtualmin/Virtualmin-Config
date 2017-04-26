@@ -57,7 +57,7 @@ virtualmin init-system [options]
 
 =item --bundle
 
-A set of confguraion options, to initialize the system for use as a Virtualmin
+A set of confguration options, to initialize the system for use as a Virtualmin
 system. Default plugin bundle is "LAMP", which configures Apache, as well as
 a variety of other components. "LEMP" replaces Apache with nginx.
 
