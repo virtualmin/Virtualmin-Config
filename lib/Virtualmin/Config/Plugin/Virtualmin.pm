@@ -48,6 +48,7 @@ sub actions {
     $vconfig{'bind_spf'}         = "yes";
     $vconfig{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
     $vconfig{'bccs'}             = 1;
+    $vconfig{'reseller_theme'}   = "authentic-theme";
     if (!defined($vconfig{'plugins'})) {
       $vconfig{'plugins'}
         = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd';
