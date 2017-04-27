@@ -36,6 +36,7 @@ sub actions {
     foreign_require("webmin", "webmin-lib.pl");
     $gconfig{'theme'}        = "authentic-theme";
     $gconfig{'mobile_theme'} = "authentic-theme";
+    $gconfig{'reseller_theme'} = "authentic-theme";
     $gconfig{'logfiles'}     = 1;
     write_file("$config_directory/config", \%gconfig);
     get_miniserv_config(\%miniserv);
