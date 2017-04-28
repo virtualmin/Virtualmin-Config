@@ -50,11 +50,15 @@ sub actions {
 
     # Start clamd@scan and run clamdscan just to prime the damned thing.
     # XXX Make this work on Debian/Ubuntu, too.
-    system("systemctl start clamd\@scan");
-    sleep 10; # XXX THis is ridiculous. But, clamd is ridiculous.
+    system('systemctl start clamd@scan');
+    sleep 30; # XXX THis is ridiculous. But, clamd is ridiculous.
     my $res = `clamdscan --quiet --config-file=/etc/clamd.d/scan.conf /etc/webmin/miniserv.conf`;
+    system('systemctl stop clamd@scan');
+    # If RHEL/CentOS/Fedora, the clamav packages don't work, by default.
+    if ( ! -e '/etc/clamd.conf' ) {
+      eval { symlink('/etc/clamd.d/scan.conf', 'etc/clamd.conf');
+    }
     if ($res) { die 1; }
-    system("systemctl stop clamd\@scan");
     $self->done(1);    # OK!
   };
   if ($@) {
