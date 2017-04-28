@@ -46,12 +46,14 @@ sub actions {
             }
             flush_file_lines($fcconf);
     }
-    system("freshclam -q");
+    system("freshclam --quiet");
 
     # Start clamd@scan and run clamdscan just to prime the damned thing.
     # XXX Make this work on Debian/Ubuntu, too.
     system("systemctl start clamd\@scan");
-    system("clamdscan --quiet --config-file=/etc/clamd.d/scan.conf /etc/webmin/miniserv.conf");
+    sleep 10; # XXX THis is ridiculous. But, clamd is ridiculous.
+    my $res = `clamdscan --quiet --config-file=/etc/clamd.d/scan.conf /etc/webmin/miniserv.conf`;
+    if ($res) { die 1; }
     system("systemctl stop clamd\@scan");
     $self->done(1);    # OK!
   };
