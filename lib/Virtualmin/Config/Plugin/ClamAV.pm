@@ -56,7 +56,7 @@ sub actions {
     system('systemctl stop clamd@scan');
     # If RHEL/CentOS/Fedora, the clamav packages don't work, by default.
     if ( ! -e '/etc/clamd.conf' ) {
-      eval { symlink('/etc/clamd.d/scan.conf', 'etc/clamd.conf');
+      eval { symlink('/etc/clamd.d/scan.conf', 'etc/clamd.conf'); }
     }
     if ($res) { die 1; }
     $self->done(1);    # OK!
