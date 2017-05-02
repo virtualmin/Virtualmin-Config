@@ -65,6 +65,11 @@ sub actions {
     }
     my $res = `clamdscan --quiet - < /etc/webmin/miniserv.conf`;
     if ($res) { die 1; }
+    if (init::action_status('clamd@scan')) {
+      init::stop_action('clamd@scan');
+    } elsif (init::action_status('clamd')) {
+      init::stop_action('clamd');
+    }
     $self->done(1);    # OK!
   };
   if ($@) {
