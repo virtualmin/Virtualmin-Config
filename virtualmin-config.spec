@@ -1,11 +1,11 @@
 Name:           virtualmin-config
 Version:        6.0.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Collection of plugins to initialize the configuration of sevrices that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
 Group:          Development/Libraries
 URL:            https://github.com/virtualmin/Virtualmin-Config/
-Source0:        %{name}-%{version}.tar.gz
+Source0:        Virtualmin-Config-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
 BuildRequires:  perl >= 0:5.010
@@ -43,9 +43,9 @@ rm -rf $RPM_BUILD_ROOT
 
 make pure_install PERL_INSTALL_ROOT=$RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/libexec/webmin/virtual-server
-# link virtualmin-init-system into Virtualmin dir
-ln -s /usr/bin/virtualmin-init-system.pl \
-  $RPM_BUILD_ROOT/usr/libexec/webmin/virtual-server/init-system.pl
+# link virtualmin-config-system into Virtualmin dir
+ln -s /usr/bin/virtualmin-config-system \
+  $RPM_BUILD_ROOT/usr/libexec/webmin/virtual-server/config-system.pl
 
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} \;
 find $RPM_BUILD_ROOT -depth -type d -exec rmdir {} 2>/dev/null \;
@@ -65,9 +65,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_mandir}/man1/*
 %{_mandir}/man3/*
 %{_bindir}/*
-/usr/libexec/webmin/virtual-server/init-system.pl
+/usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon May 08 2017 Joe Cooper <joe@virtualmin.com>
+- Rename to config-system
 * Mon May 08 2017 Joe Cooper <joe@virtualmin.com>
 - Tweak deps
 * Sat May 06 2017 Joe Cooper <joe@virtualmin.com> 6.0.0-1

@@ -42,7 +42,7 @@ init-system
 
 =head1 SYNOPSIS
 
-virtualmin init-system [options]
+virtualmin config-system [options]
 
   Options:
     --help      Print this summaery of options and exit

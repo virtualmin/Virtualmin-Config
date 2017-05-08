@@ -14,7 +14,7 @@ my %WriteMakefileArgs = (
   },
   "DISTNAME" => "Virtualmin-Config",
   "EXE_FILES" => [
-    "bin/virtualmin-init-system.pl"
+    "bin/virtualmin-config-system"
   ],
   "LICENSE" => "gpl",
   "MIN_PERL_VERSION" => "5.010",
