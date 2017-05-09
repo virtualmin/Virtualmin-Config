@@ -163,8 +163,8 @@ alt='Coverage Status' /></a>
 =head1 NAME
 
 Virtualmin::Config - A collection of plugins to initialize the configuration
-of sevrices that Virtualmin manages, and a command line tool called init-system
-to run them.
+of sevrices that Virtualmin manages, and a command line tool called
+config-system to run them.
 
 =head1 SYNOPSIS
 
