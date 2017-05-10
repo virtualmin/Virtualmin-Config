@@ -38,7 +38,7 @@ exit main(\@ARGV);
 
 =head1 NAME
 
-init-system
+config-system
 
 =head1 SYNOPSIS
 
