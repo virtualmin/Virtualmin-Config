@@ -52,6 +52,7 @@ sub actions {
       system("a2enmod ssl");
       system("a2enmod dav");
       system("a2enmod lbmethod_byrequests");
+      system("a2dissite 000-default");
 
       if (!-e "/etc/apache2/conf.d/ssl.conf") {
         print "Enabling mod_ssl\n";

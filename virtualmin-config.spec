@@ -1,6 +1,6 @@
 Name:           virtualmin-config
 Version:        6.0.0
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        Collection of plugins to initialize the configuration of sevrices that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
 Group:          Development/Libraries
@@ -21,7 +21,6 @@ Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
 Requires:       perl(Term::Spinner::Color)
 Requires:	perl(Module::Load)
-Requires:       perl(:MODULE_COMPAT_%(eval "`%{__perl} -V:version`"; echo $version))
 
 %description
 This is a mini-framework for configuring elements of a Virtualmin system.
