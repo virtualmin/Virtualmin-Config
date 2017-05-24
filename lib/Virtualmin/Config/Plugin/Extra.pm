@@ -17,7 +17,7 @@ sub new {
   # inherit from Plugin
   my $self = $class->SUPER::new(
     name     => 'Extra',
-    depennds => 'Apache',
+    depends => 'Apache',
     'Webmin', 'Virtualmin'
   );
 
