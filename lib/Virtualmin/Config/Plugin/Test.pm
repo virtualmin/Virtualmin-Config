@@ -24,7 +24,7 @@ sub actions {
   my $log = Log::Log4perl->get_logger();
   $log->info("This is logging from the test plugin.");
   chdir($root);
-  $0 = "$root/init-system.pl";
+  $0 = "$root/virtual-server/config-system.pl";
   push(@INC, $root);
 
   #use lib $root;
