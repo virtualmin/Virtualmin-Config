@@ -18,7 +18,6 @@ sub new {
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
-  my $clocksource;
 
   $self->spin();
   eval {    # try
@@ -26,17 +25,20 @@ sub actions {
     my $clockfile = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
-      $clocksource = do { local $/ = <$clocksource> };
+      my $clocksource = do { local $/ = <$clocksource> };
+      if ($clocksource eq "kvm-clock") {
+        $log->info("System clock source is kvm-clock, skipping NTP");
+        $self->done(1);
+        return;
+      }
     }
-    if ($clocksource eq "kvm-clock") {
-      $log->info("System clock source is kvm-clock, skipping NTP");
-    }
-    elsif (-x "/usr/sbin/ntpdate-debian") {
+    if (-x "/usr/sbin/ntpdate-debian") {
       $self->logsystem("ntpdate-debian");
     }
     elsif (-x "/usr/sbin/ntpdate") {
       $self->logsystem("ntpdate");
     }
+
     # If it's installed, and not kvm-clock, turn ntpd on.
     if (! $clocksource eq "kvm-clock" && init::action_status("ntpd")) {
       init::enable_at_boot("ntpd");
