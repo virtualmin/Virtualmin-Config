@@ -14,6 +14,7 @@ sub new {
   return $self;
 }
 
+my $clocksource;
 # actions method performs whatever configuration is needed for this
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
@@ -25,7 +26,8 @@ sub actions {
     my $clockfile = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
-      my $clocksource = do { local $/ = <$clocksource> };
+      $clocksource = do { local $/ = <$clockfile> };
+      close $clockfile;
       if ($clocksource eq "kvm-clock") {
         $log->info("System clock source is kvm-clock, skipping NTP");
         $self->done(1);
