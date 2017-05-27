@@ -47,7 +47,7 @@ sub run {
   	log4perl.appender.FileApp.mode	= append
   );
   Log::Log4perl->init(\$log_conf);
-  my $log = Log::Log4perl->get_logger();
+  my $log = Log::Log4perl->get_logger("virtualmin-config-system");
   $log->info("Starting init-system log...");
 
   my @plugins = $self->_gather_plugins();
@@ -67,7 +67,7 @@ sub run {
 sub logsystem {
   my $self = shift;
   my $cmd = shift;
-  my $log = Log::Log4perl->get_logger();
+  my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
   my $res = `$cmd`;
   $log->info($res);
