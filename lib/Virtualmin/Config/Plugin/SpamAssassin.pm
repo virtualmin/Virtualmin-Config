@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Shells;
+package Virtualmin::Config::Plugin::SpamAssassin;
 use strict;
 use warnings;
 no warnings qw(once);
@@ -13,7 +13,7 @@ sub new {
   my $class = shift;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Shells');
+  my $self = $class->SUPER::new(name => 'SpamAssassin', depends => [ 'Postfix' ]);
 
   return $self;
 }
@@ -34,14 +34,8 @@ sub actions {
   $self->spin();
   sleep 0.3;    # XXX Useless sleep, prevent spin from ending before it starts
   eval {
-    my $lref = read_file_lines("/etc/shells");
-    my $idx = indexof("/bin/false", @$lref);
-    if ($idx < 0) {
-
-      # XXX Do we need jk_chrootsh here, or is it added by the package?
-      push(@$lref, "/bin/false");
-      flush_file_lines("/etc/shells");
-    }
+    foreign_require("init",   "init-lib.pl");
+    init::disable_at_boot("spamassassin");
     $self->done(1);    # OK!
   };
   if ($@) {
