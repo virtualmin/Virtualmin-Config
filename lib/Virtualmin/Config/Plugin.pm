@@ -2,6 +2,7 @@ package Virtualmin::Config::Plugin;
 use strict;
 use warnings;
 use 5.010_001;
+use Time::HiRes qw( sleep );
 
 # Plugin base class, just runs stuff with spinner and status
 use Virtualmin::Config;
