@@ -41,10 +41,10 @@ sub actions {
       or $gconfig{'os_type'} eq "ubuntu-linux")
     {
       my $fn          = "/etc/default/saslauthd";
-      my $sasldefault = &read_file_lines($fn) or die "Failed to open $fn!";
-      my $idx         = &indexof("# START=yes", @$sasldefault);
+      my $sasldefault = read_file_lines($fn) or die "Failed to open $fn!";
+      my $idx         = indexof("# START=yes", @$sasldefault);
       if ($idx < 0) {
-        $idx = &indexof("START=no", @$sasldefault);
+        $idx = indexof("START=no", @$sasldefault);
       }
       if ($idx >= 0) {
         $sasldefault->[$idx] = "START=yes";
@@ -53,14 +53,14 @@ sub actions {
         "PARAMS=\"-m /var/spool/postfix/var/run/saslauthd -r\"");
       flush_file_lines($fn);
       $cf = "/etc/postfix/sasl/smtpd.conf";
-      system("mkdir -p -m 755 /var/spool/postfix/var/run/saslauthd");
-      system("adduser postfix sasl");
+      $self->logsystem("mkdir -p -m 755 /var/spool/postfix/var/run/saslauthd");
+      $self->logsystem("adduser postfix sasl");
       $saslinit = "/etc/init.d/saslauthd";
     }
     elsif ($gconfig{'os_type'} eq 'solaris') {
 
       # Use CSW saslauthd
-      my $lref = &read_file_lines("/opt/csw/etc/saslauthd.init");
+      my $lref = read_file_lines("/opt/csw/etc/saslauthd.init");
       foreach my $l (@$lref) {
         if ($l =~ /^\#+\s*MECHANISM/) {
           $l = "MECHANISM=pam";
@@ -92,7 +92,7 @@ sub actions {
     }
     if ($cf) {
       if (!-e $cf) {
-        system("touch $cf");
+        $self->logsystem("touch $cf");
       }
       my $smtpdconf = read_file_lines($cf) or die "Failed to open $cf!";
       my $idx = indexof("", @$smtpdconf);
@@ -106,7 +106,6 @@ sub actions {
       #proc::safe_process_exec($cmd, 0, 0, *STDOUT, undef, 1);
       init::start_action('saslauthd');
     }
-
     $self->done(1);    # OK!
   };
   if ($@) {
