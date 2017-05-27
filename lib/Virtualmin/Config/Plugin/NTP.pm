@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use 5.010;
 use parent qw(Virtualmin::Config::Plugin);
+use Time::HiRes qw( sleep );
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
 sub new {
@@ -14,15 +15,15 @@ sub new {
   return $self;
 }
 
-my $clocksource;
 # actions method performs whatever configuration is needed for this
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
+  my $clocksource;
 
   $self->spin();
+  sleep 0.5;
   eval {    # try
-    sleep 0.5;
     my $clockfile = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
