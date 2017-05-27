@@ -22,7 +22,7 @@ sub new {
   $self->{bundle}  = $args{bundle};
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
-  $self->{log}     = $args{log} // "/root/virtualmin-install.log";
+  $self->{log}     = $args{log} || "/root/virtualmin-install.log";
 
   return bless $self, $class;
 }
