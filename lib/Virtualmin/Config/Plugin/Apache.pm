@@ -7,6 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
 sub new {
   my $class = shift;
@@ -54,7 +55,6 @@ sub actions {
       $self->logsystem("a2dissite 000-default");
 
       if (!-e "/etc/apache2/conf.d/ssl.conf") {
-        print "Enabling mod_ssl\n";
         $self->logsystem("a2enmod ssl");
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
@@ -179,7 +179,7 @@ sub actions {
 
     if (!apache::is_apache_running()) {
       my $err = apache::start_apache();
-      print STDERR "Failed to start Apache!\n" if ($err);
+      $log->error("Failed to start Apache!")   if ($err);
     }
 
     # Force re-check of installed Apache modules

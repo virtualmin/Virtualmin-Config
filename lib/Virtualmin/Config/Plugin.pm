@@ -90,7 +90,6 @@ sub logsystem {
   my $cmd = shift;
   my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
-  $log->info("In a plugin, doing loggy things");
   my $res = `$cmd`;
   $log->info($res);
   return $?;
