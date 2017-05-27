@@ -13,7 +13,7 @@ sub new {
   my $class = shift;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'SpamAssassin', depends => [ 'Postfix' ]);
+  my $self = $class->SUPER::new(name => 'SpamAssassin');
 
   return $self;
 }
