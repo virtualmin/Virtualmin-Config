@@ -39,7 +39,7 @@ sub actions {
 
 # And another thing (the Right Thing) for RHEL/CentOS/Fedora/Mandriva/Debian/Ubuntu
     foreign_require("firewall", "firewall-lib.pl");
-    my @tables = &firewall::get_iptables_save();
+    my @tables = firewall::get_iptables_save();
     my @allrules = map { @{$_->{'rules'}} } @tables;
     if (@allrules) {
       my ($filter) = grep { $_->{'name'} eq 'filter' } @tables;

@@ -96,7 +96,7 @@ sub actions {
     # Remove any options that would make BIND listen on localhost only
     undef(@bind8::get_config_cache);
     my $conf = bind8::get_config();
-    my $options = &bind8::find("options", $conf);
+    my $options = bind8::find("options", $conf);
     if ($options) {
       bind8::save_directive($options, "allow-query", [], 0);
       foreach my $dir ("listen-on", "listen-on-v6") {
