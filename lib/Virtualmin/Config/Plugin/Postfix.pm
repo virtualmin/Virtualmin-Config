@@ -70,14 +70,12 @@ sub actions {
       if (defined(postfix::regenerate_bcc_table()));
 
     # Setup sender dependent map
-    if ($postfix::postfix_version >= 2.7) {
-      if (!postfix::get_real_value("sender_dependent_default_transport_maps")) {
-        postfix::set_current_value("sender_dependent_default_transport_maps",
-          "$maptype:$postetc/dependent");
-      }
-      postfix::ensure_map("sender_dependent_default_transport_maps");
-      postfix::regenerate_any_table("sender_dependent_default_transport_maps");
+    if (!postfix::get_real_value("sender_dependent_default_transport_maps")) {
+      postfix::set_current_value("sender_dependent_default_transport_maps",
+        "$maptype:$postetc/dependent");
     }
+    postfix::ensure_map("sender_dependent_default_transport_maps");
+    postfix::regenerate_any_table("sender_dependent_default_transport_maps");
 
     my $wrapper = "/usr/bin/procmail-wrapper";
     postfix::set_current_value("mailbox_command",
