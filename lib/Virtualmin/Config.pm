@@ -39,11 +39,11 @@ sub run {
 
   # Initialize logger
   my $log_conf = qq(
-  	log4perl.logger 		= ERROR, FileApp
+  	log4perl.logger 		= INFO, FileApp
   	log4perl.appender.FileApp	= Log::Log4perl::Appender::File
   	log4perl.appender.FileApp.filename = $self->{log}
   	log4perl.appender.FileApp.layout   = PatternLayout
-  	log4perl.appender.FileApp.layout.ConversionPattern = %d %p - %m%n
+  	log4perl.appender.FileApp.layout.ConversionPattern = [%d] [%p] - %m%n
   	log4perl.appender.FileApp.mode	= append
   );
   Log::Log4perl->init(\$log_conf);
