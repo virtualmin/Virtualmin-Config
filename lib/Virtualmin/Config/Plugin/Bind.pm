@@ -102,6 +102,8 @@ sub actions {
       foreach my $dir ("listen-on", "listen-on-v6") {
         my @listen = bind8::find($dir, $options->{'members'});
         next if (!@listen);
+        next if (!defined($listen[0]->{'values'})
+              && !defined($listen[0]->{'type'}));
         if (
              $listen[0]->{'values'}->[0] eq 'port'
           && $listen[0]->{'values'}->[1] eq '53'
