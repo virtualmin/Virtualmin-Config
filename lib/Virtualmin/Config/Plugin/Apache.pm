@@ -43,7 +43,6 @@ sub actions {
 
     # Fix up some Debian stuff
     if ($gconfig{'os_type'} eq "debian-linux") {
-      print "Setting up Debian Apache configuration file\n";
       if (-e "/etc/init.d/apache") { init::disable_at_boot("apache"); }
       $self->logsystem("a2enmod cgi");
       $self->logsystem("a2enmod suexec");
@@ -59,12 +58,6 @@ sub actions {
         $self->logsystem("a2enmod ssl");
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
-      }
-      if (-e "/etc/init.d/apache") {
-        print "Shutting down Apache 1.3, if running\n";
-        my $cmd = "/etc/init.d/apache stop";
-        foreign_require("proc", "proc-lib.pl");
-        proc::safe_process_exec($cmd, 0, 0, *STDOUT, undef, 1);
       }
       my $fn             = "/etc/default/apache2";
       my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
@@ -88,7 +81,7 @@ sub actions {
         "actions",    "suexec",    "auth_digest",    "dav_svn",
         "ssl",        "dav",       "dav_fs",         "fcgid",
         "rewrite",    "proxy",     "proxy_balancer", "proxy_connect",
-        "proxy_http", "authz_svn", "slotmem_shm",    "cgi"
+        "proxy_http", "slotmem_shm",                 "cgi"
         )
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
@@ -100,21 +93,11 @@ sub actions {
       }
     }
 
-    # On Debian 5.0+ and Ubuntu 10.04+ configure apache2-suexec-custom
-    if (
-      (
-           ($gconfig{'real_os_type'} eq 'Debian Linux')
-        && ($gconfig{'real_os_version'} >= 5.0)
-      )
-      || ( ($gconfig{'real_os_type'} eq 'Ubuntu Linux')
-        && ($gconfig{'real_os_version'} >= 10.04))
-      )
-    {
-      my $fn = "/etc/apache2/suexec/www-data";
-      my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
-      $apache2suexec->[0] = "/home";
-      flush_file_lines($fn);
-    }
+    my $fn = "/etc/apache2/suexec/www-data";
+    my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
+    $apache2suexec->[0] = "/home";
+    $apache2suexec->[1] = "public_html";
+    flush_file_lines($fn);
 
     # On Ubuntu 10, PHP is enabled in php5.conf in a way that makes it
     # impossible to turn off for CGI mode!
