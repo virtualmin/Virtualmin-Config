@@ -27,7 +27,7 @@ sub actions {
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
       $clocksource = do { local $/ = <$CLOCK> };
-      close $clockfile;
+      close $CLOCK;
       if ($clocksource eq "kvm-clock") {
         $log->info("System clock source is kvm-clock, skipping NTP");
         $self->done(1);
