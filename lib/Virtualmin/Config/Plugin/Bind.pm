@@ -102,8 +102,13 @@ sub actions {
       foreach my $dir ("listen-on", "listen-on-v6") {
         my @listen = bind8::find($dir, $options->{'members'});
         next if (!@listen);
+        # XXX This is ridiculous.
         next if (!defined($listen[0]->{'values'})
-              && !defined($listen[0]->{'type'}));
+              || !defined($listen[0]->{'values'}->[0])
+              || !defined($listen[0]->{'values'}->[1])
+              || !defined($listen[0]->{'type'})
+              || !defined($listen[0]->{'members'})
+              || !defined($listen[0]->{'members'}->[0]->{'name'}));
         if (
              $listen[0]->{'values'}->[0] eq 'port'
           && $listen[0]->{'values'}->[1] eq '53'

@@ -13,13 +13,13 @@ sub new {
 }
 
 sub plugins {
-  return (
+  return [
     "Webmin",  "Apache",  "Bind",    "Dovecot",   "Net",
     "AWStats", "Postfix", "MySQL",   "Firewall",  "Procmail",
     "ProFTPd", "Quotas",  "SASL",    "Shells",    "Status",
     "Upgrade", "Quotas",  "Usermin", "Webalizer", "Virtualmin",
     "Extra",   "ClamAV"
-  );
+  ];
 }
 
 1;
