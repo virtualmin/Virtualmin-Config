@@ -18,6 +18,7 @@ sub new {
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
+  my $clocksource;
 
   $self->spin();
   eval {    # try
@@ -25,7 +26,7 @@ sub actions {
     my $clockfile = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
-      my $clocksource = do { local $/ = <$clocksource> };
+      $clocksource = do { local $/ = <$clocksource> };
     }
     if ($clocksource eq "kvm-clock") {
       $log->info("System clock source is kvm-clock, skipping NTP");
