@@ -109,7 +109,7 @@ sub _order_plugins {
     my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
     load $pkg;
     my $plugin = $pkg->new();
-    $plugin_details{$plugin->{'name'}} = [$plugin->{'depends'}] // [];
+    $plugin_details{$plugin->{'name'}} = $plugin->{'depends'} || [];
   }
   return _topo_sort(%plugin_details);
 }
