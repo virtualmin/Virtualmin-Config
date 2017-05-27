@@ -45,18 +45,18 @@ sub actions {
     if ($gconfig{'os_type'} eq "debian-linux") {
       print "Setting up Debian Apache configuration file\n";
       if (-e "/etc/init.d/apache") { init::disable_at_boot("apache"); }
-      system("a2enmod cgi");
-      system("a2enmod suexec");
-      system("a2enmod actions");
-      system("a2enmod fcgid");
-      system("a2enmod ssl");
-      system("a2enmod dav");
-      system("a2enmod lbmethod_byrequests");
-      system("a2dissite 000-default");
+      $self->logsystem("a2enmod cgi");
+      $self->logsystem("a2enmod suexec");
+      $self->logsystem("a2enmod actions");
+      $self->logsystem("a2enmod fcgid");
+      $self->logsystem("a2enmod ssl");
+      $self->logsystem("a2enmod dav");
+      $self->logsystem("a2enmod lbmethod_byrequests");
+      $self->logsystem("a2dissite 000-default");
 
       if (!-e "/etc/apache2/conf.d/ssl.conf") {
         print "Enabling mod_ssl\n";
-        system("a2enmod ssl");
+        $self->logsystem("a2enmod ssl");
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
       }
