@@ -102,9 +102,9 @@ sub _order_plugins {
   my ($self, @plugins) = @_;
   my %plugin_details;    # Will hold an array of hashes containing name/depends
                          # Load up @plugin_details with name and dependency list
-  if (ref($plugins[0]) eq 'ARRAY') {    # XXX Why is this so stupid?
-    @plugins = map {@$_} @plugins;      # Flatten the array of refs into list.
-  }
+  #if (ref($plugins[0]) eq 'ARRAY') {    # XXX Why is this so stupid?
+  #  @plugins = map {@$_} @plugins;      # Flatten the array of refs into list.
+  #}
   for my $plugin_name (@plugins) {
     my $pkg = "Virtualmin::Config::Plugin::$plugin_name";
     load $pkg;
