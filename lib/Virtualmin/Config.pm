@@ -61,19 +61,6 @@ sub run {
   return 1;
 }
 
-# logsystem(command)
-# Similar to system() or backticks but with logging.
-# Runs a single system command, and returns the result code.
-sub logsystem {
-  my $self = shift;
-  my $cmd = shift;
-  my $log = Log::Log4perl->get_logger("virtualmin-config-system");
-
-  my $res = `$cmd`;
-  $log->info($res);
-  return $?;
-}
-
 # Merges the selected bundle, with any extra includes, and removes excludes
 sub _gather_plugins {
   my $self = shift;

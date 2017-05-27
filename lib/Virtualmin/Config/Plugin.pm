@@ -82,4 +82,18 @@ sub root {
   return $root;
 }
 
+# logsystem(command)
+# Similar to system() or backticks but with logging.
+# Runs a single system command, and returns the result code.
+sub logsystem {
+  my $self = shift;
+  my $cmd = shift;
+  my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
+  $log->info("In a plugin, doing loggy things");
+  my $res = `$cmd`;
+  $log->info($res);
+  return $?;
+}
+
 1;
