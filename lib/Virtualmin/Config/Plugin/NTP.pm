@@ -29,13 +29,11 @@ sub actions {
       $clocksource = do { local $/ = <$CLOCK> };
       close $CLOCK;
       chomp($clocksource);
-      if ($clocksource eq "kvm-clock") {
-        $log->info("System clock source is kvm-clock, skipping NTP");
-        $self->done(1);
-        return;
-      }
     }
-    if (-x "/usr/sbin/ntpdate-debian") {
+    if ($clocksource eq "kvm-clock") {
+      $log->info("System clock source is kvm-clock, skipping NTP");
+    }
+    elsif (-x "/usr/sbin/ntpdate-debian") {
       $self->logsystem("ntpdate-debian");
     }
     elsif (-x "/usr/sbin/ntpdate") {
@@ -46,12 +44,12 @@ sub actions {
     if (! $clocksource eq "kvm-clock" && init::action_status("ntpd")) {
       init::enable_at_boot("ntpd");
     }
+    $self->done(1);      # OK!
   } or do {    # catch
     $self->done(0);    # Something failed
     $log->info("Something went wrong with NTP configuration");
     return;
   };
-  $self->done(1);      # OK!
 }
 
 1;
