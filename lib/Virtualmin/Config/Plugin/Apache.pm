@@ -183,7 +183,8 @@ sub actions {
     }
 
     # Force re-check of installed Apache modules
-    unlink($apache::site_file);
+    unlink($apache::site_file) or
+      $log->error("Failed to unlink $apache::site_file");
     $self->done(1);    # OK!
   };
   if ($@) {
