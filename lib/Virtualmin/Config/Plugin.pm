@@ -15,6 +15,8 @@ our $spinner;
 our $trust_unknown_referers = 1;
 our $error_must_die         = 1;
 
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 sub new {
   my ($class, %args) = @_;
 
@@ -56,12 +58,12 @@ sub done {
   if ($res) {
 
     # Success!
-    $log->info("$name succeeded");
+    $log->info("Succeeded");
     $spinner->ok();
   }
   else {
     # Failure!
-    $log->warn("$name failed");
+    $log->warn("Failed");
     $spinner->nok();
   }
 }
@@ -92,7 +94,6 @@ sub root {
 sub logsystem {
   my $self = shift;
   my $cmd = shift;
-  my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
   my $res = `$cmd`;
   $log->info($res);
