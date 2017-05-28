@@ -1,0 +1,32 @@
+Source: virtualmin-config
+Section: admin
+Priority: optional
+Maintainer: Joe Cooper <joe@virtualmin.com>
+Build-Depends: debhelper (>= 8)
+Build-Depends-Indep: liblog-log4perl-perl,
+ libterm-spinner-color-perl,
+ perl,
+ perl-base,
+ perl-modules
+Standards-Version: 3.9.2
+Homepage: http://search.cpan.org/dist/Virtualmin-Config/
+
+Package: virtualmin-config
+Architecture: all
+Depends: ${misc:Depends}, ${perl:Depends},
+ liblog-log4perl-perl,
+ libterm-spinner-color-perl,
+ perl,
+ perl-modules
+Description: Configure a system for use by Virtualmin
+ This is a mini-framework for configuring elements of a Virtualmin system. It
+ uses Webmin as a library to abstract common configuration tasks, provides a
+ friendly status indicator, and makes it easy to pick and choose the kind of
+ configuration you want (should you choose to go that route). The Virtualmin
+ install script chooses either the LAMP (with Apache) or LEMP (with nginx)
+ bundle, and performs the configuration for the whole stack.
+ .
+ It includes plugins for all of the common tasks in a Virtualmin system, such
+ as Apache, MySQL/MariaDB, Postfix, SpamAssassin, etc.
+ .
+ This description was automagically extracted from the module by dh-make-perl.
