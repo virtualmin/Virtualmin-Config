@@ -46,9 +46,12 @@ sub actions {
             }
             flush_file_lines($fcconf);
     }
-    $self->logsystem("freshclam");
 
     foreign_require("init", "init-lib.pl");
+    if ( ! init::action_status("clamav-freshclam") ) {
+      $self->logsystem("freshclam");
+    }
+
     # RHEL/CentOS/Fedora
     # Start clamd@scan and run clamdscan just to prime the damned thing.
     if($gconfig{'os_type'} eq 'redhat-linux') {
