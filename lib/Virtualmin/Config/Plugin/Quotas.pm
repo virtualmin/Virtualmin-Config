@@ -108,6 +108,7 @@ sub actions {
     $self->done($res);    # OK!
   };
   if ($@) {
+    $ENV{'QUOTA_FAILED'} = '1';
     $self->done(0);
   }
 }
