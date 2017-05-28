@@ -60,7 +60,7 @@ sub actions {
         `echo Listen 443 >> /etc/apache2/ports.conf`;
       }
       # New Ubuntu doesn't use this.
-      if (unless $init_mode eq "systemd") {
+      unless ($init::init_mode eq "systemd") {
         my $fn             = "/etc/default/apache2";
         my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
         my $idx            = indexof("NO_START=1");
