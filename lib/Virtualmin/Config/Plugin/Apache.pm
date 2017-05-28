@@ -59,11 +59,14 @@ sub actions {
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
       }
-      my $fn             = "/etc/default/apache2";
-      my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
-      my $idx            = indexof("NO_START=1");
-      $apache2default->[$idx] = "NO_START=0";
-      flush_file_lines($fn);
+      # New Ubuntu doesn't use this.
+      if (unless $init_mode eq "systemd") {
+        my $fn             = "/etc/default/apache2";
+        my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
+        my $idx            = indexof("NO_START=1");
+        $apache2default->[$idx] = "NO_START=0";
+        flush_file_lines($fn);
+      }
     }
 
     # Handle missing fcgid dir
