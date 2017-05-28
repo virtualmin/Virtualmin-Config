@@ -43,6 +43,7 @@ sub spin {
   my $self    = shift;
   my $name    = $self->name();
   my $message = shift // "Configuring " . $name;
+  $log->info($message);
   $spinner = Term::Spinner::Color->new();
   print $message . " " x (79 - length($message) - $spinner->{'last_size'});
   $spinner->auto_start();
@@ -55,10 +56,12 @@ sub done {
   if ($res) {
 
     # Success!
+    $log->info("$name succeeded");
     $spinner->ok();
   }
   else {
     # Failure!
+    $log->warn("$name failed");
     $spinner->nok();
   }
 }
