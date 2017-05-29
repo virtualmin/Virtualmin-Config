@@ -3,6 +3,7 @@ use strict;
 use warnings;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
+use Time::HiRes qw( sleep );    # XXX Figure out how to not need this.
 
 our $config_directory;
 our (%gconfig, %miniserv);
@@ -32,6 +33,7 @@ sub actions {
   init_config();
 
   $self->spin();
+  sleep 0.3;
   eval {
     my $res = 1;
     foreign_require("init", "init-lib.pl");

@@ -17,7 +17,7 @@ sub plugins {
     "Webmin",  "Apache",  "Bind",    "Dovecot",   "Net",
     "AWStats", "Postfix", "MySQL",   "Firewall",  "Procmail",
     "ProFTPd", "Quotas",  "SASL",    "Shells",    "Status",
-    "Upgrade", "Quotas",  "Usermin", "Webalizer", "Virtualmin",
+    "Upgrade", "Usermin", "Webalizer",            "Virtualmin",
     "Extra",   "ClamAV",  "NTP",     "SpamAssassin"
   ];
 }
