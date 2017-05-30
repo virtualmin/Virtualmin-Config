@@ -14,7 +14,12 @@ alt='Coverage Status' /></a>
 
 Virtualmin::Config - A collection of plugins to initialize the configuration
 of services that Virtualmin manages, and a command line tool called
-config-system to run them.
+config-system to run them. It can be thought of as a very specialized
+configuration management system (e.g. puppet, chef, whatever) for doing
+just one thing (setting up a system for Virtualmin). It has basic dependency
+resolution (via topological sort), logging, and ties into the Webmin API to
+make some common tasks (like starting/stopping services, setting them to run
+on boot) simpler to code.
 
 =head1 SYNOPSIS
 

@@ -163,7 +163,7 @@ alt='Coverage Status' /></a>
 =head1 NAME
 
 Virtualmin::Config - A collection of plugins to initialize the configuration
-of sevrices that Virtualmin manages, and a command line tool called
+of services that Virtualmin manages, and a command line tool called
 config-system to run them. It can be thought of as a very specialized
 configuration management system (e.g. puppet, chef, whatever) for doing
 just one thing (setting up a system for Virtualmin). It has basic dependency
