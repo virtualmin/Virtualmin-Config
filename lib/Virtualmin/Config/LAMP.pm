@@ -15,7 +15,7 @@ sub new {
 sub plugins {
   return [
     "Webmin",  "Apache",  "Bind",    "Dovecot",   "Net",
-    "AWStats", "Postfix", "MySQL",   "Firewall",  "Procmail",
+    "AWStats", "Postfix", "MySQL",   "Firewalld",  "Procmail",
     "ProFTPd", "Quotas",  "SASL",    "Shells",    "Status",
     "Upgrade", "Usermin", "Webalizer",            "Virtualmin",
     "Extra",   "ClamAV",  "NTP",     "SpamAssassin"
