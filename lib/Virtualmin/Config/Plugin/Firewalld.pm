@@ -48,17 +48,18 @@ sub actions {
 
     if (has_command('firewall-cmd')) {
       foreach my $s (@services) {
-        logsystem("firewall-cmd --zone=public --add-service=${s}/tcp");
-        logsystem("firewall-cmd --zone=public --permanent --add-service=${s}/tcp");
+        $self->logsystem("firewall-cmd --zone=public --add-service=${s}");
+        $self->logsystem("firewall-cmd --zone=public --permanent --add-service=${s}");
       }
       foreach my $p (@tcpports) {
-        logsystem("firewall-cmd --zone=public --add-port=${p}/tcp");
-        logsystem("firewall-cmd --zone=public --permanent --add-port=${p}/tcp");
+        $self->logsystem("firewall-cmd --zone=public --add-port=${p}/tcp");
+        $self->logsystem("firewall-cmd --zone=public --permanent --add-port=${p}/tcp");
       }
       foreach my $p (@udpports) {
-        logsystem("firewall-cmd --zone=public --add-port=${p}/udp");
-        logsystem("firewall-cmd --zone=public --permanent --add-port=${p}/udp");
+        $self->logsystem("firewall-cmd --zone=public --add-port=${p}/udp");
+        $self->logsystem("firewall-cmd --zone=public --permanent --add-port=${p}/udp");
       }
+      $self->logsystem("firewall-cmd --set-default-zone public");
     }
 
     $self->done(1);    # OK!
