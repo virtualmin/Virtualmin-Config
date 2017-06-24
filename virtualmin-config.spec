@@ -1,7 +1,7 @@
 Name:           virtualmin-config
-Version:        6.0.0
-Release:        4%{?dist}
-Summary:        Collection of plugins to initialize the configuration of sevrices that Virtualmin manages, and a command line tool called init-system to run them
+Version:        6.0.5
+Release:        1%{?dist}
+Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
 Group:          Development/Libraries
 URL:            https://github.com/virtualmin/Virtualmin-Config/
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Fri Jun 23 2017 Joe Cooper <joe@virtualmin.com> 6.0.5-1
+- Fail2ban and Firewalld modules added
+- Handle systemd or not
 * Mon May 08 2017 Joe Cooper <joe@virtualmin.com>
 - Rename to config-system
 * Mon May 08 2017 Joe Cooper <joe@virtualmin.com>
