@@ -22,6 +22,7 @@ sub new {
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
+  my $err;
 
   # XXX Webmin boilerplate.
   use Cwd;
@@ -35,21 +36,20 @@ sub actions {
   # End of Webmin boilerplate.
 
   $self->spin();
-  eval {
-    foreign_require('init', 'init-lib.pl');
-    init::enable_at_boot('fail2ban');
+  foreign_require('init', 'init-lib.pl');
+  init::enable_at_boot('fail2ban');
 
-    if (has_command('fail2ban-server')) {
-      # Create a jail.local with some basic config
-      create_fail2ban_jail();
-      create_fail2ban_firewalld();
-    }
+  if (has_command('fail2ban-server')) {
+    # Create a jail.local with some basic config
+    create_fail2ban_jail() or $err++;
+    create_fail2ban_firewalld() or $err++;
+  }
 
-    init::restart_action('fail2ban');
-    $self->done(1);    # OK!
-  };
-  if ($@) {
+  init::restart_action('fail2ban') or $err++;
+  if ($err) {
     $self->done(0);
+  } else {
+    $self->done(1);    # OK!
   }
 }
 
@@ -124,9 +124,8 @@ sub create_fail2ban_firewalld {
 [DEFAULT]
 banaction = firewallcmd-ipset
 EOF
-
     close $FIREWALLD_CONF;
-  }
+  } # XXX iptables-multiport is default on CentOS, double check others.
 }
 
 1;
