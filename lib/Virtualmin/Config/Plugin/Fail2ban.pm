@@ -36,11 +36,6 @@ sub actions {
 
   $self->spin();
   eval {
-    my @firewall_filters = qw(webmin-auth );
-    my @tcpports
-      = qw(submission domain ftp-data 2222 10000-10010 20000);
-    my @udpports = qw(domain);
-
     foreign_require('init', 'init-lib.pl');
     init::enable_at_boot('fail2ban');
 
@@ -50,6 +45,7 @@ sub actions {
       create_fail2ban_firewalld();
     }
 
+    init::restart_action('fail2ban');
     $self->done(1);    # OK!
   };
   if ($@) {
