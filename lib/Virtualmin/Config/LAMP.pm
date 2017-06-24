@@ -13,13 +13,28 @@ sub new {
 }
 
 sub plugins {
-  return [
-    "Webmin",  "Apache",  "Bind",    "Dovecot",   "Net",
-    "AWStats", "Postfix", "MySQL",   "Firewalld",  "Procmail",
-    "ProFTPd", "Quotas",  "SASL",    "Shells",    "Status",
-    "Upgrade", "Usermin", "Webalizer",            "Virtualmin",
-    "Extra",   "ClamAV",  "NTP",     "SpamAssassin"
-  ];
+
+  # Modern system with systemd?
+  if (has_command('systemctl')) {
+    return [
+      "Webmin",    "Apache",    "Bind",         "Dovecot",
+      "Net",       "AWStats",   "Postfix",      "MySQL",
+      "Firewalld", "Procmail",  "ProFTPd",      "Quotas",
+      "SASL",      "Shells",    "Status",       "Upgrade",
+      "Usermin",   "Webalizer", "Virtualmin",   "Extra",
+      "ClamAV",    "NTP",       "SpamAssassin", "Fail2ban"
+    ];
+  }
+  else {
+    return [
+      "Webmin",   "Apache",    "Bind",         "Dovecot",
+      "Net",      "AWStats",   "Postfix",      "MySQL",
+      "Firewall", "Procmail",  "ProFTPd",      "Quotas",
+      "SASL",     "Shells",    "Status",       "Upgrade",
+      "Usermin",  "Webalizer", "Virtualmin",   "Extra",
+      "ClamAV",   "NTP",       "SpamAssassin", "Fail2ban"
+    ];
+  }
 }
 
 1;
