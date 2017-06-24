@@ -36,20 +36,21 @@ sub actions {
   # End of Webmin boilerplate.
 
   $self->spin();
-  foreign_require('init', 'init-lib.pl');
-  init::enable_at_boot('fail2ban');
+  eval {
+    foreign_require('init', 'init-lib.pl');
+    init::enable_at_boot('fail2ban');
 
-  if (has_command('fail2ban-server')) {
-    # Create a jail.local with some basic config
-    create_fail2ban_jail() or $err++;
-    create_fail2ban_firewalld() or $err++;
-  }
+    if (has_command('fail2ban-server')) {
+      # Create a jail.local with some basic config
+      create_fail2ban_jail();
+      create_fail2ban_firewalld();
+    }
 
-  init::restart_action('fail2ban') or $err++;
-  if ($err) {
-    $self->done(0);
-  } else {
-    $self->done(1);    # OK!
+    init::restart_action('fail2ban');
+    $self->done(1);
+  };
+  if ($@) {
+    $self->done(0);    # NOK!
   }
 }
 
@@ -57,7 +58,7 @@ sub create_fail2ban_jail {
   if (-e "/etc/fail2ban/jail.local") {
     die "Fail2ban already has local configuration. Will not overwrite.";
   }
-  open(my $JAIL_LOCAL, '>', '/etc/faiil2ban/jail.local');
+  open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
 print $JAIL_LOCAL <<EOF;
 [sshd]
 
