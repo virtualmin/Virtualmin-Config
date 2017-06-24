@@ -45,7 +45,7 @@ config-system
 virtualmin config-system [options]
 
   Options:
-    --help      Print this summaery of options and exit
+    --help      Print this summary of options and exit
     --bundle    A bundle of plugins to execute
     --log       Path to a file for logging actions
     --include   One or more extra plugins to include
