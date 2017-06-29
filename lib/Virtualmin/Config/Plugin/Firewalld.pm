@@ -48,8 +48,8 @@ sub actions {
 
     if (has_command('firewall-cmd')) {
       foreach my $s (@services) {
-        $self->logsystem("firewall-cmd --zone=public --add-service=${s}");
-        $self->logsystem("firewall-cmd --zone=public --permanent --add-service=${s}");
+        $self->logsystem("firewall-cmd --quiet --zone=public --add-service=${s}");
+        $self->logsystem("firewall-cmd --quiet --zone=public --permanent --add-service=${s}");
       }
       foreach my $p (@tcpports) {
         $self->logsystem("firewall-cmd --zone=public --add-port=${p}/tcp");

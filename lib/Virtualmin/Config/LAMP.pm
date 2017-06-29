@@ -15,7 +15,7 @@ sub new {
 sub plugins {
 
   # Modern system with systemd?
-  if (has_command('systemctl')) {
+  if (-x "/usr/bin/systemctl") {
     return [
       "Webmin",    "Apache",    "Bind",         "Dovecot",
       "Net",       "AWStats",   "Postfix",      "MySQL",
