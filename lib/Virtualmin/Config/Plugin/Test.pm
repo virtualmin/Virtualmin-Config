@@ -50,4 +50,8 @@ sub actions {
   }
 }
 
+sub tests {
+  # Pretend to test something
+}
+
 1;

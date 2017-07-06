@@ -58,8 +58,8 @@ sub run {
     load $pkg || die "Loading Plugin failed: $_";
     my $plugin = $pkg->new();
     $plugin->actions();
-    if ($self->{test} && $plugin->can('test')) {
-      $plugin->test();
+    if ($self->{test} && $plugin->can('tests')) {
+      $plugin->tests();
     }
   }
   return 1;

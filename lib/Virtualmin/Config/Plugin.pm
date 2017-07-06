@@ -12,6 +12,7 @@ use Term::Spinner::Color;
 # TODO I don't like this, but can't figure out how to put it into
 # $self->{spinner}
 our $spinner;
+
 our $trust_unknown_referers = 1;
 our $error_must_die         = 1;
 
