@@ -34,7 +34,9 @@ sub actions {
     if ($clocksource eq "kvm-clock") {
       $log->info("System clock source is kvm-clock, skipping NTP");
     }
-    elsif ($clocksource eq "" || ! defined($clocksource)) {
+    elsif ($clocksource eq "" ||
+           $clocksource eq "jiffies" ||
+           ! defined($clocksource)) {
       $log->info("Could not determine system clock source, skipping NTP");
     }
     elsif (-x "/usr/sbin/ntpdate-debian") {
