@@ -22,6 +22,7 @@ sub new {
   $self->{bundle}  = $args{bundle};
   $self->{include} = $args{include};
   $self->{exclude} = $args{exclude};
+  $self->{test}    = $args{test};
   $self->{log}     = $args{log} || "/root/virtualmin-install.log";
 
   return bless $self, $class;
@@ -57,6 +58,9 @@ sub run {
     load $pkg || die "Loading Plugin failed: $_";
     my $plugin = $pkg->new();
     $plugin->actions();
+    if ($self->{test} && $plugin->can('test')) {
+      $plugin->test();
+    }
   }
   return 1;
 }

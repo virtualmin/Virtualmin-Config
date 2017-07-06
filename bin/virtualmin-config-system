@@ -11,7 +11,7 @@ sub main {
   my %opt;
   my (@include, @exclude);
   GetOptions(
-    \%opt, 'help|h', 'bundle|b=s', 'log|l=s',
+    \%opt, 'help|h', 'test|t', 'bundle|b=s', 'log|l=s',
     'include|i=s{1,}' => \@include,
     'exclude|x=s{1,}' => \@exclude,
   );
@@ -25,6 +25,7 @@ sub main {
     log     => $opt{log},
     include => \@include,
     exclude => \@exclude,
+    test   => $opt{test},
   );
 
   $bundle->run();
@@ -50,6 +51,7 @@ virtualmin config-system [options]
     --log       Path to a file for logging actions
     --include   One or more extra plugins to include
     --exclude   One or more plugins to exclude
+    --test      Test services after configured (when available)
 
 =head1 OPTIONS
 
@@ -72,6 +74,12 @@ will be installed.
 
 Exclude one or more plugins from either the default bundle, if no  bundle is
 specified, or from the bundle specified.
+
+=item --test
+
+Run tests for plugins, when available. Testing a service during configuration
+confirms whether it is in the expected state. For large plugin bundles this can
+make the process take a long time. Disabled by default.
 
 =back
 
