@@ -39,15 +39,17 @@ sub actions {
     }
     elsif (-x "/usr/sbin/ntpdate-debian") {
       $self->logsystem("ntpdate-debian");
+      if (init::action_status("ntpd")) {
+        init::enable_at_boot("ntpd");
+      }
     }
     elsif (-x "/usr/sbin/ntpdate") {
       $self->logsystem("ntpdate");
+      if (init::action_status("ntpd")) {
+        init::enable_at_boot("ntpd");
+      }
     }
 
-    # If it's installed, and not kvm-clock, turn ntpd on.
-    if (! $clocksource eq "kvm-clock" && init::action_status("ntpd")) {
-      init::enable_at_boot("ntpd");
-    }
     $self->done(1);      # OK!
   } or do {    # catch
     $self->done(0);    # Something failed
