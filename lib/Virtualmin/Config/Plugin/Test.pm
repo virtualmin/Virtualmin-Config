@@ -51,7 +51,16 @@ sub actions {
 }
 
 sub tests {
+  my $self = shift;
   # Pretend to test something
+  $self->spin();
+  eval {
+    sleep 2;
+    $self->done(1);
+  };
+  if ($@) {
+    $self->done(0);
+  }
 }
 
 1;
