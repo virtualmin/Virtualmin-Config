@@ -1,3 +1,22 @@
+virtualmin-config (6.0.6-1.1) stable; urgency=low
+
+  * Fix detection of systemd on Debian, for real 
+
+ -- Joe Cooper <joe@virtualmin.com>  Thu, 13 Jul 2017 21:52:45 -0500
+
+virtualmin-config (6.0.6-1) stable; urgency=low
+
+  * Fix fail2ban systemd detection
+
+ -- Joe Cooper <joe@virtualmin.com>  Mon, 03 Jul 2017 00:51:48 -0500
+
+virtualmin-config (6.0.5-1) stable; urgency=low
+
+  * Fail2ban and firewalld added
+  * Bug fixes for Ubuntu
+
+ -- Joe Cooper <joe@virtualmin.com>  Fri, 23 Jun 2017 23:18:59 -0500
+
 virtualmin-config (6.0.2-1) stable; urgency=low
 
   * Add ubuntu support 
