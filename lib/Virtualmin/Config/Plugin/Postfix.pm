@@ -99,6 +99,9 @@ sub actions {
       postfix::set_current_value("mydestination", $mydest . ", " . $myhost, 1);
     }
 
+    # Opportunistic encryption for outgoing mail
+    postfix::set_current_value("smtp_tls_security_level", "may", 1);
+
     # Turn off limit on mailbox size
     postfix::set_current_value("mailbox_size_limit", "0");
 
