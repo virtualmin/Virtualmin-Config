@@ -1,6 +1,6 @@
 Name:           virtualmin-config
 Version:        6.0.7
-Release:        1%{?dist}
+Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
 Group:          Development/Libraries
