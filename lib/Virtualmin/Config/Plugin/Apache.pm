@@ -94,13 +94,12 @@ sub actions {
           symlink("$adir/$mod.conf", "$edir/$mod.conf");
         }
       }
+      my $fn = "/etc/apache2/suexec/www-data";
+      my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
+      $apache2suexec->[0] = "/home";
+      $apache2suexec->[1] = "public_html";
+      flush_file_lines($fn);
     }
-
-    my $fn = "/etc/apache2/suexec/www-data";
-    my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
-    $apache2suexec->[0] = "/home";
-    $apache2suexec->[1] = "public_html";
-    flush_file_lines($fn);
 
     # On Ubuntu 10, PHP is enabled in php5.conf in a way that makes it
     # impossible to turn off for CGI mode!
