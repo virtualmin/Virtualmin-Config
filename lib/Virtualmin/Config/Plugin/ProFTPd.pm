@@ -35,7 +35,6 @@ sub actions {
   eval {
     foreign_require("init", "init-lib.pl");
     init::enable_at_boot("proftpd");
-    init::restart_action("proftpd");
     if ($gconfig{'os_type'} eq 'freebsd') {
 
       # This directory is missing on FreeBSD
@@ -44,7 +43,7 @@ sub actions {
 
     # UseIPv6 doesn't work on FreeBSD
     foreign_require("proftpd", "proftpd-lib.pl");
-    my $conf = &proftpd::get_config();
+    my $conf = proftpd::get_config();
     proftpd::save_directive("UseIPv6", [], $conf, $conf);
 
     # Create a virtualmin.conf file and Include it
@@ -141,6 +140,8 @@ EOF
 
     # Generate a basic config, subbing in the right variables.
     flush_file_lines();
+
+    init::restart_action("proftpd");
 
     $self->done(1);    # OK!
   };
