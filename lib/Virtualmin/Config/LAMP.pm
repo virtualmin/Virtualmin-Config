@@ -24,7 +24,7 @@ sub plugins {
       "SASL",         "Shells",  "Status",
       "Upgrade",      "Usermin", "Webalizer",
       "Virtualmin",   "ClamAV",  "NTP",
-      "SpamAssassin", "Fail2ban-Firewalld"
+      "SpamAssassin", "Fail2banFirewalld"
     ];
   }
   else {

@@ -1,4 +1,4 @@
-package Virtualmin::Config::Plugin::Fail2ban;
+package Virtualmin::Config::Plugin::Fail2banFirewalld;
 
 # Enables fail2ban and sets up a reasonable set of rules.
 # This is currently identical to Fail2ban, with a different depends.
@@ -17,7 +17,7 @@ sub new {
   my $class = shift;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Fail2ban', depends => 'Firewalld');
+  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => 'Firewalld');
 
   return $self;
 }
