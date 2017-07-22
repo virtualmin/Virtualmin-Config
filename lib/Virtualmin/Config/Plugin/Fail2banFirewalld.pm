@@ -17,7 +17,7 @@ sub new {
   my $class = shift;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => 'Firewalld');
+  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => ['Firewalld']);
 
   return $self;
 }
