@@ -17,22 +17,24 @@ sub plugins {
   # Modern system with systemd?
   if (-x "/usr/bin/systemctl" || -x "/bin/systemctl") {
     return [
-      "Webmin",    "Apache",    "Bind",         "Dovecot",
-      "Net",       "AWStats",   "Postfix",      "MySQL",
-      "Firewalld", "Procmail",  "ProFTPd",      "Quotas",
-      "SASL",      "Shells",    "Status",       "Upgrade",
-      "Usermin",   "Webalizer", "Virtualmin",
-      "ClamAV",    "NTP",       "SpamAssassin", "Fail2ban"
+      "Webmin",       "Apache",  "Bind",
+      "Dovecot",      "Net",     "AWStats",
+      "Postfix",      "MySQL",   "Firewalld",
+      "Procmail",     "ProFTPd", "Quotas",
+      "SASL",         "Shells",  "Status",
+      "Upgrade",      "Usermin", "Webalizer",
+      "Virtualmin",   "ClamAV",  "NTP",
+      "SpamAssassin", "Fail2ban-Firewalld"
     ];
   }
   else {
     return [
-      "Webmin",   "Apache",    "Bind",         "Dovecot",
-      "Net",      "AWStats",   "Postfix",      "MySQL",
-      "Firewall", "Procmail",  "ProFTPd",      "Quotas",
-      "SASL",     "Shells",    "Status",       "Upgrade",
-      "Usermin",  "Webalizer", "Virtualmin",
-      "ClamAV",   "NTP",       "SpamAssassin", "Fail2ban"
+      "Webmin",   "Apache",       "Bind",       "Dovecot",
+      "Net",      "AWStats",      "Postfix",    "MySQL",
+      "Firewall", "Procmail",     "ProFTPd",    "Quotas",
+      "SASL",     "Shells",       "Status",     "Upgrade",
+      "Usermin",  "Webalizer",    "Virtualmin", "ClamAV",
+      "NTP",      "SpamAssassin", "Fail2ban"
     ];
   }
 }

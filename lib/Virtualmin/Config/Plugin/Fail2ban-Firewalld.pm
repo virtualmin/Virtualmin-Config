@@ -1,6 +1,9 @@
 package Virtualmin::Config::Plugin::Fail2ban;
 
 # Enables fail2ban and sets up a reasonable set of rules.
+# This is currently identical to Fail2ban, with a different depends.
+# We could make the dependency resolution in Config smarter to re-merge it
+# back to one file. This will do for now.
 use strict;
 use warnings;
 no warnings qw(once);
@@ -14,7 +17,7 @@ sub new {
   my $class = shift;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Fail2ban', depends => 'Firewall');
+  my $self = $class->SUPER::new(name => 'Fail2ban', depends => 'Firewalld');
 
   return $self;
 }
