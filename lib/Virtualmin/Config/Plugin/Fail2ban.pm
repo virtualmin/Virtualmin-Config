@@ -58,9 +58,6 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
-  if (-e "/etc/fail2ban/jail.local") {
-    die "Fail2ban already has local configuration. Will not overwrite.";
-  }
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
 [sshd]

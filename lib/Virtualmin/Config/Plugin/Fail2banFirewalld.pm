@@ -45,10 +45,11 @@ sub actions {
     foreign_require('init', 'init-lib.pl');
     init::enable_at_boot('fail2ban');
 
+    my $err;
     if (has_command('fail2ban-server')) {
 
       # Create a jail.local with some basic config
-      create_fail2ban_jail();
+      my $err = create_fail2ban_jail();
       create_fail2ban_firewalld();
     }
 
@@ -61,9 +62,6 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
-  if (-e "/etc/fail2ban/jail.local") {
-    die "Fail2ban already has local configuration. Will not overwrite.";
-  }
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
 [sshd]
