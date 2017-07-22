@@ -190,6 +190,13 @@ sub actions {
     else { $uconfig{'homedir_perms'} = "0750"; }
     save_module_config(\%uconfig, "useradmin");
 
+    # Turn on caching for downloads by Virtualmin
+    if ( !$gconfig{'cache_size'} ) {
+      $gconfig{'cache_size'} = 50 * 1024 * 1024;
+      $gconfig{'cache_mods'} = "virtual-server";
+      write_file( "$config_directory/config", \%gconfig );
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {
