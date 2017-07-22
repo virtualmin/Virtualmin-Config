@@ -96,7 +96,7 @@ sub logsystem {
   my $self = shift;
   my $cmd = shift;
 
-  my $res = `$cmd`;
+  my $res = `$cmd 2>/dev/null`;
   $log->info("Code: $? Result: $res");
   return $?;
 }
