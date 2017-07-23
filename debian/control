@@ -6,9 +6,9 @@ Build-Depends: debhelper (>= 8)
 Build-Depends-Indep: liblog-log4perl-perl,
  libterm-spinner-color-perl,
  perl,
- perl-base,
+ perl-base (>=5.10),
  perl-modules
-Standards-Version: 3.9.2
+Standards-Version: 3.9.4
 Homepage: http://search.cpan.org/dist/Virtualmin-Config/
 
 Package: virtualmin-config
@@ -28,5 +28,3 @@ Description: Configure a system for use by Virtualmin
  .
  It includes plugins for all of the common tasks in a Virtualmin system, such
  as Apache, MySQL/MariaDB, Postfix, SpamAssassin, etc.
- .
- This description was automagically extracted from the module by dh-make-perl.

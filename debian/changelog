@@ -1,3 +1,9 @@
+virtualmin-config (6.0.8-1) virtualmin-universal; urgency=low
+
+  * Update to latest version 
+
+ -- Joe Cooper <joe@virtualmin.com>  Sat, 22 Jul 2017 20:58:36 -0500
+
 virtualmin-config (6.0.6-1.1) stable; urgency=low
 
   * Fix detection of systemd on Debian, for real 
