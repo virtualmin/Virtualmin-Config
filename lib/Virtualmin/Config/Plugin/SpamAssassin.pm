@@ -35,7 +35,9 @@ sub actions {
   sleep 0.3;    # XXX Useless sleep, prevent spin from ending before it starts
   eval {
     foreign_require("init",   "init-lib.pl");
+    # Stop it, so a default install is small. Can be enabled during wizard.
     init::disable_at_boot("spamassassin");
+    init::stop_action("spamassassin");
     $self->done(1);    # OK!
   };
   if ($@) {
