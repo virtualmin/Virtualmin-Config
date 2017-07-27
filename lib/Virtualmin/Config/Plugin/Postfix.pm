@@ -42,7 +42,7 @@ sub actions {
     # that causes postconf to error out.
     {
       my $err = `sed -i "s/^inet_interfaces = localhost/inet_interfaces = all/" /etc/postfix/main.cf 2>&1`;
-      if $err {
+      if ($err) {
         $log->warning("Something is wrong with the Postfix /etc/postfix/main.cf. Is it missing?");
       }
     }
