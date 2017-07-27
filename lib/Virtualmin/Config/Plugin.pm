@@ -16,12 +16,14 @@ our $spinner;
 our $trust_unknown_referers = 1;
 our $error_must_die         = 1;
 
+our $count = 1;
+
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
 sub new {
   my ($class, %args) = @_;
 
-  my $self = {name => $args{name}, depends => $args{depends}};
+  my $self = {name => $args{name}, depends => $args{depends}, total => $args{ total }};
   bless $self, $class;
 
   return $self;
@@ -46,6 +48,9 @@ sub spin {
   my $self    = shift;
   my $name    = $self->name();
   my $message = shift // "Configuring " . $name;
+  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->{total} .
+    RESET . "] " . $message;
+  $count++;
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
   $message = $message . " " x (79 - length($message) - $spinner->{'last_size'});
