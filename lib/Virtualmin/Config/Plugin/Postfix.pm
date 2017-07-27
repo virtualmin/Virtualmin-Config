@@ -8,6 +8,8 @@ our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 sub new {
   my $class = shift;
 
@@ -35,6 +37,15 @@ sub actions {
   eval {
     foreign_require("init",    "init-lib.pl");
     foreign_require("postfix", "postfix-lib.pl");
+
+    # Alibaba Cloud images have a broken network config (no IPv6 lo)
+    # that causes postconf to error out.
+    {
+      my $err = `sed -i "s/^inet_interfaces = localhost/inet_interfaces = all/" /etc/postfix/main.cf 2>&1`;
+      if $err {
+        $log->warning("Something is wrong with the Postfix /etc/postfix/main.cf. Is it missing?");
+      }
+    }
 
     # Debian doesn't get a default main.cf unless apt-get is run
     # interactively.

@@ -8,6 +8,8 @@ our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 sub new {
   my $class = shift;
 
@@ -37,7 +39,6 @@ sub actions {
       = qw(ssh smtp submission domain ftp ftp-data pop3 pop3s imap imaps http https 2222 10000 20000);
     my @udpports = qw(domain);
 
-# And another thing (the Right Thing) for RHEL/CentOS/Fedora/Mandriva/Debian/Ubuntu
     foreign_require("firewall", "firewall-lib.pl");
     my @tables = firewall::get_iptables_save();
     my @allrules = map { @{$_->{'rules'}} } @tables;
@@ -53,7 +54,7 @@ sub actions {
       }
       foreach (@tcpports) {
 
-        #print "  Allowing traffic on TCP port: $_\n";
+        $log->info("Allowing traffic on TCP port: $_\n");
         my $newrule = {
           'chain' => 'INPUT',
           'm'     => [['', 'tcp']],
@@ -65,7 +66,7 @@ sub actions {
       }
       foreach (@udpports) {
 
-        #print "  Allowing traffic on UDP port: $_\n";
+        $log->info("Allowing traffic on UDP port: $_\n");
         my $newrule = {
           'chain' => 'INPUT',
           'm'     => [['', 'udp']],
