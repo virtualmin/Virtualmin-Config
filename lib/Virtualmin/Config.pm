@@ -54,11 +54,12 @@ sub run {
   my @plugins = $self->_gather_plugins();
   @plugins = $self->_order_plugins(@plugins);
   my $total = $#plugins;
+  $log->info("Total plugins to be run: $total");
   for (@plugins) {
     my $pkg = "Virtualmin::Config::Plugin::$_";
     load $pkg || die "Loading Plugin failed: $_";
-    my $plugin = $pkg->new( total => $total );
-    $plugin->actions($total);
+    my $plugin = $pkg->new( { total => $total } );
+    $plugin->actions();
     if ($self->{test} && $plugin->can('tests')) {
       $plugin->tests();
     }
