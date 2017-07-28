@@ -57,6 +57,7 @@ sub spin {
   my $message = shift // "Configuring " . $name;
   $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->total() .
     RESET . "] " . $message;
+  my $color_correction = length(YELLOW . RESET . GREEN . RESET);
   $count++;
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
