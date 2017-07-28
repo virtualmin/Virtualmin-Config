@@ -9,10 +9,10 @@ our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 
 sub new {
-  my $class = shift;
+  my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin']);
+  my $self = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin'], %args);
 
   return $self;
 }

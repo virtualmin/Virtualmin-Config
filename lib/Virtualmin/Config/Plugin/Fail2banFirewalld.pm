@@ -14,10 +14,10 @@ our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 
 sub new {
-  my $class = shift;
+  my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => ['Firewalld']);
+  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => ['Firewalld'], %args);
 
   return $self;
 }

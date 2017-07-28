@@ -7,10 +7,10 @@ use parent 'Virtualmin::Config::Plugin';
 use Log::Log4perl;
 
 sub new {
-  my $class = shift;
+  my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Test');
+  my $self = $class->SUPER::new(name => 'Test', %args);
   return $self;
 }
 

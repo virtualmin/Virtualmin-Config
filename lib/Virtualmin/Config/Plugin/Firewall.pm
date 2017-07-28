@@ -11,10 +11,10 @@ our $trust_unknown_referers = 1;
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
 sub new {
-  my $class = shift;
+  my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Firewall');
+  my $self = $class->SUPER::new(name => 'Firewall', %args);
 
   return $self;
 }

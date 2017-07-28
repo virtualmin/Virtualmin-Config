@@ -5,10 +5,10 @@ use 5.010;
 use parent qw(Virtualmin::Config::Plugin);
 
 sub new {
-  my $class = shift;
+  my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Test2', depends => ['Test']);
+  my $self = $class->SUPER::new(name => 'Test2', depends => ['Test'], %args);
 
   return $self;
 }
