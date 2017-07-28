@@ -23,7 +23,7 @@ my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 sub new {
   my ($class, %args) = @_;
 
-  my $self = {name => $args{name}, depends => $args{depends}, total => $args{ total }};
+  my $self = {name => $args{name}, depends => $args{depends}, total => $args{total}};
   bless $self, $class;
 
   return $self;
@@ -54,9 +54,8 @@ sub total {
 sub spin {
   my $self    = shift;
   my $name    = $self->name();
-  my $total   = $self->total();
   my $message = shift // "Configuring " . $name;
-  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $total .
+  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->total() .
     RESET . "] " . $message;
   $count++;
   $log->info($message);
