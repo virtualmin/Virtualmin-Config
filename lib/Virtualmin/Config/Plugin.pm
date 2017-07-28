@@ -44,11 +44,19 @@ sub depends {
   return $self->{depends};
 }
 
+# Total number of plugins being run for running count
+sub total {
+  my ($self, $total) = @_;
+  if ($total) { $self->{total} = shift }
+  returnn $self->{total};
+}
+
 sub spin {
   my $self    = shift;
   my $name    = $self->name();
+  my $total   = $self->total();
   my $message = shift // "Configuring " . $name;
-  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->{total} .
+  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $total .
     RESET . "] " . $message;
   $count++;
   $log->info($message);
