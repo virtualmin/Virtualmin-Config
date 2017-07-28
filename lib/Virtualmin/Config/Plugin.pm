@@ -48,7 +48,7 @@ sub depends {
 sub total {
   my ($self, $total) = @_;
   if ($total) { $self->{total} = shift }
-  returnn $self->{total};
+  return $self->{total};
 }
 
 sub spin {
