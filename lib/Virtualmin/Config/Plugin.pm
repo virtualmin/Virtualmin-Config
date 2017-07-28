@@ -61,7 +61,7 @@ sub spin {
   $count++;
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
-  $message = $message . " " x (79 - length($message) - $spinner->{'last_size'});
+  $message = $message . " " x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
   print $message;
   $spinner->auto_start();
 }
