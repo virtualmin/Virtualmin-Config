@@ -6,7 +6,7 @@ use Time::HiRes qw( sleep );
 
 # Plugin base class, just runs stuff with spinner and status
 use Virtualmin::Config;
-use Term::ANSIColor 2.01 qw(:constants colorstrip);
+use Term::ANSIColor 2.01 qw(:constants);
 use Term::Spinner::Color;
 
 # TODO I don't like this, but can't figure out how to put it into
@@ -55,12 +55,12 @@ sub spin {
   my $self    = shift;
   my $name    = $self->name();
   my $message = shift // "Configuring " . $name;
+  $log->info($message);
+  $spinner = Term::Spinner::Color->new();
   $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->total() .
     RESET . "] " . $message;
   my $color_correction = length(YELLOW . RESET . GREEN . RESET);
   $count++;
-  $log->info(colorstrip($message));
-  $spinner = Term::Spinner::Color->new();
   $message = $message . " " x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
   print $message;
   $spinner->auto_start();
