@@ -6,7 +6,7 @@ use Time::HiRes qw( sleep );
 
 # Plugin base class, just runs stuff with spinner and status
 use Virtualmin::Config;
-use Term::ANSIColor 2.01 qw(:constants);
+use Term::ANSIColor qw(:constants);
 use Term::Spinner::Color;
 
 # TODO I don't like this, but can't figure out how to put it into
