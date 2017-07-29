@@ -6,7 +6,7 @@ use Time::HiRes qw( sleep );
 
 # Plugin base class, just runs stuff with spinner and status
 use Virtualmin::Config;
-use Term::ANSIColor qw(:constants);
+use Term::ANSIColor qw(:constants colorstrip);
 use Term::Spinner::Color;
 
 # TODO I don't like this, but can't figure out how to put it into
@@ -59,7 +59,7 @@ sub spin {
     RESET . "] " . $message;
   my $color_correction = length(YELLOW . RESET . GREEN . RESET);
   $count++;
-  $log->info($message);
+  $log->info(colorstrip($message));
   $spinner = Term::Spinner::Color->new();
   $message = $message . " " x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
   print $message;
