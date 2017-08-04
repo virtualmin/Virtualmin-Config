@@ -1,4 +1,10 @@
-virtualmin-config (6.0.8-1) virtualmin-universal; urgency=low
+virtualmin-config (6.0.9-1) stable; urgency=low
+
+  * Update to fix undefined var issue
+
+ -- Joe Cooper <joe@virtualmin.com>  Fri, 04 Aug 2017 03:24:32 -0500
+
+virtualmin-config (6.0.8-1) stable; urgency=low
 
   * Update to latest version 
 
