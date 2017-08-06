@@ -13,7 +13,8 @@ sub new {
   my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'AWStats', depends => ['Apache'], %args);
+  my $self
+    = $class->SUPER::new(name => 'AWStats', depends => ['Apache'], %args);
 
   return $self;
 }

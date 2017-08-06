@@ -31,7 +31,7 @@ sub actions {
   eval 'use WebminCore';    ## no critic
   init_config();
 
-  if (! -x "/usr/sbin/setsebool") {
+  if (!-x "/usr/sbin/setsebool") {
     log->info("SELinux doesn't seem to be installed. Skipping.");
     return 1;
   }

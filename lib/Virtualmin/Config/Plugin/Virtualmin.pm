@@ -12,7 +12,8 @@ sub new {
   my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin'], %args);
+  my $self
+    = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin'], %args);
 
   return $self;
 }
@@ -191,10 +192,10 @@ sub actions {
     save_module_config(\%uconfig, "useradmin");
 
     # Turn on caching for downloads by Virtualmin
-    if ( !$gconfig{'cache_size'} ) {
+    if (!$gconfig{'cache_size'}) {
       $gconfig{'cache_size'} = 50 * 1024 * 1024;
       $gconfig{'cache_mods'} = "virtual-server";
-      write_file( "$config_directory/config", \%gconfig );
+      write_file("$config_directory/config", \%gconfig);
     }
 
     $self->done(1);    # OK!

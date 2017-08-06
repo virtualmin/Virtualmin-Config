@@ -59,6 +59,7 @@ sub actions {
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
       }
+
       # New Ubuntu doesn't use this.
       unless ($init::init_mode eq "systemd") {
         my $fn             = "/etc/default/apache2";
@@ -81,10 +82,10 @@ sub actions {
       my $adir = "/etc/apache2/mods-available";
       my $edir = "/etc/apache2/mods-enabled";
       foreach my $mod (
-        "actions",    "suexec",    "auth_digest",    "dav_svn",
-        "ssl",        "dav",       "dav_fs",         "fcgid",
-        "rewrite",    "proxy",     "proxy_balancer", "proxy_connect",
-        "proxy_http", "slotmem_shm",                 "cgi"
+        "actions",    "suexec",      "auth_digest",    "dav_svn",
+        "ssl",        "dav",         "dav_fs",         "fcgid",
+        "rewrite",    "proxy",       "proxy_balancer", "proxy_connect",
+        "proxy_http", "slotmem_shm", "cgi"
         )
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
@@ -181,12 +182,12 @@ sub actions {
 
     if (!apache::is_apache_running()) {
       my $err = apache::start_apache();
-      $log->error("Failed to start Apache!")   if ($err);
+      $log->error("Failed to start Apache!") if ($err);
     }
 
     # Force re-check of installed Apache modules
-    unlink($apache::site_file) or
-      $log->error("Failed to unlink $apache::site_file");
+    unlink($apache::site_file)
+      or $log->error("Failed to unlink $apache::site_file");
     $self->done(1);    # OK!
   };
   if ($@) {

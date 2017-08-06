@@ -17,7 +17,7 @@ sub plugins {
   # Modern system with systemd?
   if (-x "/usr/bin/systemctl" || -x "/bin/systemctl") {
     return [
-      "Webmin",       "Nginx",  "Bind",
+      "Webmin",       "Nginx",   "Bind",
       "Dovecot",      "Net",     "AWStats",
       "Postfix",      "MySQL",   "Firewalld",
       "Procmail",     "ProFTPd", "Quotas",
@@ -29,7 +29,7 @@ sub plugins {
   }
   else {
     return [
-      "Webmin",   "Nginx",       "Bind",       "Dovecot",
+      "Webmin",   "Nginx",        "Bind",       "Dovecot",
       "Net",      "AWStats",      "Postfix",    "MySQL",
       "Firewall", "Procmail",     "ProFTPd",    "Quotas",
       "SASL",     "Shells",       "Status",     "Upgrade",

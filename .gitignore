@@ -19,3 +19,4 @@ nytprof.out
 *.bs
 /_eumm/
 .perl-version
+Virtualmin-Config-*

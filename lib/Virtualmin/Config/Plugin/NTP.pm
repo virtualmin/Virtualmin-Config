@@ -24,7 +24,8 @@ sub actions {
   $self->spin();
   sleep 0.5;
   eval {    # try
-    my $clockfile = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
+    my $clockfile
+      = "/sys/devices/system/clocksource/clocksource0/current_clocksource";
     if (-e $clockfile) {
       open(my $CLOCK, "<", $clockfile) or die "Couldn't open $clockfile: $!";
       $clocksource = do { local $/ = <$CLOCK> };
@@ -34,9 +35,10 @@ sub actions {
     if ($clocksource eq "kvm-clock") {
       $log->info("System clock source is kvm-clock, skipping NTP");
     }
-    elsif ($clocksource eq "" ||
-           $clocksource eq "jiffies" ||
-           ! defined($clocksource)) {
+    elsif ($clocksource eq ""
+      || $clocksource eq "jiffies"
+      || !defined($clocksource))
+    {
       $log->info("Could not determine system clock source, skipping NTP");
     }
     elsif (-x "/usr/sbin/ntpdate-debian") {
@@ -52,8 +54,8 @@ sub actions {
       }
     }
 
-    $self->done(1);      # OK!
-  } or do {    # catch
+    $self->done(1);    # OK!
+  } or do {            # catch
     $self->done(0);    # Something failed
     $log->info("Something went wrong with NTP configuration");
     return;

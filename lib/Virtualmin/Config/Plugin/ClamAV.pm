@@ -38,17 +38,17 @@ sub actions {
     # Make sure freshclam is not disabled
     my $fcconf = "/etc/sysconfig/freshclam";
     if (-r $fcconf) {
-            my $lref = &read_file_lines($fcconf);
-            foreach my $l (@$lref) {
-                    if ($l =~ /^FRESHCLAM_DELAY=disabled/) {
-                            $l = "#$l";
-                    }
-            }
-            flush_file_lines($fcconf);
+      my $lref = &read_file_lines($fcconf);
+      foreach my $l (@$lref) {
+        if ($l =~ /^FRESHCLAM_DELAY=disabled/) {
+          $l = "#$l";
+        }
+      }
+      flush_file_lines($fcconf);
     }
 
     foreign_require("init", "init-lib.pl");
-    if ( ! init::action_status("clamav-freshclam") ) {
+    if (!init::action_status("clamav-freshclam")) {
       $self->logsystem("freshclam");
     }
 
@@ -70,33 +70,36 @@ sub tests {
   push(@INC, $root);
   eval 'use WebminCore';    ## no critic
   init_config();
+
   # RHEL/CentOS/Fedora
   # Start clamd@scan and run clamdscan just to prime the damned thing.
   foreign_require("init", "init-lib.pl");
   $self->done(1);
   eval {
-    if($gconfig{'os_type'} eq 'redhat-linux') {
+    if ($gconfig{'os_type'} eq 'redhat-linux') {
       if (init::action_status('clamd@scan')) {
         init::enable_at_boot('clamd@scan');
         init::start_action('clamd@scan');
-      } elsif (init::action_status('clamd')) {
+      }
+      elsif (init::action_status('clamd')) {
         init::enable_at_boot('clamd');
         init::start_action('clamd');
       }
-      sleep 60; # XXX This is ridiculous. But, clam is ridiculous.
-      # If RHEL/CentOS/Fedora, the clamav packages don't work, by default.
-      if ( ! -e '/etc/clamd.conf' ) {
-        eval { symlink('/etc/clamd.d/scan.conf', '/etc/clamd.conf'); }
+      sleep 60;    # XXX This is ridiculous. But, clam is ridiculous.
+          # If RHEL/CentOS/Fedora, the clamav packages don't work, by default.
+      if (!-e '/etc/clamd.conf') {
+        eval { symlink('/etc/clamd.d/scan.conf', '/etc/clamd.conf'); };
       }
       my $res = `clamdscan --quiet - < /etc/webmin/miniserv.conf`;
       if ($res) { die 1; }
       if (init::action_status('clamd@scan')) {
         init::stop_action('clamd@scan');
-      } elsif (init::action_status('clamd')) {
+      }
+      elsif (init::action_status('clamd')) {
         init::stop_action('clamd');
       }
     }
-    elsif($gconfig{'os_type'} eq 'debian-linux') {
+    elsif ($gconfig{'os_type'} eq 'debian-linux') {
       init::enable_at_boot('clamav-daemon');
       init::start_action('clamav-daemon');
       sleep 60;

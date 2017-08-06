@@ -41,9 +41,12 @@ sub actions {
     # Alibaba Cloud images have a broken network config (no IPv6 lo)
     # that causes postconf to error out.
     {
-      my $err = `sed -i "s/^inet_interfaces = localhost/inet_interfaces = all/" /etc/postfix/main.cf 2>&1`;
+      my $err
+        = `sed -i "s/^inet_interfaces = localhost/inet_interfaces = all/" /etc/postfix/main.cf 2>&1`;
       if ($err) {
-        $log->warning("Something is wrong with the Postfix /etc/postfix/main.cf. Is it missing?");
+        $log->warning(
+          "Something is wrong with the Postfix /etc/postfix/main.cf. Is it missing?"
+        );
       }
     }
 

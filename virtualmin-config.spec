@@ -16,11 +16,11 @@ BuildRequires:  perl(Term::ANSIColor)
 BuildRequires:  perl(Term::Spinner::Color)
 BuildRequires:  perl(Test::More)
 BuildRequires:	perl(Module::Load)
-Requires:	webmin
+Requires:	      webmin
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
 Requires:       perl(Term::Spinner::Color)
-Requires:	perl(Module::Load)
+Requires:	      perl(Module::Load)
 
 %description
 This is a mini-framework for configuring elements of a Virtualmin system.

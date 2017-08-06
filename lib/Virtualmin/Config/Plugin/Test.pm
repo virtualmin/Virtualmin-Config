@@ -21,7 +21,7 @@ sub actions {
   use Cwd;
   my $cwd  = getcwd();
   my $root = $self->root();
-  my $log = Log::Log4perl->get_logger();
+  my $log  = Log::Log4perl->get_logger();
   $log->info("This is logging from the test plugin.");
   chdir($root);
   $0 = "$root/virtual-server/config-system.pl";
@@ -52,6 +52,7 @@ sub actions {
 
 sub tests {
   my $self = shift;
+
   # Pretend to test something
   $self->spin();
   eval {

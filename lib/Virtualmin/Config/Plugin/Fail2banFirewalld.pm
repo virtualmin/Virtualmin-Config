@@ -17,7 +17,11 @@ sub new {
   my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Fail2banFirewalld', depends => ['Firewalld'], %args);
+  my $self = $class->SUPER::new(
+    name    => 'Fail2banFirewalld',
+    depends => ['Firewalld'],
+    %args
+  );
 
   return $self;
 }

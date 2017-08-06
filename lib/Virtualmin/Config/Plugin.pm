@@ -23,7 +23,8 @@ my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 sub new {
   my ($class, %args) = @_;
 
-  my $self = {name => $args{name}, depends => $args{depends}, total => $args{total}};
+  my $self
+    = {name => $args{name}, depends => $args{depends}, total => $args{total}};
   bless $self, $class;
 
   return $self;
@@ -57,11 +58,19 @@ sub spin {
   my $message = shift // "Configuring " . $name;
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
-  $message = "[" . YELLOW . $count . RESET . "/" . GREEN . $self->total() .
-    RESET . "] " . $message;
+  $message
+    = "["
+    . YELLOW
+    . $count
+    . RESET . "/"
+    . GREEN
+    . $self->total()
+    . RESET . "] "
+    . $message;
   my $color_correction = length(YELLOW . RESET . GREEN . RESET);
   $count++;
-  $message = $message . " " x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
+  $message = $message . " "
+    x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
   print $message;
   $spinner->auto_start();
 }
@@ -108,7 +117,7 @@ sub root {
 # Runs a single system command, and returns the result code.
 sub logsystem {
   my $self = shift;
-  my $cmd = shift;
+  my $cmd  = shift;
 
   my $res = `$cmd 2>&1` // "[]";
   $log->info("Code: $? Result: $res");
