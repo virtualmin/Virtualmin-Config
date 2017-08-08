@@ -203,6 +203,33 @@ bundle, and performs the configuration for the whole stack.
 It includes plugins for all of the common tasks in a Virtualmin system, such
 as Apache, MySQL/MariaDB, Postfix, SpamAssassin, etc.
 
+=head1 INSTALLATION
+
+The recommended installation method is to use native packages for your
+distribution. We provide packages for Debian, Ubuntu, CentOS/RHEL, and Fedora
+in our repositories.
+
+You can use the standard Perl process to install from the source tarball or
+git clone:
+
+    perl Makefile.PL
+    make
+    make test
+    make install
+
+Or, use your system native package manager. The followin assumes you have all
+of the packages needed to build native packages installed.
+
+To build a dpkg for Debian/Ubuntu:
+
+    dpkg-buildpackage -b -rfakeroot -us -uc
+
+And, for CentOS/Fedora/RHEL/etc. RPM distributions:
+
+    dzil build # Creates a tarball
+    cp Virtualmin-Config-*.tar.gz ~/rpmbuild/SOURCES
+    rpmbuild -bb virtualmin-config.spec
+
 =head1 ATTRIBUTES
 
 =over
