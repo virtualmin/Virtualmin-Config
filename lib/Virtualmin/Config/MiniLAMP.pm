@@ -17,11 +17,11 @@ sub plugins {
   # Modern system with systemd?
   if (-x "/usr/bin/systemctl" || -x "/bin/systemctl") {
     return [
-      "Webmin",  "Apache",  "Bind",      "Net",
-      "Postfix", "MySQL",   "Firewalld", "Procmail",
-      "ProFTPd", "Quotas",  "Shells",    "Status",
-      "Upgrade", "Usermin", "Webalizer", "MiniVirtualmin",
-      "NTP",     "Fail2banFirewalld"
+      "Webmin",  "Apache",  "Bind",           "Net",
+      "Postfix", "MySQL",   "Firewalld",      "Procmail",
+      "ProFTPd", "Quotas",  "Shells",         "Status",
+      "Upgrade", "Usermin", "MiniVirtualmin", "NTP",
+      "Fail2banFirewalld"
     ];
   }
   else {

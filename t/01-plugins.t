@@ -9,12 +9,14 @@ my $bundle = Virtualmin::Config->new(bundle => 'Dummy');
 my @plugins = $bundle->_gather_plugins();
 ok(
   map {
-    grep {/Test/} @{$_}
+    grep {/Test/}
+      @{$_}
   } @plugins
 );
 ok(
   map {
-    grep {/Test2/} @{$_}
+    grep {/Test2/}
+      @{$_}
   } @plugins
 );
 
@@ -22,7 +24,8 @@ my $include = Virtualmin::Config->new(include => ['Test']);
 my @plugins2 = $include->_gather_plugins();
 ok(
   map {
-    grep {/^Test$/} @{$_}
+    grep {/^Test$/}
+      @{$_}
   } @plugins2
 );
 ok(scalar @plugins2 == 1);
