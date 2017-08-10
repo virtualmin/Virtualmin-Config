@@ -14,7 +14,7 @@ sub new {
 
   # inherit from Plugin
   my $self
-    = $class->SUPER::new(name => 'AWStats', depends => ['Apache'], %args);
+    = $class->SUPER::new(name => 'AWStats', %args);
 
   return $self;
 }

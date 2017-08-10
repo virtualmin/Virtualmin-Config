@@ -14,8 +14,8 @@ sub new {
 
 sub plugins {
 
-  # Modern system with systemd?
-  if (-x "/usr/bin/systemctl" || -x "/bin/systemctl") {
+  # Modern system with firewalld?
+  if (-x "/usr/bin/firewall-cmd" || -x "/bin/firewall-cmd") {
     return [
       "Webmin",  "Apache",  "Bind",           "Net",
       "Postfix", "MySQL",   "Firewalld",      "Procmail",
