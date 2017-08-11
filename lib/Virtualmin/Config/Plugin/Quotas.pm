@@ -52,7 +52,7 @@ sub actions {
     elsif ($gconfig{'os_type'} =~ /-linux$/) {
       $mount::options{'usrquota'} = '';
       $mount::options{'grpquota'} = '';
-      #$mount::options{'quota'}    = '';
+      $mount::options{'quota'}    = '';
     }
     elsif ($gconfig{'os_type'} =~ /freebsd|netbsd|openbsd|macos/) {
 
@@ -90,12 +90,12 @@ sub actions {
       $mounts[$idx]->[5]
     );
     my $err = mount::remount_dir($dir, $dev, $type, $opts);
-    if ($dir eq "/" || $err) {
+    if ($type eq "xfs" || $err) {
       print "\b" x 7 . " " x 7;
       print
         "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
       print
-        "You may need to reboot your system, and enable quotas in the Disk\n";
+        "You may need to reboot your system, and/or enable quotas in the Disk\n";
       print "Quotas module.";
       print " " x 65;
       $res = 0;
