@@ -52,7 +52,7 @@ sub actions {
     elsif ($gconfig{'os_type'} =~ /-linux$/) {
       $mount::options{'usrquota'} = '';
       $mount::options{'grpquota'} = '';
-      $mount::options{'quota'}    = '';
+      #$mount::options{'quota'}    = '';
     }
     elsif ($gconfig{'os_type'} =~ /freebsd|netbsd|openbsd|macos/) {
 
