@@ -1,3 +1,15 @@
+virtualmin-config (6.0.11) stable; urgency=low
+
+  * LEMP and minimal stack bugfixes 
+
+ -- Joe Cooper <joe@virtualmin.com>  Thu, 10 Aug 2017 01:21:51 -0500
+
+virtualmin-config (6.0.10) stable; urgency=low
+
+  * New minimal modes for LAMP and LEMP
+
+ -- Joe Cooper <joe@virtualmin.com>  Tue, 08 Aug 2017 06:07:16 -0500
+
 virtualmin-config (6.0.9-1) stable; urgency=low
 
   * Update to fix undefined var issue
