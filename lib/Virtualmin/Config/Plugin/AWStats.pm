@@ -13,8 +13,7 @@ sub new {
   my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self
-    = $class->SUPER::new(name => 'AWStats', %args);
+  my $self = $class->SUPER::new(name => 'AWStats', %args);
 
   return $self;
 }

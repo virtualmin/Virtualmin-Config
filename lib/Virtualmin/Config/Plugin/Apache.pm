@@ -36,8 +36,12 @@ sub actions {
   eval {
     foreign_require("init",   "init-lib.pl");
     foreign_require("apache", "apache-lib.pl");
-    if    (-e "/etc/init.d/httpd")   { init::enable_at_boot("httpd"); }
-    elsif (-e "/etc/init.d/apache2") { init::enable_at_boot("apache2"); }
+    if (-e "/etc/init.d/httpd" or -e "/etc/httpd/conf/httpd.conf") {
+      init::enable_at_boot("httpd");
+    }
+    elsif (-e "/etc/init.d/apache2" or -e "/etc/apache2/apache2.conf") {
+      init::enable_at_boot("apache2");
+    }
     elsif (-e "/usr/local/etc/rc.d/apache22") {
       init::enable_at_boot("apache22");
     }
