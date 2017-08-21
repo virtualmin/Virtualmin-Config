@@ -7,46 +7,34 @@ use 5.010;
 use ExtUtils::MakeMaker;
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "Configure a system for use by Virtualmin",
-  "AUTHOR" => "Joe Cooper <swelljoe\@gmail.com>",
-  "CONFIGURE_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0
-  },
-  "DISTNAME" => "Virtualmin-Config",
-  "EXE_FILES" => [
-    "bin/virtualmin-config-system"
-  ],
-  "LICENSE" => "gpl",
-  "MIN_PERL_VERSION" => "5.010",
-  "NAME" => "Virtualmin::Config",
-  "PREREQ_PM" => {
-    "Log::Log4perl" => 0,
-    "Term::ANSIColor" => 0,
-    "Term::Spinner::Color" => 0
-  },
-  "TEST_REQUIRES" => {
-    "ExtUtils::MakeMaker" => 0,
-    "File::Spec" => 0,
-    "Test::More" => 0
-  },
-  "VERSION" => "6.0.12",
-  "test" => {
-    "TESTS" => "t/*.t"
-  }
+  "ABSTRACT"           => "Configure a system for use by Virtualmin",
+  "AUTHOR"             => "Joe Cooper <swelljoe\@gmail.com>",
+  "CONFIGURE_REQUIRES" => {"ExtUtils::MakeMaker" => 0},
+  "DISTNAME"           => "Virtualmin-Config",
+  "EXE_FILES"          => ["bin/virtualmin-config-system"],
+  "LICENSE"            => "gpl",
+  "MIN_PERL_VERSION"   => "5.010",
+  "NAME"               => "Virtualmin::Config",
+  "PREREQ_PM" =>
+    {"Log::Log4perl" => 0, "Term::ANSIColor" => 0, "Term::Spinner::Color" => 0},
+  "TEST_REQUIRES" =>
+    {"ExtUtils::MakeMaker" => 0, "File::Spec" => 0, "Test::More" => 0},
+  "VERSION" => "6.0.13",
+  "test"    => {"TESTS" => "t/*.t"}
 );
 
 
 my %FallbackPrereqs = (
-  "ExtUtils::MakeMaker" => 0,
-  "File::Spec" => 0,
-  "Log::Log4perl" => 0,
-  "Term::ANSIColor" => 0,
+  "ExtUtils::MakeMaker"  => 0,
+  "File::Spec"           => 0,
+  "Log::Log4perl"        => 0,
+  "Term::ANSIColor"      => 0,
   "Term::Spinner::Color" => 0,
-  "Test::More" => 0
+  "Test::More"           => 0
 );
 
 
-unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+unless (eval { ExtUtils::MakeMaker->VERSION(6.63_03) }) {
   delete $WriteMakefileArgs{TEST_REQUIRES};
   delete $WriteMakefileArgs{BUILD_REQUIRES};
   $WriteMakefileArgs{PREREQ_PM} = \%FallbackPrereqs;

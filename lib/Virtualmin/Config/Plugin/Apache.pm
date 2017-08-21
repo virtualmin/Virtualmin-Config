@@ -36,6 +36,7 @@ sub actions {
   eval {
     foreign_require("init",   "init-lib.pl");
     foreign_require("apache", "apache-lib.pl");
+
     # Start Apache on boot
     if (-e '/etc/init.d/httpd' or -e '/etc/httpd/conf/httpd.conf') {
       init::enable_at_boot('httpd');
@@ -46,6 +47,7 @@ sub actions {
     elsif (-e '/usr/local/etc/rc.d/apache22') {
       init::enable_at_boot('apache22');
     }
+
     # Make sure nginx isn't starting on boot, even if installed
     if (-d '/etc/nginx') {
       init::disable_at_boot('nginx');
