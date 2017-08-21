@@ -34,11 +34,11 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("init", "init-lib.pl");
-    if (init::action_status("named")) {
-      init::enable_at_boot("named");
-    }
-    elsif (init::action_status("bind9")) {
+    if (init::action_status("bind9")) {
       init::enable_at_boot("bind9");
+    }
+    elsif (init::action_status("named")) {
+      init::enable_at_boot("named");
     }
     foreign_require("bind8", "bind8-lib.pl");
     my $conffile = bind8::make_chroot($bind8::config{'named_conf'});
