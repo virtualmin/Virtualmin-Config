@@ -36,14 +36,19 @@ sub actions {
   eval {
     foreign_require("init",   "init-lib.pl");
     foreign_require("apache", "apache-lib.pl");
-    if (-e "/etc/init.d/httpd" or -e "/etc/httpd/conf/httpd.conf") {
-      init::enable_at_boot("httpd");
+    # Start Apache on boot
+    if (-e '/etc/init.d/httpd' or -e '/etc/httpd/conf/httpd.conf') {
+      init::enable_at_boot('httpd');
     }
-    elsif (-e "/etc/init.d/apache2" or -e "/etc/apache2/apache2.conf") {
-      init::enable_at_boot("apache2");
+    elsif (-e '/etc/init.d/apache2' or -e '/etc/apache2/apache2.conf') {
+      init::enable_at_boot('apache2');
     }
-    elsif (-e "/usr/local/etc/rc.d/apache22") {
-      init::enable_at_boot("apache22");
+    elsif (-e '/usr/local/etc/rc.d/apache22') {
+      init::enable_at_boot('apache22');
+    }
+    # Make sure nginx isn't starting on boot, even if installed
+    if (-d '/etc/nginx') {
+      init::disable_at_boot('nginx');
     }
 
     # Fix up some Debian stuff
