@@ -79,11 +79,15 @@ sub done {
   my $self = shift;
   my $res  = shift;
   $spinner->auto_done();
-  if ($res) {
-
+  if ($res==1) {
     # Success!
     $log->info("Succeeded");
     $spinner->ok();
+  }
+  elsif ($res==2) {
+    # Not quite OK
+    $log->warn("Non-fatal error");
+    $spinner->meh();
   }
   else {
     # Failure!

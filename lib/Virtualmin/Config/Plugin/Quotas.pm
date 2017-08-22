@@ -109,7 +109,7 @@ sub actions {
   };
   if ($@) {
     $ENV{'QUOTA_FAILED'} = '1';
-    $self->done(0);
+    $self->done(2); # 2 is a non-fatal error
   }
 }
 
