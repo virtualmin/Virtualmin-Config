@@ -156,6 +156,7 @@ sub actions {
 
     # Comment out config files that conflict
     foreach my $file ("/etc/httpd/conf.d/welcome.conf",
+      "/etc/httpd/conf.d/php.conf",
       "/etc/httpd/conf.d/awstats.conf")
     {
       next if (!-r $file);
