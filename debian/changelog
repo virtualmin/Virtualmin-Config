@@ -1,3 +1,17 @@
+virtualmin-config (6.0.13) stable; urgency=low
+
+  * Quotas warn instead of error
+  * Apache init is smarter about which init system is in use
+  * Add non-fatal error type
+
+ -- Joe Cooper <joe@virtualmin.com>  Tue, 22 Aug 2017 04:34:12 -0500
+
+virtualmin-config (6.0.12) stable; urgency=low
+
+  * Quotas fix 
+
+ -- Joe Cooper <joe@virtualmin.com>  Fri, 11 Aug 2017 07:12:18 -0500
+
 virtualmin-config (6.0.11) stable; urgency=low
 
   * LEMP and minimal stack bugfixes 
