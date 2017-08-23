@@ -39,6 +39,12 @@ sub actions {
     init::enable_at_boot('nginx');
     init::start_action('nginx');
 
+    my %vconfig = &foreign_config("virtual-server");
+    $vconfig{'web'}      = 0;
+    $vconfig{'plugins'}
+      = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
+    save_module_config(\%vconfig, "virtual-server");
+
     $self->done(1);    # OK!
   };
   if ($@) {

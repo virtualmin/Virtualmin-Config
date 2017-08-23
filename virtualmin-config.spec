@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        6.0.12
+Version:        6.0.14
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
@@ -16,11 +16,11 @@ BuildRequires:  perl(Term::ANSIColor)
 BuildRequires:  perl(Term::Spinner::Color)
 BuildRequires:  perl(Test::More)
 BuildRequires:	perl(Module::Load)
-Requires:	      webmin
+Requires:	webmin
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
 Requires:       perl(Term::Spinner::Color)
-Requires:	      perl(Module::Load)
+Requires:	perl(Module::Load)
 
 %description
 This is a mini-framework for configuring elements of a Virtualmin system.
@@ -67,6 +67,15 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Wed Aug 23 2017 Joe Cooper <joe@virtualmin.com> 6.0.14-1
+- Fix non-fatal warn on Quotas
+- Fix some SASL problems
+- Fix Quotas convertquota error by using checkquota instead
+- Make Virtualmin use nginx correctly
+* Tue Aug 22 2017 Joe Cooper <joe@virtualmin.com> 6.0.13-1
+- Fixes for Apache init/systemd detection
+- Non-fatal error on Quotas
+- New non-fatal error result type
 * Fri Jun 23 2017 Joe Cooper <joe@virtualmin.com> 6.0.5-1
 - Fail2ban and Firewalld modules added
 - Handle systemd or not
