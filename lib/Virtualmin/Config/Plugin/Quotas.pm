@@ -98,14 +98,16 @@ sub actions {
         "You may need to reboot your system, and/or enable quotas in the Disk\n";
       print "Quotas module.";
       print " " x 65;
-      $res = 0;
+      $res = 2;
     }
     else {
       # Activate quotas
-      foreign_require("quota", "quota-lib.pl");
-      quota::quotaon($dir, 3);
+      $self->logsystem("modprobe quota_v2");
+      $self->logsystem("quotacheck -vgum $dir");
+      $self->logsystem("quotaon -av");
+      $res = 1;
     }
-    $self->done($res);    # OK!
+    $self->done($res);    # Maybe OK!
   };
   if ($@) {
     $ENV{'QUOTA_FAILED'} = '1';

@@ -42,6 +42,7 @@ sub actions {
     if ( $gconfig{'os_type'} eq "debian-linux"
       or $gconfig{'os_type'} eq "ubuntu-linux")
     {
+      # Update saslauthd default to run inside postfix chroot
       my $fn          = "/etc/default/saslauthd";
       my $sasldefault = read_file_lines($fn) or die "Failed to open $fn!";
       my $idx         = indexof("# START=yes", @$sasldefault);
@@ -51,8 +52,24 @@ sub actions {
       if ($idx >= 0) {
         $sasldefault->[$idx] = "START=yes";
       }
-      push(@$sasldefault,
-        "PARAMS=\"-m /var/spool/postfix/var/run/saslauthd -r\"");
+      # Substitute options and params if already in file
+      foreach my $l (@$sasldefault) {
+        if ($l =~ /OPTIONS/) {
+          $l = 'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd"';
+        }
+        if ($l =~ /PARAMS/) {
+          $l = 'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"';
+        }
+      }
+      # Add them, if not
+      if ( ! grep {/OPTIONS/} @$sasldefault ) {
+        push(@$sasldefault,
+          'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd"');
+      }
+      if ( ! grep {/PARAMS/} @$sasldefault ) {
+        push(@$sasldefault,
+          'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"');
+      }
       flush_file_lines($fn);
       $cf = "/etc/postfix/sasl/smtpd.conf";
       $self->logsystem("mkdir -p -m 755 /var/spool/postfix/var/run/saslauthd");
