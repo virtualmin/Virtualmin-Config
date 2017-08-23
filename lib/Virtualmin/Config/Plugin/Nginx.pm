@@ -41,9 +41,6 @@ sub actions {
 
     my %vconfig = &foreign_config("virtual-server");
     $vconfig{'web'}      = 0;
-    $vconfig{'webalizer'} = 0;
-    $vconfig{'backup_feature_webalizer'} = 0;
-    $vconfig{'avail_webalizer'} = 0;
     $vconfig{'ssl'} = 0;
     $vconfig{'avail_virtualmin-dav'} = '';
     $vconfig{'backup_feature_ssl'} = 0;
