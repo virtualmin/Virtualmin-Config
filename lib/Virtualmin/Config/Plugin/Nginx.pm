@@ -45,10 +45,11 @@ sub actions {
     $vconfig{'backup_feature_webalizer'} = 0;
     $vconfig{'avail_webalizer'} = 0;
     $vconfig{'ssl'} = 0;
+    $vconfig{'avail_virtualmin-dav'} = '';
     $vconfig{'backup_feature_ssl'} = 0;
 
     $vconfig{'plugins'}
-      = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
+      = 'virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
     save_module_config(\%vconfig, "virtual-server");
 
     $self->done(1);    # OK!
