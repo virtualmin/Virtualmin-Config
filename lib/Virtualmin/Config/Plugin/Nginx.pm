@@ -41,6 +41,9 @@ sub actions {
 
     my %vconfig = &foreign_config("virtual-server");
     $vconfig{'web'}      = 0;
+    $vconfig{'webalizer'} = 0;
+    $vconfig{'backup_feature_webalizer'} = 0;
+    $vconfig{'avail_webalizer'} = 0;
     $vconfig{'plugins'}
       = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
     save_module_config(\%vconfig, "virtual-server");
