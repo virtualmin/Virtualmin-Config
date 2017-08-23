@@ -52,6 +52,7 @@ sub actions {
       if ($idx >= 0) {
         $sasldefault->[$idx] = "START=yes";
       }
+
       # Substitute options and params if already in file
       foreach my $l (@$sasldefault) {
         if ($l =~ /OPTIONS/) {
@@ -61,12 +62,13 @@ sub actions {
           $l = 'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"';
         }
       }
+
       # Add them, if not
-      if ( ! grep {/OPTIONS/} @$sasldefault ) {
+      if (!grep {/OPTIONS/} @$sasldefault) {
         push(@$sasldefault,
           'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd"');
       }
-      if ( ! grep {/PARAMS/} @$sasldefault ) {
+      if (!grep {/PARAMS/} @$sasldefault) {
         push(@$sasldefault,
           'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"');
       }

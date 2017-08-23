@@ -40,10 +40,10 @@ sub actions {
     init::start_action('nginx');
 
     my %vconfig = &foreign_config("virtual-server");
-    $vconfig{'web'}      = 0;
-    $vconfig{'ssl'} = 0;
+    $vconfig{'web'}                  = 0;
+    $vconfig{'ssl'}                  = 0;
     $vconfig{'avail_virtualmin-dav'} = '';
-    $vconfig{'backup_feature_ssl'} = 0;
+    $vconfig{'backup_feature_ssl'}   = 0;
 
     $vconfig{'plugins'}
       = 'virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
