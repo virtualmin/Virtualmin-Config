@@ -159,10 +159,31 @@ sub actions {
       "/etc/httpd/conf.d/php.conf", "/etc/httpd/conf.d/awstats.conf")
     {
       next if (!-r $file);
-      my $lref = &read_file_lines($file);
+      my $lref = read_file_lines($file);
       foreach my $l (@$lref) {
         if ($l !~ /^\s*#/) {
           $l = "#" . $l;
+        }
+      }
+      flush_file_lines($file);
+    }
+
+    # Remove default SSL VirtualHost on RH systems
+    if (-r '/etc/httpd/conf.d/ssl.conf') {
+      my $file = '/etc/httpd/conf.d/ssl.conf';
+      my $lref = read_file_lines($file);
+      my $virtual_host_section = 0;
+      foreach my $l (@$lref) {
+        if ($l !~ /^\s*#/) {
+          if ($l =~ /^\s*<VirtualHost/) {
+            $virtual_host_section = 1;
+          }
+          if ($virtual_host_section == 1) {
+            $l = "#" . $l;
+          }
+          if ($l =~ /<\/VirtualHost/) {
+            $virtual_host_section = 0;
+          }
         }
       }
       flush_file_lines($file);
