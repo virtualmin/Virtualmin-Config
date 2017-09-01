@@ -35,13 +35,20 @@ sub actions {
   $self->spin();
   eval {
     my %vconfig = &foreign_config("virtual-server");
-    $vconfig{'mail_system'}      = 0;
-    $vconfig{'aliascopy'}        = 1;
-    $vconfig{'home_base'}        = "/home";
-    $vconfig{'spam'}             = 1;
-    $vconfig{'virus'}            = 1;
+    $vconfig{'mail_system'} = 0;
+    $vconfig{'aliascopy'}   = 1;
+    $vconfig{'home_base'}   = "/home";
+    if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
+      $vconfig{'spam'}  = 0;
+      $vconfig{'virus'} = 0;
+      $vconfig{'postgresql'}       = 0;
+    }
+    else {
+      $vconfig{'spam'}  = 1;
+      $vconfig{'virus'} = 1;
+      $vconfig{'postgresql'}       = 1;
+    }
     $vconfig{'ftp'}              = 2;
-    $vconfig{'postgresql'}       = 1;
     $vconfig{'logrotate'}        = 3;
     $vconfig{'default_procmail'} = 1;
     $vconfig{'bind_spfall'}      = 0;
@@ -49,6 +56,7 @@ sub actions {
     $vconfig{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
     $vconfig{'bccs'}             = 1;
     $vconfig{'reseller_theme'}   = "authentic-theme";
+
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
       $vconfig{'ssl'}                  = 0;
       $vconfig{'web'}                  = 0;

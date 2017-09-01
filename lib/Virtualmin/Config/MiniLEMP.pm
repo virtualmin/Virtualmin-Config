@@ -20,7 +20,7 @@ sub plugins {
       "Webmin",  "Nginx",   "Bind",           "Net",
       "Postfix", "MySQL",   "Firewalld",      "Procmail",
       "ProFTPd", "Quotas",  "Shells",         "Status",
-      "Upgrade", "Usermin", "MiniVirtualmin", "NTP",
+      "Upgrade", "Usermin", "Virtualmin", "NTP",
       "Fail2banFirewalld"
     ];
   }
