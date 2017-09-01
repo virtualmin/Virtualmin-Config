@@ -34,8 +34,6 @@ sub actions {
   $self->spin();
   eval {
     if (foreign_check("net")) {
-
-      #print "Configuring resolv.conf to use my DNS server\n";
       foreign_require("net", "net-lib.pl");
       my $dns = net::get_dns_config();
       if (indexof("127.0.0.1", @{$dns->{'nameserver'}}) < 0) {
@@ -43,6 +41,19 @@ sub actions {
         net::save_dns_config($dns);
       }
 
+      # Check to see if we're configured with dhcp
+      my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
+      if (@dhcp) {
+        log_debug("Detected DHCP-configured network. This isn't ideal.");
+        my $lref;
+        if (-e '/etc/dhcp/dhclient.conf') {
+          $lref = read_file_lines('/etc/dhcp/dhclient.conf');
+          if (indexof("prepend domain-name-servers 127.0.0.1;", @{$lref}) < 0) {
+            log_debug("Adding name server 127.0.0.1 to dhcp configuration.");
+            push ( @{$lref}, 'prepend domain-name-servers 127.0.0.1;' );
+          }
+        }
+      }
       # Restart Postfix so that it picks up the new resolv.conf
       foreign_require("virtual-server");
       virtual_server::stop_service_mail();
