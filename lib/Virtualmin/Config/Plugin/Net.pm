@@ -8,6 +8,8 @@ our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 sub new {
   my ($class, %args) = @_;
 
@@ -44,16 +46,27 @@ sub actions {
       # Check to see if we're configured with dhcp
       my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
       if (@dhcp) {
-        log_debug("Detected DHCP-configured network. This isn't ideal.");
+        $log->warn("Detected DHCP-configured network. This isn't ideal.");
         my $lref;
-        if (-e '/etc/dhcp/dhclient.conf') {
-          $lref = read_file_lines('/etc/dhcp/dhclient.conf');
+        my $file = '/etc/dhcp/dhclient.conf';
+        if (-e $file) {
+          $lref = read_file_lines($file);
           if (indexof("prepend domain-name-servers 127.0.0.1;", @{$lref}) < 0) {
-            log_debug("Adding name server 127.0.0.1 to dhcp configuration.");
+            $log->info("Adding name server 127.0.0.1 to dhcp configuration.");
             push ( @{$lref}, 'prepend domain-name-servers 127.0.0.1;' );
           }
+          flush_file_lines($file);
         }
+        # Force 127.0.0.1 into name servers in resolv.conf
+        # XXX This shouldn't be necessary. There's some kind of bug in net::
+        my $resolvconf = '/etc/resolv.conf';
+        my $rlref = read_file_lines($resolvconf);
+        if (indexof('nameserver 127.0.0.1') < 0) {
+          unshift(@{$rlref}, 'nameserver 127.0.0.1');
+        }
+        flush_file_lines($resolvconf);
       }
+
       # Restart Postfix so that it picks up the new resolv.conf
       foreign_require("virtual-server");
       virtual_server::stop_service_mail();
