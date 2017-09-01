@@ -56,6 +56,12 @@ sub total {
   return $self->{total};
 }
 
+sub bundle {
+  my ($self, $bundle) = @_;
+  if ($bundle) { $self->{bundle} = shift }
+  return $self->{bundle};
+}
+
 sub spin {
   my $self    = shift;
   my $name    = $self->name();
