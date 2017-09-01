@@ -53,14 +53,15 @@ sub actions {
           $lref = read_file_lines($file);
           if (indexof("prepend domain-name-servers 127.0.0.1;", @{$lref}) < 0) {
             $log->info("Adding name server 127.0.0.1 to dhcp configuration.");
-            push ( @{$lref}, 'prepend domain-name-servers 127.0.0.1;' );
+            push(@{$lref}, 'prepend domain-name-servers 127.0.0.1;');
           }
           flush_file_lines($file);
         }
+
         # Force 127.0.0.1 into name servers in resolv.conf
         # XXX This shouldn't be necessary. There's some kind of bug in net::
         my $resolvconf = '/etc/resolv.conf';
-        my $rlref = read_file_lines($resolvconf);
+        my $rlref      = read_file_lines($resolvconf);
         if (indexof('nameserver 127.0.0.1') < 0) {
           unshift(@{$rlref}, 'nameserver 127.0.0.1');
         }

@@ -23,8 +23,12 @@ my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 sub new {
   my ($class, %args) = @_;
 
-  my $self
-    = {name => $args{name}, depends => $args{depends}, total => $args{total}};
+  my $self = {
+    name    => $args{name},
+    depends => $args{depends},
+    total   => $args{total},
+    bundle  => $args{bundle}
+  };
   bless $self, $class;
 
   return $self;
