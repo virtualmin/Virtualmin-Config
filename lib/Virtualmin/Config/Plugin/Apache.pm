@@ -170,8 +170,8 @@ sub actions {
 
     # Remove default SSL VirtualHost on RH systems
     if (-r '/etc/httpd/conf.d/ssl.conf') {
-      my $file = '/etc/httpd/conf.d/ssl.conf';
-      my $lref = read_file_lines($file);
+      my $file                 = '/etc/httpd/conf.d/ssl.conf';
+      my $lref                 = read_file_lines($file);
       my $virtual_host_section = 0;
       foreach my $l (@$lref) {
         if ($l !~ /^\s*#/) {

@@ -40,7 +40,6 @@ sub actions {
     $vconfig{'home_base'}        = "/home";
     $vconfig{'spam'}             = 1;
     $vconfig{'virus'}            = 1;
-    $vconfig{'ssl'}              = 2;
     $vconfig{'ftp'}              = 2;
     $vconfig{'postgresql'}       = 1;
     $vconfig{'logrotate'}        = 3;
@@ -50,6 +49,15 @@ sub actions {
     $vconfig{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
     $vconfig{'bccs'}             = 1;
     $vconfig{'reseller_theme'}   = "authentic-theme";
+    if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
+      $vconfig{'ssl'}                  = 0;
+      $vconfig{'web'}                  = 0;
+      $vconfig{'avail_virtualmin-dav'} = '';
+      $vconfig{'backup_feature_ssl'}   = 0;
+    }
+    else {
+      $vconfig{'ssl'} = 2;
+    }
     if (!defined($vconfig{'plugins'})) {
       $vconfig{'plugins'}
         = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd';
