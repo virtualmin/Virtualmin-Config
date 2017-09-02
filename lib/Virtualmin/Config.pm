@@ -80,7 +80,7 @@ sub list_bundles {
   my @bundles = grep(/\.pm$/, readdir($DIR));
   closedir($DIR);
   @bundles = grep { $_ ne 'Dummy.pm' && $_ ne 'Plugin.pm' } @bundles;
-  for (@bundles) { s/\.pm$// };
+  for (@bundles) {s/\.pm$//}
   @bundles = sort(@bundles);
   return @bundles;
 }
@@ -99,7 +99,7 @@ sub list_plugins {
   my @plugins = grep(/\.pm$/, readdir($DIR));
   closedir($DIR);
   @plugins = grep { $_ ne 'Test.pm' && $_ ne 'Test2.pm' } @plugins;
-  for (@plugins) { s/\.pm$// };
+  for (@plugins) {s/\.pm$//}
   @plugins = sort(@plugins);
   return @plugins;
 }
