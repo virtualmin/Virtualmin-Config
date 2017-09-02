@@ -1,4 +1,4 @@
-virtualmin-config (6.0.15) UNRELEASED; urgency=medium
+virtualmin-config (6.0.15) stable; urgency=medium
 
   * Remove MiniVirtualmin plugin, Virtualmin plugin handles it when bundle is
     Mini*
