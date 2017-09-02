@@ -39,14 +39,14 @@ sub actions {
     $vconfig{'aliascopy'}   = 1;
     $vconfig{'home_base'}   = "/home";
     if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
-      $vconfig{'spam'}  = 0;
-      $vconfig{'virus'} = 0;
-      $vconfig{'postgresql'}       = 0;
+      $vconfig{'spam'}       = 0;
+      $vconfig{'virus'}      = 0;
+      $vconfig{'postgresql'} = 0;
     }
     else {
-      $vconfig{'spam'}  = 1;
-      $vconfig{'virus'} = 1;
-      $vconfig{'postgresql'}       = 1;
+      $vconfig{'spam'}       = 1;
+      $vconfig{'virus'}      = 1;
+      $vconfig{'postgresql'} = 1;
     }
     $vconfig{'ftp'}              = 2;
     $vconfig{'logrotate'}        = 3;

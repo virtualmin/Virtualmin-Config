@@ -11,11 +11,33 @@ sub main {
   my %opt;
   my (@include, @exclude);
   GetOptions(
-    \%opt, 'help|h', 'test|t', 'bundle|b=s', 'log|l=s',
+    \%opt, 'help|h', 'test|t', 'bundle|b=s', 'log|l=s', 'list-bundles|s',
+    'list-plugins|p',
     'include|i=s{1,}' => \@include,
     'exclude|x=s{1,}' => \@exclude,
   );
   pod2usage(0) if $opt{help};
+  if ($opt{'list-bundles'}) {
+    my $config  = Virtualmin::Config->new();
+    my @bundles = $config->list_bundles();
+    say "Available Configuration bundles:\n";
+    for my $b (@bundles) {
+      say "  $b";
+    }
+    say '';
+    exit 0;
+  }
+  if ($opt{'list-plugins'}) {
+    my $config  = Virtualmin::Config->new();
+    my @plugins = $config->list_plugins();
+    say "Available Plugins:\n";
+    for my $p (@plugins) {
+      say "  $p";
+    }
+    say '';
+    exit 0;
+  }
+
   unless ($opt{bundle} || @include) {
     pod2usage(0);
   }

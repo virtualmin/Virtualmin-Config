@@ -67,6 +67,41 @@ sub run {
   return 1;
 }
 
+# list_bundles
+# Returns a list of the available configuration bundles.
+sub list_bundles {
+  my $self = shift;
+
+  # Figure out our module home directory
+  my $modpath = $INC{'Virtualmin/Config.pm'};
+  use File::Basename;
+  my $bundlepath = dirname($modpath) . '/Config';
+  opendir(my $DIR, $bundlepath);
+  my @bundles = grep(/\.pm$/, readdir($DIR));
+  closedir($DIR);
+  @bundles = grep { $_ ne 'Dummy.pm' && $_ ne 'Plugin.pm' } @bundles;
+  map { $_ =~ s/\.pm$// } @bundles;
+  return sort(@bundles);
+}
+
+# list-plugins
+# Returns a sorted list of the available plugins.
+sub list_plugins {
+  my $self = shift;
+
+  # Figure out our module home directory
+  require 'Virtualmin/Config/Plugin.pm';
+  my $modpath = $INC{'Virtualmin/Config/Plugin.pm'};
+  use File::Basename;
+  my $pluginpath = dirname($modpath) . '/Plugin';
+  opendir(my $DIR, $pluginpath);
+  my @plugins = grep(/\.pm$/, readdir($DIR));
+  closedir($DIR);
+  @plugins = grep { $_ ne 'Test.pm' && $_ ne 'Test2.pm' } @plugins;
+  map { $_ =~ s/\.pm$// } @plugins;
+  return sort(@plugins);
+}
+
 # Merges the selected bundle, with any extra includes, and removes excludes
 sub _gather_plugins {
   my $self = shift;

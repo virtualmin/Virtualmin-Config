@@ -19,7 +19,7 @@ my %WriteMakefileArgs = (
     {"Log::Log4perl" => 0, "Term::ANSIColor" => 0, "Term::Spinner::Color" => 0},
   "TEST_REQUIRES" =>
     {"ExtUtils::MakeMaker" => 0, "File::Spec" => 0, "Test::More" => 0},
-  "VERSION" => "6.0.14",
+  "VERSION" => "6.0.15",
   "test"    => {"TESTS" => "t/*.t"}
 );
 

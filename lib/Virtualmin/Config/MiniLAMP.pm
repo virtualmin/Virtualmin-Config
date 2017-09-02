@@ -17,9 +17,9 @@ sub plugins {
   # Modern system with firewalld?
   if (-x "/usr/bin/firewall-cmd" || -x "/bin/firewall-cmd") {
     return [
-      "Webmin",  "Apache",  "Bind",           "Net",
-      "Postfix", "MySQL",   "Firewalld",      "Procmail",
-      "ProFTPd", "Quotas",  "Shells",         "Status",
+      "Webmin",  "Apache",  "Bind",       "Net",
+      "Postfix", "MySQL",   "Firewalld",  "Procmail",
+      "ProFTPd", "Quotas",  "Shells",     "Status",
       "Upgrade", "Usermin", "Virtualmin", "NTP",
       "Fail2banFirewalld"
     ];
