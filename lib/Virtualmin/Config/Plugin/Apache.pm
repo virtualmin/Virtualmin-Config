@@ -64,6 +64,7 @@ sub actions {
       $self->logsystem("a2enmod dav");
       $self->logsystem("a2enmod lbmethod_byrequests");
       $self->logsystem("a2dissite 000-default");
+      $self->logsystem("a2dissite default-ssl.conf");
 
       if (!-e "/etc/apache2/conf.d/ssl.conf") {
         $self->logsystem("a2enmod ssl");

@@ -80,8 +80,9 @@ sub list_bundles {
   my @bundles = grep(/\.pm$/, readdir($DIR));
   closedir($DIR);
   @bundles = grep { $_ ne 'Dummy.pm' && $_ ne 'Plugin.pm' } @bundles;
-  map { $_ =~ s/\.pm$// } @bundles;
-  return sort(@bundles);
+  for (@bundles) { s/\.pm$// };
+  @bundles = sort(@bundles);
+  return @bundles;
 }
 
 # list-plugins
@@ -90,7 +91,7 @@ sub list_plugins {
   my $self = shift;
 
   # Figure out our module home directory
-  require 'Virtualmin/Config/Plugin.pm';
+  require Virtualmin::Config::Plugin;
   my $modpath = $INC{'Virtualmin/Config/Plugin.pm'};
   use File::Basename;
   my $pluginpath = dirname($modpath) . '/Plugin';
@@ -98,8 +99,9 @@ sub list_plugins {
   my @plugins = grep(/\.pm$/, readdir($DIR));
   closedir($DIR);
   @plugins = grep { $_ ne 'Test.pm' && $_ ne 'Test2.pm' } @plugins;
-  map { $_ =~ s/\.pm$// } @plugins;
-  return sort(@plugins);
+  for (@plugins) { s/\.pm$// };
+  @plugins = sort(@plugins);
+  return @plugins;
 }
 
 # Merges the selected bundle, with any extra includes, and removes excludes
