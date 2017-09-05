@@ -73,7 +73,7 @@ sub actions {
     }
 
     # Add to end of file, if not already there Include /etc/proftpd/conf.d
-    proftpd::save_directive('Include', '/etc/proftpd/conf.d', $conf, $conf);
+    proftpd::save_directive('Include', ['/etc/proftpd/conf.d'], $conf, $conf);
 
     # generate TLS cert/key pair
     my $hostname = `hostname -f`;
@@ -135,6 +135,11 @@ LoadModule mod_sftp.c
   MaxLoginAttempts 6
 </VirtualHost>
 EOF
+
+    # Write out virtualmin.config
+    open my $VMH, '>', '/etc/proftpd/conf.d/virtualmin.conf';
+    print $VMH $vmconf;
+    close $VMH;
 
     # If SELinux is installed enable the right boolean
     # For SFTP?
