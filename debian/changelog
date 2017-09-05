@@ -1,3 +1,9 @@
+virtualmin-config (6.0.16) stable; urgency=medium
+
+  * Fix ProFTPd failure to write config changes 
+
+ -- Joe Cooper <joe@virtualmin.com>  Mon, 04 Sep 2017 19:21:17 -0500
+
 virtualmin-config (6.0.15) stable; urgency=medium
 
   * Remove MiniVirtualmin plugin, Virtualmin plugin handles it when bundle is

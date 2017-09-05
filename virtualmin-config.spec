@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        6.0.15
+Version:        6.0.16
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
@@ -67,6 +67,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Sep 04 2017 Joe Cooper <joe@virtualmin.com> 6.0.16-1
+- Fix ProFTPd failure to write config changes
 * Fri Sep 01 2017 Joe Cooper <joe@virtualmin.com> 6.0.15-1
 - Remove MiniVirtualmin plugin, Virtualmin plugin handles it when bundle is Mini*
 - Handle some DHCP configured systems by adding localhost to name servers
