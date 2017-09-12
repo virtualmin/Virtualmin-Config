@@ -45,6 +45,7 @@ sub actions {
       init::stop_action('iptables');
       init::disable_at_boot('iptables');
     }
+    init::start_action('firewalld')
 
     if (has_command('firewall-cmd')) {
       foreach my $s (@services) {
