@@ -66,6 +66,7 @@ sub actions {
         }
         flush_file_lines($fail2ban_service_ref);
         $self->logsystem('systemctl daemon-reload');
+      }
     }
 
     init::restart_action('fail2ban');
