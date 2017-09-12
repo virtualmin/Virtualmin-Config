@@ -58,7 +58,7 @@ sub actions {
 
       # Fix systemd unit for firewalld
       if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-        my $fail2ban_service_ref = read_file_lines('lib/systemd/system/fail2ban.service');
+        my $fail2ban_service_ref = read_file_lines('/lib/systemd/system/fail2ban.service');
         foreach my $l (@$fail2ban_service_ref) {
           if ( $l =~ /^\s*After=/) {
             $l = "After=network.target firewalld.service";
