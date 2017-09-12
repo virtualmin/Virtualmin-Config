@@ -64,7 +64,7 @@ sub actions {
             $l = "After=network.target firewalld.service";
           }
         }
-        flush_file_lines($fail2ban_service_ref);
+        flush_file_lines('/lib/systemd/system/fail2ban.service');
         $self->logsystem('systemctl daemon-reload');
       }
     }
