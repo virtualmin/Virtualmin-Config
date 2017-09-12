@@ -72,50 +72,37 @@ sub create_fail2ban_jail {
 
 enabled = true
 port    = ssh
-logpath = %(sshd_log)s
-backend = %(sshd_backend)s
 
 [ssh-ddos]
 
 enabled = true
 port    = ssh,sftp
 filter  = sshd-ddos
-log_path = %{sshd_log}s
 
 [webmin-auth]
 
 enabled = true
 port    = 10000
-logpath = %(syslog_authpriv)s
-backend = %(syslog_backend)s
 
 [proftpd]
 
 enabled  = true
 port     = ftp,ftp-data,ftps,ftps-data
-logpath  = %(proftpd_log)s
-backend  = %(proftpd_backend)s
 
 [postfix]
 
 enabled  = true
 port     = smtp,465,submission
-logpath  = %(postfix_log)s
-backend  = %(postfix_backend)s
 
 [dovecot]
 
 enabled = true
 port    = pop3,pop3s,imap,imaps,submission,465,sieve
-logpath = %(dovecot_log)s
-backend = %(dovecot_backend)s
 
 [postfix-sasl]
 
 enabled  = true
 port     = smtp,465,submission,imap3,imaps,pop3,pop3s
-logpath  = %(postfix_log)s
-backend  = %(postfix_backend)s
 
 EOF
 
