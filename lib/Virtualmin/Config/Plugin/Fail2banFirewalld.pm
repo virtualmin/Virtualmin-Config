@@ -61,7 +61,7 @@ sub actions {
         my $fail2ban_service_ref = read_file_lines('lib/systemd/system/fail2ban.service');
         foreach my $l (@$fail2ban_service_ref) {
           if ( $l =~ /^\s*After=/) {
-            $l = "After=network.target firewalld.service"
+            $l = "After=network.target firewalld.service";
           }
         }
         flush_file_lines($fail2ban_service_ref);
