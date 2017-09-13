@@ -62,20 +62,22 @@ sub actions {
     if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
       $certfile = '/etc/ssl/certs/proftpd.crt';
       $keyfile  = '/etc/ssl/private/proftpd.key';
+      # Add to end of file, if not already there Include /etc/proftpd/conf.d
+      proftpd::save_directive('Include',
+        ['/etc/proftpd/modules.conf', '/etc/proftpd/conf.d'],
+        $conf, $conf);
+
     }
     elsif ($gconfig{'os_type'} eq 'redhat-linux') {
       $certfile = '/etc/pki/tls/certs/proftpd.pem';
       $keyfile  = '/etc/pki/tls/private/proftpd.pem';
+      proftpd::save_directive('Include', '/etc/proftpd/conf.d'], $conf, $conf);
     }
     else {
       $log->warn("No configuration available for OS type $gconfig{'os_type'}.");
       die "Skipping additional ProFTPd configuration for this OS.";
     }
 
-    # Add to end of file, if not already there Include /etc/proftpd/conf.d
-    proftpd::save_directive('Include',
-      ['/etc/proftpd/modules.conf', '/etc/proftpd/conf.d'],
-      $conf, $conf);
 
     # generate TLS cert/key pair
     my $hostname = `hostname -f`;
