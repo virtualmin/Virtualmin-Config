@@ -46,6 +46,17 @@ sub actions {
       }
       flush_file_lines($fcconf);
     }
+    # Remove idiotic Example line from clamd scan.conf
+    my $scanconf = "/etc/clamd.d/scan.conf";
+    if (-r $scanconf) {
+      my $lref = read_file_lines($scanconf);
+      foreach my $l (@$lref) {
+        if ($l =~ /^Example/) {
+          $l = "#$l";
+        }
+      }
+      flush_file_lines($scanconf);
+    }
 
     foreign_require("init", "init-lib.pl");
     if (!init::action_status("clamav-freshclam")) {
