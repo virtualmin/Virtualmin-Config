@@ -1,3 +1,9 @@
+virtualmin-config (6.0.18) stable; urgency=medium
+
+  * Fix missing mail.warn file on Debian/Ubuntu, because it's stupid. 
+
+ -- Joe Cooper <joe@virtualmin.com>  Tue, 12 Sep 2017 22:46:55 -0500
+
 virtualmin-config (6.0.17) stable; urgency=medium
 
   * ProFTPd fixes, especially for Debian/Ubuntu
