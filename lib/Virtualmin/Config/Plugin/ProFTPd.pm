@@ -71,7 +71,7 @@ sub actions {
     elsif ($gconfig{'os_type'} eq 'redhat-linux') {
       $certfile = '/etc/pki/tls/certs/proftpd.pem';
       $keyfile  = '/etc/pki/tls/private/proftpd.pem';
-      proftpd::save_directive('Include', '/etc/proftpd/conf.d'], $conf, $conf);
+      proftpd::save_directive('Include', ['/etc/proftpd/conf.d'], $conf, $conf);
     }
     else {
       $log->warn("No configuration available for OS type $gconfig{'os_type'}.");
