@@ -1,3 +1,10 @@
+virtualmin-config (6.0.17) stable; urgency=medium
+
+  * ProFTPd fixes, especially for Debian/Ubuntu
+  * Fail2ban w/ Firewalld fixes for broken Debian/Ubuntu systemd config 
+
+ -- Joe Cooper <joe@virtualmin.com>  Tue, 12 Sep 2017 19:46:54 -0500
+
 virtualmin-config (6.0.16) stable; urgency=medium
 
   * Fix ProFTPd failure to write config changes 

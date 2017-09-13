@@ -73,7 +73,9 @@ sub actions {
     }
 
     # Add to end of file, if not already there Include /etc/proftpd/conf.d
-    proftpd::save_directive('Include', ['/etc/proftpd/modules.conf', '/etc/proftpd/conf.d'], $conf, $conf);
+    proftpd::save_directive('Include',
+      ['/etc/proftpd/modules.conf', '/etc/proftpd/conf.d'],
+      $conf, $conf);
 
     # generate TLS cert/key pair
     my $hostname = `hostname -f`;
