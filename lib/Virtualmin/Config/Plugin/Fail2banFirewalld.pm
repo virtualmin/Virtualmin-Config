@@ -60,6 +60,7 @@ sub actions {
       if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
         $self->logsystem(
           'cp /lib/systemd/system/fail2ban.service /etc/systemd/system/');
+        $self->logsystem('touch /var/log/mail.warn');
         my $fail2ban_service_ref
           = read_file_lines('/etc/systemd/system/fail2ban.service');
         foreach my $l (@$fail2ban_service_ref) {
