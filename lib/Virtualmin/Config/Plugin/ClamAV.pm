@@ -54,6 +54,7 @@ sub actions {
         if ($l =~ /^Example/) {
           $l = "#$l";
         }
+        $l =~ s/#+(LocalSocket.*)$/$1/;
       }
       flush_file_lines($scanconf);
     }
