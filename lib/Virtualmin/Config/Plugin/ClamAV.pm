@@ -46,6 +46,7 @@ sub actions {
       }
       flush_file_lines($fcconf);
     }
+
     # Remove idiotic Example line from clamd scan.conf
     my $scanconf = "/etc/clamd.d/scan.conf";
     if (-r $scanconf) {

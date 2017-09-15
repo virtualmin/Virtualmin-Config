@@ -1,3 +1,10 @@
+virtualmin-config (6.0.19) stable; urgency=medium
+
+  * Fix ClamAV broken-by-default configuration (again)
+  * Insure mod_tls.c is always loaded in ProFTPd no matter what 
+
+ -- Joe Cooper <joe@virtualmin.com>  Thu, 14 Sep 2017 23:29:37 -0500
+
 virtualmin-config (6.0.18) stable; urgency=medium
 
   * Fix missing mail.warn file on Debian/Ubuntu, because it's stupid. 
