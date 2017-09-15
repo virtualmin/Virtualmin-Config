@@ -104,6 +104,7 @@ sub actions {
 DefaultRoot ~
 
 # Enable TLS
+LoadModule mod_tls.c
 TLSEngine                     on
 TLSRequired                   on
 TLSRSACertificateFile         $certfile
