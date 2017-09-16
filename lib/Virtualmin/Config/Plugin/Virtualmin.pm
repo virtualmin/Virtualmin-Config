@@ -42,6 +42,8 @@ sub actions {
       $vconfig{'spam'}       = 0;
       $vconfig{'virus'}      = 0;
       $vconfig{'postgresql'} = 0;
+      $vconfig{'webalizer'}  = 0;
+
     }
     else {
       $vconfig{'spam'}       = 1;
@@ -67,8 +69,14 @@ sub actions {
       $vconfig{'ssl'} = 2;
     }
     if (!defined($vconfig{'plugins'})) {
-      $vconfig{'plugins'}
-        = 'virtualmin-dav virtualmin-awstats virtualmin-mailman virtualmin-htpasswd';
+      if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
+        $vconfig{'plugins'}
+          = 'virtualmin-dav virtualmin-mailman virtualmin-htpasswd';
+      }
+      else {
+        $vconfig{'plugins'}
+          = 'virutalmin-awstats virtualmin-dav virtualmin-mailman virtualmin-htpasswd';
+      }
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
       $vconfig{'proftpd_config'}
