@@ -68,12 +68,14 @@ config-system
 virtualmin config-system [options]
 
   Options:
-    --help      Print this summary of options and exit
-    --bundle    A bundle of plugins to execute
-    --log       Path to a file for logging actions
-    --include   One or more extra plugins to include
-    --exclude   One or more plugins to exclude
-    --test      Test services after configured (when available)
+    --help|-h          Print this summary of options and exit
+    --list-bundles|-s  List available installation bundles
+    --list-plugins|-p  List available plugins
+    --bundle|-b        A bundle of plugins to execute
+    --log|-l           Path to a file for logging actions
+    --include|-i       One or more extra plugins to include
+    --exclude|-x       One or more plugins to exclude
+    --test|-t          Test services after configured (when available)
 
 =head1 OPTIONS
 
