@@ -3,7 +3,9 @@ use strict;
 use warnings;
 use 5.010_001;
 use Getopt::Long;
-use Pod::Usage;
+BEGIN { $Pod::Usage::Formatter = 'Pod::Text::Color'; }
+use Pod::Usage qw(pod2usage);
+use Term::ANSIColor qw(:constants);
 use Virtualmin::Config;
 
 sub main {
@@ -20,9 +22,14 @@ sub main {
   if ($opt{'list-bundles'}) {
     my $config  = Virtualmin::Config->new();
     my @bundles = $config->list_bundles();
-    say "Available Configuration bundles:\n";
+    say YELLOW . "Available Configuration Bundles:\n";
+    my $numcols = 4;
+    my $cur     = 0;
+    printf "  ";
     for my $b (@bundles) {
-      say "  $b";
+      printf(CYAN . "%-18s ", $b);
+      $cur++;
+      if ($cur == $numcols) { $cur = 0; printf "\n  " . RESET; }
     }
     say '';
     exit 0;
@@ -30,16 +37,21 @@ sub main {
   if ($opt{'list-plugins'}) {
     my $config  = Virtualmin::Config->new();
     my @plugins = $config->list_plugins();
-    say "Available Plugins:\n";
+    say YELLOW . "Available Plugins:\n";
+    my $numcols = 4;
+    my $cur     = 0;
+    printf "  ";
     for my $p (@plugins) {
-      say "  $p";
+      printf(CYAN . "%-18s ", $p);
+      $cur++;
+      if ($cur == $numcols) { $cur = 0; printf "\n  " . RESET; }
     }
     say '';
     exit 0;
   }
 
   unless ($opt{bundle} || @include) {
-    pod2usage(0);
+    pod2usage(-perldocopt => 'Color');
   }
 
   my $bundle = Virtualmin::Config->new(

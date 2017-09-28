@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        6.0.19
+Version:        6.0.20
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
@@ -67,6 +67,10 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Thu Sep 28 2017 Joe Cooper <joe@virtualmin.com> 6.0.20-1
+- Minimal configs adds Dovecot, SASL, removes Fail2ban
+- Fix Apache default file handling on Ubuntu 16.04
+- ProFTPd shouldn't require TlS
 * Mon Sep 04 2017 Joe Cooper <joe@virtualmin.com> 6.0.16-1
 - Fix ProFTPd failure to write config changes
 * Fri Sep 01 2017 Joe Cooper <joe@virtualmin.com> 6.0.15-1

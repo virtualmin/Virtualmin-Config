@@ -106,7 +106,7 @@ DefaultRoot ~
 # Enable TLS
 LoadModule mod_tls.c
 TLSEngine                     on
-TLSRequired                   on
+TLSRequired                   off
 TLSRSACertificateFile         $certfile
 TLSRSACertificateKeyFile      $keyfile
 TLSOptions                    NoCertRequest

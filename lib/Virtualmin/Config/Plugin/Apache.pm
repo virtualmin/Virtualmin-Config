@@ -77,7 +77,9 @@ sub actions {
         my $fn             = "/etc/default/apache2";
         my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
         my $idx            = indexof("NO_START=1");
-        $apache2default->[$idx] = "NO_START=0";
+        if ($idx) {
+          $apache2default->[$idx] = "NO_START=0";
+        }
         flush_file_lines($fn);
       }
     }

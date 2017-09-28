@@ -1,3 +1,11 @@
+virtualmin-config (6.0.20) stable; urgency=medium
+
+  * Minimal configs adds Dovecot, SASL, removes Fail2ban
+  * Fix Apache default file handling on Ubuntu 16.04 
+  * ProFTPd shouldn't require TlS
+
+ -- Joe Cooper <joe@virtualmin.com>  Thu, 28 Sep 2017 00:41:40 -0500
+
 virtualmin-config (6.0.19) stable; urgency=medium
 
   * Fix ClamAV broken-by-default configuration (again)
