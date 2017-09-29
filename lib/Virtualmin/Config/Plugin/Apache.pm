@@ -56,13 +56,6 @@ sub actions {
     # Fix up some Debian stuff
     if ($gconfig{'os_type'} eq "debian-linux") {
       if (-e "/etc/init.d/apache") { init::disable_at_boot("apache"); }
-      $self->logsystem("a2enmod cgi");
-      $self->logsystem("a2enmod suexec");
-      $self->logsystem("a2enmod actions");
-      $self->logsystem("a2enmod fcgid");
-      $self->logsystem("a2enmod ssl");
-      $self->logsystem("a2enmod dav");
-      $self->logsystem("a2enmod lbmethod_byrequests");
       $self->logsystem("a2dissite 000-default");
       $self->logsystem("a2dissite default-ssl.conf");
 
@@ -73,7 +66,7 @@ sub actions {
       }
 
       # New Ubuntu doesn't use this.
-      unless ($init::init_mode eq "systemd") {
+      unless (-x "/bin/systemctl" || -x "/usr/bin/systemctl") {
         my $fn             = "/etc/default/apache2";
         my $apache2default = read_file_lines($fn) or die "Failed to open $fn!";
         my $idx            = indexof("NO_START=1");
@@ -99,7 +92,8 @@ sub actions {
         "actions",    "suexec",      "auth_digest",    "dav_svn",
         "ssl",        "dav",         "dav_fs",         "fcgid",
         "rewrite",    "proxy",       "proxy_balancer", "proxy_connect",
-        "proxy_http", "slotmem_shm", "cgi"
+        "proxy_http", "slotmem_shm", "cgi",            "proxy_fcgi",
+        "lbmethod_byrequests"
         )
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
