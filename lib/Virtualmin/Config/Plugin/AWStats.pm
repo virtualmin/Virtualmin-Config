@@ -35,6 +35,7 @@ sub actions {
   $self->spin();
   sleep 0.2;                # XXX Pause to allow spin to start.
   eval {
+    # Remove cronjobs for awstats on Debian/Ubuntu
     foreign_require("cron");
     my @jobs = &cron::list_cron_jobs();
     my @dis  = grep {
@@ -46,6 +47,17 @@ sub actions {
         $job->{'active'} = 0;
         &cron::change_cron_job($job);
       }
+    }
+    # Comment out cron job for awstats on CentOS/RHEL
+    my $file = '/etc/cron.hourly/awstats';
+    if (-r $file) {
+      my $lref = read_file_lines($file);
+      foreach my $l (@$lref) {
+        if ($l !~ /^\s*#/) {
+          $l = "#" . $l;
+        }
+      }
+      flush_file_lines($file);
     }
     $self->done(1);    # OK!
   };
