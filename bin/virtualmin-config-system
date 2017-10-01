@@ -71,9 +71,9 @@ exit main(\@ARGV);
 
 =pod
 
-=head1 NAME
+=head1 config-system
 
-config-system
+Perform initial configuration of system services
 
 =head1 SYNOPSIS
 
