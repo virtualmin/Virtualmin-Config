@@ -42,7 +42,7 @@ sub actions {
     if ( $gconfig{'os_type'} eq "debian-linux"
       or $gconfig{'os_type'} eq "ubuntu-linux")
     {
-      # Update saslauthd default to run inside postfix chroot
+      # Update saslauthd default to start on boot
       my $fn          = "/etc/default/saslauthd";
       my $sasldefault = read_file_lines($fn) or die "Failed to open $fn!";
       my $idx         = indexof("# START=yes", @$sasldefault);
@@ -127,6 +127,22 @@ sub actions {
       #proc::safe_process_exec($cmd, 0, 0, *STDOUT, undef, 1);
       init::start_action('saslauthd');
     }
+
+    # Update flags to use realm as part of username
+    my $saslconfig = "/etc/sysconfig/saslauthd";
+    if (-r $saslconfig) {
+      my $lref = read_file_lines($saslconfig);
+      foreach my $l (@$lref) {
+        if ($l =~ /^\s*FLAGS=\s*$/) {
+          $l = "FLAGS=\"-r\"";
+        }
+        elsif ($l =~ /^\s*FLAGS="(.*)"$/) {
+          $l = "FLAGS=\"$1 -r\"";
+        }
+      }
+      flush_file_lines($saslconfig);
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {

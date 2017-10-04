@@ -89,10 +89,14 @@ sub actions {
       my $adir = "/etc/apache2/mods-available";
       my $edir = "/etc/apache2/mods-enabled";
       foreach my $mod (
-        "actions",    "suexec",      "auth_digest",    "dav_svn",
-        "ssl",        "dav",         "dav_fs",         "fcgid",
-        "rewrite",    "proxy",       "proxy_balancer", "proxy_connect",
-        "proxy_http", "slotmem_shm", "cgi",            "proxy_fcgi",
+        "actions",        "suexec",
+        "auth_digest",    "dav_svn",
+        "ssl",            "dav",
+        "dav_fs",         "fcgid",
+        "rewrite",        "proxy",
+        "proxy_balancer", "proxy_connect",
+        "proxy_http",     "slotmem_shm",
+        "cgi",            "proxy_fcgi",
         "lbmethod_byrequests"
         )
       {

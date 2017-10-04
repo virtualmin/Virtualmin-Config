@@ -48,6 +48,7 @@ sub actions {
         &cron::change_cron_job($job);
       }
     }
+
     # Comment out cron job for awstats on CentOS/RHEL
     my $file = '/etc/cron.hourly/awstats';
     if (-r $file) {
