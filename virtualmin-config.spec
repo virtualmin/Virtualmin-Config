@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        6.0.20
+Version:        6.0.21
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called init-system to run them
 License:        GPL+
@@ -67,6 +67,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Fri Oct 13 2017 Joe Cooper <joe@virtualmin.com> 6.0.21-1
+- Update SASL flags
 * Thu Sep 28 2017 Joe Cooper <joe@virtualmin.com> 6.0.20-1
 - Minimal configs adds Dovecot, SASL, removes Fail2ban
 - Fix Apache default file handling on Ubuntu 16.04

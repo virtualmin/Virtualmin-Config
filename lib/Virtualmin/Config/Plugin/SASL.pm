@@ -56,7 +56,7 @@ sub actions {
       # Substitute options and params if already in file
       foreach my $l (@$sasldefault) {
         if ($l =~ /OPTIONS/) {
-          $l = 'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd"';
+          $l = 'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"';
         }
         if ($l =~ /PARAMS/) {
           $l = 'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"';
@@ -66,7 +66,7 @@ sub actions {
       # Add them, if not
       if (!grep {/OPTIONS/} @$sasldefault) {
         push(@$sasldefault,
-          'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd"');
+          'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"');
       }
       if (!grep {/PARAMS/} @$sasldefault) {
         push(@$sasldefault,
