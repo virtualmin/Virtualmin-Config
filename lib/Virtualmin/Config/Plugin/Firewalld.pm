@@ -35,8 +35,8 @@ sub actions {
 
   $self->spin();
   eval {
-    my @services = qw(ssh smtp ftp pop3 pop3s imap imaps http https);
-    my @tcpports = qw(submission domain ftp-data 2222 10000-10010 20000);
+    my @services = qw(ssh smtp smtps ftp pop3 pop3s imap imaps http https);
+    my @tcpports = qw(submission domain ftp-data 2222 10000-10100 20000);
     my @udpports = qw(domain);
 
     foreign_require('init', 'init-lib.pl');
