@@ -32,6 +32,9 @@ sub actions {
       close $CLOCK;
       chomp($clocksource);
     }
+    else {
+      $clocksource = "";
+    }
     if ($clocksource eq "kvm-clock") {
       $log->info("System clock source is kvm-clock, skipping NTP");
     }
