@@ -43,7 +43,6 @@ sub actions {
       $vconfig{'virus'}      = 0;
       $vconfig{'postgresql'} = 0;
       $vconfig{'webalizer'}  = 0;
-
     }
     else {
       $vconfig{'spam'}       = 1;
