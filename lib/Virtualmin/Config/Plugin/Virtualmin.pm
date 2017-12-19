@@ -57,6 +57,7 @@ sub actions {
     $vconfig{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
     $vconfig{'bccs'}             = 1;
     $vconfig{'reseller_theme'}   = "authentic-theme";
+    $vconfig{'append_style'}     = 6;
 
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
       $vconfig{'ssl'}                  = 0;
