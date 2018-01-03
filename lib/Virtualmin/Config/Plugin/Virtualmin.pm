@@ -71,11 +71,11 @@ sub actions {
     if (!defined($vconfig{'plugins'})) {
       if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
         $vconfig{'plugins'}
-          = 'virtualmin-dav virtualmin-mailman virtualmin-htpasswd';
+          = 'virtualmin-dav virtualmin-htpasswd';
       }
       else {
         $vconfig{'plugins'}
-          = 'virutalmin-awstats virtualmin-dav virtualmin-mailman virtualmin-htpasswd';
+          = 'virtualmin-awstats virtualmin-dav virtualmin-htpasswd';
       }
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {

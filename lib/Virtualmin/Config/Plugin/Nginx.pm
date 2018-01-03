@@ -46,7 +46,7 @@ sub actions {
     $vconfig{'backup_feature_ssl'}   = 0;
 
     $vconfig{'plugins'}
-      = 'virtualmin-awstats virtualmin-mailman virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
+      = 'virtualmin-awstats virtualmin-htpasswd virtualmin-nginx virtualmin-nginx-ssl';
     save_module_config(\%vconfig, "virtual-server");
 
     $self->done(1);    # OK!
