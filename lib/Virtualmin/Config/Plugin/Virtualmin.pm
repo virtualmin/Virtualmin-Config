@@ -125,6 +125,7 @@ sub actions {
     $mailconfig{'send_mode'}        = 'localhost';
     $mailconfig{'nologout'}         = 1;
     $mailconfig{'noindex_hostname'} = 1;
+    $mailconfig{'edit_from'}        = 0;
     write_file($cfile, \%mailconfig);
 
     # Set the mail folders subdir to Maildir
