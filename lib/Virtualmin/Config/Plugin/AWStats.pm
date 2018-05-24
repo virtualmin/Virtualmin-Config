@@ -37,7 +37,7 @@ sub actions {
   eval {
     # Remove cronjobs for awstats on Debian/Ubuntu
     foreign_require("cron");
-    my @jobs = &cron::list_cron_jobs();
+    my @jobs = cron::list_cron_jobs();
     my @dis  = grep {
       $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic).sh/
         && $_->{'active'}
@@ -45,7 +45,7 @@ sub actions {
     if (@dis) {
       foreach my $job (@dis) {
         $job->{'active'} = 0;
-        &cron::change_cron_job($job);
+        cron::change_cron_job($job);
       }
     }
 
