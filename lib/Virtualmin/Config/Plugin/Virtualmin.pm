@@ -70,8 +70,7 @@ sub actions {
     }
     if (!defined($vconfig{'plugins'})) {
       if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
-        $vconfig{'plugins'}
-          = 'virtualmin-dav virtualmin-htpasswd';
+        $vconfig{'plugins'} = 'virtualmin-dav virtualmin-htpasswd';
       }
       else {
         $vconfig{'plugins'}

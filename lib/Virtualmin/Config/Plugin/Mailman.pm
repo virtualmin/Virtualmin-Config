@@ -36,16 +36,18 @@ sub actions {
     eval {
       my $err;              # We should handle errors better here.
       foreign_require("virtualmin-mailman", "virtualmin-mailman-lib.pl");
-        my @lists = virtualmin_mailman::list_lists();
-        my ($mlist) = grep { $_->{'list'} eq 'mailman' } @lists;
-        if (!$mlist) {
+      my @lists = virtualmin_mailman::list_lists();
+      my ($mlist) = grep { $_->{'list'} eq 'mailman' } @lists;
+      if (!$mlist) {
+
         # Need to create
-        virtualmin_mailman::create_list("mailman", undef,
-                                        "Default mailing list",
-                                        undef,
-                                        "root\@".get_system_hostname(),
-                                        time().$$);
-        }
+        virtualmin_mailman::create_list(
+          "mailman", undef, "Default mailing list",
+          undef,
+          "root\@" . get_system_hostname(),
+          time() . $$
+        );
+      }
 
       $self->done(0);
     };
