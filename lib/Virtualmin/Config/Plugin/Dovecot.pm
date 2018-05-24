@@ -74,7 +74,7 @@ sub actions {
     my $am = dovecot::find_value("auth_mechanisms", $conf, 2);
     if ($am && $am !~ /login/) {
       $am .= " login";
-      &dovecot::save_directive($conf, "auth_mechanisms", $am);
+      dovecot::save_directive($conf, "auth_mechanisms", $am);
     }
     flush_file_lines();
 

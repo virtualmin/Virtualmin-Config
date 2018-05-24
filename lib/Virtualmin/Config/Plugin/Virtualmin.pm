@@ -34,7 +34,7 @@ sub actions {
 
   $self->spin();
   eval {
-    my %vconfig = &foreign_config("virtual-server");
+    my %vconfig = foreign_config("virtual-server");
     $vconfig{'mail_system'} = 0;
     $vconfig{'aliascopy'}   = 1;
     $vconfig{'home_base'}   = "/home";
@@ -203,13 +203,13 @@ sub actions {
       ['postgresql', 'style']
       )
     {
-      my %mconfig = &foreign_config($t->[0]);
+      my %mconfig = foreign_config($t->[0]);
       $mconfig{$t->[1]} = 1;
       save_module_config(\%mconfig, $t->[0]);
     }
 
     # Make the default home directory permissions 750
-    my %uconfig = &foreign_config("useradmin");
+    my %uconfig = foreign_config("useradmin");
     if ($gconfig{'os_type'} eq 'freebsd') {
       $uconfig{'homedir_perms'} = "0751";
     }

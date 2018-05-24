@@ -39,7 +39,7 @@ sub actions {
     init::enable_at_boot('nginx');
     init::start_action('nginx');
 
-    my %vconfig = &foreign_config("virtual-server");
+    my %vconfig = foreign_config("virtual-server");
     $vconfig{'web'}                  = 0;
     $vconfig{'ssl'}                  = 0;
     $vconfig{'avail_virtualmin-dav'} = '';

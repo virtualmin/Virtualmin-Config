@@ -35,7 +35,7 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("webalizer", "webalizer-lib.pl");
-    my $conf = &webalizer::get_config();
+    my $conf = webalizer::get_config();
     webalizer::save_directive($conf, "IncrementalName", "webalizer.current");
     webalizer::save_directive($conf, "HistoryName",     "webalizer.hist");
     webalizer::save_directive($conf, "DNSCache",        "dns_cache.db");

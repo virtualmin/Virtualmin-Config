@@ -183,7 +183,7 @@ sub actions {
 
       # Set default mailer to Postfix, in /etc/mail/mailer.conf
       print "Setting default mailer to Postfix\n";
-      $lref = &read_file_lines("/etc/mail/mailer.conf");
+      $lref = read_file_lines("/etc/mail/mailer.conf");
       foreach my $v (
         ["sendmail",   "/usr/local/sbin/sendmail"],
         ["send-mail",  "/usr/local/sbin/sendmail"],

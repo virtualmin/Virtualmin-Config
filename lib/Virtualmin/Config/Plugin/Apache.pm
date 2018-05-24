@@ -138,7 +138,7 @@ sub actions {
     # FreeBSD enables almost nothing, by default
     if ($gconfig{'os_type'} =~ /freebsd/) {
       my $fn = "/usr/local/etc/apache22/httpd.conf";
-      my $apache22conf = &read_file_lines($fn) or die "Failed to open $fn!";
+      my $apache22conf = read_file_lines($fn) or die "Failed to open $fn!";
       foreach my $l (@$apache22conf) {
         $l =~ s/#(Include .*httpd-ssl.conf)/$1/;
         $l =~ s/#(Include .*httpd-vhosts.conf)/$1/;

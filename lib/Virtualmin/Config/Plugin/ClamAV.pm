@@ -38,7 +38,7 @@ sub actions {
     # Make sure freshclam is not disabled
     my $fcconf = "/etc/sysconfig/freshclam";
     if (-r $fcconf) {
-      my $lref = &read_file_lines($fcconf);
+      my $lref = read_file_lines($fcconf);
       foreach my $l (@$lref) {
         if ($l =~ /^FRESHCLAM_DELAY=disabled/) {
           $l = "#$l";

@@ -43,7 +43,7 @@ sub actions {
         virtualmin_mailman::create_list("mailman", undef,
                                         "Default mailing list",
                                         undef,
-                                        "root\@".&get_system_hostname(),
+                                        "root\@".get_system_hostname(),
                                         time().$$);
         }
 
