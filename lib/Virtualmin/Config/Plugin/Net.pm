@@ -46,7 +46,7 @@ sub actions {
       # Check to see if we're configured with dhcp.
       my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
       # XXX Check for extra dhcp config files (this is probably unreliable.
-      my @dhcpinclude = glob "/etc/dhcp/interfaces.d/*";
+      my @dhcpinclude = glob "/etc/network/interfaces.d/*";
       if (@dhcp || @dhcpinclude) {
         $log->warn("Detected DHCP-configured network. This probably isn't ideal.");
         my $lref;
