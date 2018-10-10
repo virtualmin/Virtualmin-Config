@@ -56,6 +56,7 @@ sub actions {
           if (indexof("prepend domain-name-servers 127.0.0.1;", @{$lref}) < 0) {
             $log->info("Attempting to add name server 127.0.0.1 to dhcp configuration.");
             push(@{$lref}, 'prepend domain-name-servers 127.0.0.1;');
+            push(@{$rlref}, '# Added by Virtualmin.');
           }
           flush_file_lines($file);
         }
@@ -66,8 +67,8 @@ sub actions {
         my $resolvconf = '/etc/resolv.conf';
         my $rlref      = read_file_lines($resolvconf);
         if (indexof('nameserver 127.0.0.1') < 0) {
-          unshift(@{$rlref}, '# Added by Virtualmin.');
           unshift(@{$rlref}, 'nameserver 127.0.0.1');
+          unshift(@{$rlref}, '# Added by Virtualmin.');
         }
         flush_file_lines($resolvconf);
       }
