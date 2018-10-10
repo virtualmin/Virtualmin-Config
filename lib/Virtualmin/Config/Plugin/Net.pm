@@ -45,25 +45,30 @@ sub actions {
 
       # Check to see if we're configured with dhcp.
       my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
+
       # XXX Check for extra dhcp config files (this is probably unreliable.
       my @dhcpinclude = glob "/etc/network/interfaces.d/*";
       if (@dhcp || @dhcpinclude) {
-        $log->warn("Detected DHCP-configured network. This probably isn't ideal.");
+        $log->warn(
+          "Detected DHCP-configured network. This probably isn't ideal.");
         my $lref;
         my $file = '/etc/dhcp/dhclient.conf';
         if (-e $file) {
           $lref = read_file_lines($file);
           if (indexof("prepend domain-name-servers 127.0.0.1;", @{$lref}) < 0) {
-            $log->info("Attempting to add name server 127.0.0.1 to dhcp configuration.");
+            $log->info(
+              "Attempting to add name server 127.0.0.1 to dhcp configuration.");
             push(@{$lref}, 'prepend domain-name-servers 127.0.0.1;');
-            push(@{$rlref}, '# Added by Virtualmin.');
+            push(@{$lref}, '# Added by Virtualmin.');
           }
           flush_file_lines($file);
         }
 
         # Force 127.0.0.1 into name servers in resolv.conf
         # XXX This shouldn't be necessary. There's some kind of bug in net::
-        $log->info("Adding name server 127.0.0.1 to resolv.conf. This may be overwritten by DHCP on reboot.");
+        $log->info(
+          "Adding name server 127.0.0.1 to resolv.conf. This may be overwritten by DHCP on reboot."
+        );
         my $resolvconf = '/etc/resolv.conf';
         my $rlref      = read_file_lines($resolvconf);
         if (indexof('nameserver 127.0.0.1') < 0) {

@@ -141,12 +141,11 @@ sub actions {
     }
 
     # Add smtps entry, if missing
-    my ($smtps)
-      = grep { $_->{'name'} eq 'smtps' && $_->{'enabled'} } @$master;
+    my ($smtps) = grep { $_->{'name'} eq 'smtps' && $_->{'enabled'} } @$master;
     if (!$smtps) {
       $smtps = {%$smtp};
       $smtps->{'name'} = 'smtps';
-      $smtps->{'command'} .= " -o smtpd_tls_wrappermode=yes"; 
+      $smtps->{'command'} .= " -o smtpd_tls_wrappermode=yes";
       postfix::create_master($smtps);
     }
 
