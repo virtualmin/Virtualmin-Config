@@ -114,12 +114,14 @@ sub actions {
       flush_file_lines($fn);
     }
 
-    # On Ubuntu 10, PHP is enabled in php5.conf in a way that makes it
+    # On Debian/Ubuntu, PHP is enabled in php*.conf in a way that makes it
     # impossible to turn off for CGI mode!
     foreach my $php5conf (
       "/etc/apache2/mods-available/php5.conf",
       "/etc/apache2/mods-enabled/php5_cgi.conf",
-      "/etc/apache2/mods-available/php7.0.conf"
+      "/etc/apache2/mods-available/php7.0.conf",
+      "/etc/apache2/mods-available/php7.1.conf",
+      "/etc/apache2/mods-available/php7.2.conf"
       )
     {
       if ($gconfig{'os_type'} eq 'debian-linux' && -r $php5conf) {
