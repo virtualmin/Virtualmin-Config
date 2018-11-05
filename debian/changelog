@@ -1,3 +1,11 @@
+virtualmin-config (6.0.24) UNRELEASED; urgency=medium
+
+  * Remove SetHandler lines on newer Debian/Ubuntu verions
+  * Catch DHCP config in cases where interfaces.d is in use
+  * Be more insistent about updating resolv.conf on Debian/Ubuntu
+
+ -- Joe Cooper <joe@virtualmin.com>  Sun, 04 Nov 2018 19:14:55 -0600
+
 virtualmin-config (6.0.22) stable; urgency=low
 
   * Perl syntax updates
