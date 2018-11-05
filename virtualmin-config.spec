@@ -65,6 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sun Nov 04 2018 Joe Cooper <joe@virtualmin.com> 6.0.24-1
+- A bunch of changes for Ubuntu/Debian that don't impact RHEL
 * Fri Oct 13 2017 Joe Cooper <joe@virtualmin.com> 6.0.21-1
 - Update SASL flags
 * Thu Sep 28 2017 Joe Cooper <joe@virtualmin.com> 6.0.20-1
