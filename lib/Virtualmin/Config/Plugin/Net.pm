@@ -45,28 +45,39 @@ sub actions {
 
       # Force 127.0.0.1 into name servers in resolv.conf
       # XXX This shouldn't be necessary. There's some kind of bug in net::
-      $log->info(
-        "Adding name server 127.0.0.1 to resolv.conf."
-      );
       my $resolvconf = '/etc/resolv.conf';
       my $rlref      = read_file_lines($resolvconf);
       if (indexof('nameserver 127.0.0.1') < 0) {
+        $log->info("Adding name server 127.0.0.1 to resolv.conf.");
         unshift(@{$rlref}, 'nameserver 127.0.0.1');
         unshift(@{$rlref}, '# Added by Virtualmin.');
       }
       flush_file_lines($resolvconf);
 
-      # Check to see if we're configured with dhcp.
-      my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
-
+      # On Debian/Ubuntu, if there are extra interfaces files, we need
+      # to update them, too.
       # Check for additional included config files.
       my @interfaces_d = glob "/etc/network/interfaces.d/*";
+      if (@interfaces_d) {
+
+        # Find all of the dns-nameservers entries and update'em
+        foreach my $includefile (@interfaces_d) {
+          open my $fh, "<", $includefile
+            or
+            $log->warning("Failed to open network config file: $includefile.");
+          close $fh;
+        }
+      }
+
+      # Check to see if we're configured with dhcp.
+      my @dhcp = grep { $_->{'dhcp'} } net::boot_interfaces();
       foreach my $includefile (@interfaces_d) {
         open my $fh, '<', $includefile or die;
         while (my $line = <$fh>) {
+
           # This is not smart.
           if ($line =~ /inet .* dhcp/) {
-            push @dhcp, "1"; # Just stick something truthy in there.
+            push @dhcp, "1";    # Just stick something truthy in there.
           }
         }
       }
