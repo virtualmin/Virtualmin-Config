@@ -20,7 +20,7 @@ ok(
   } @plugins
 );
 
-my $include = Virtualmin::Config->new(include => ['Test']);
+my $include  = Virtualmin::Config->new(include => ['Test']);
 my @plugins2 = $include->_gather_plugins();
 ok(
   map {

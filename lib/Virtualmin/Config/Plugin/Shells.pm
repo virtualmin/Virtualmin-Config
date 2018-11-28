@@ -35,7 +35,7 @@ sub actions {
   sleep 0.3;    # XXX Useless sleep, prevent spin from ending before it starts
   eval {
     my $lref = read_file_lines("/etc/shells");
-    my $idx = indexof("/bin/false", @$lref);
+    my $idx  = indexof("/bin/false", @$lref);
     if ($idx < 0) {
 
       # XXX Do we need jk_chrootsh here, or is it added by the package?

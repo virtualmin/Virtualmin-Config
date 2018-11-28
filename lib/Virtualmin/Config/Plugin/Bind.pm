@@ -45,7 +45,7 @@ sub actions {
     if (!-r $conffile) {
       $bind8::config{'named_conf'} =~ /^(\S+)\/([^\/]+)$/;
       my $conf_directory = $1;
-      my $pid_file = $bind8::config{'pid_file'} || "/var/run/named.pid";
+      my $pid_file       = $bind8::config{'pid_file'} || "/var/run/named.pid";
       my $pid_dir;
 
       # Make sure all directories used by BIND exist
@@ -95,7 +95,7 @@ sub actions {
 
     # Remove any options that would make BIND listen on localhost only
     undef(@bind8::get_config_cache);
-    my $conf = bind8::get_config();
+    my $conf    = bind8::get_config();
     my $options = bind8::find("options", $conf);
     if ($options) {
       bind8::save_directive($options, "allow-query", [], 0);

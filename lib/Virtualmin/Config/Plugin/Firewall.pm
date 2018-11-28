@@ -40,7 +40,7 @@ sub actions {
     my @udpports = qw(domain);
 
     foreign_require("firewall", "firewall-lib.pl");
-    my @tables = firewall::get_iptables_save();
+    my @tables   = firewall::get_iptables_save();
     my @allrules = map { @{$_->{'rules'}} } @tables;
     if (@allrules) {
       my ($filter) = grep { $_->{'name'} eq 'filter' } @tables;

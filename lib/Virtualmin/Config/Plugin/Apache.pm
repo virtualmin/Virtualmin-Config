@@ -107,7 +107,7 @@ sub actions {
           symlink("$adir/$mod.conf", "$edir/$mod.conf");
         }
       }
-      my $fn = "/etc/apache2/suexec/www-data";
+      my $fn            = "/etc/apache2/suexec/www-data";
       my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
       $apache2suexec->[0] = "/home";
       $apache2suexec->[1] = "public_html";
@@ -139,7 +139,7 @@ sub actions {
 
     # FreeBSD enables almost nothing, by default
     if ($gconfig{'os_type'} =~ /freebsd/) {
-      my $fn = "/usr/local/etc/apache22/httpd.conf";
+      my $fn           = "/usr/local/etc/apache22/httpd.conf";
       my $apache22conf = read_file_lines($fn) or die "Failed to open $fn!";
       foreach my $l (@$apache22conf) {
         $l =~ s/#(Include .*httpd-ssl.conf)/$1/;
