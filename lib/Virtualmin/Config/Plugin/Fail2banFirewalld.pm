@@ -118,7 +118,7 @@ port    = pop3,pop3s,imap,imaps,submission,465,sieve
 [postfix-sasl]
 
 enabled  = true
-port     = smtp,465,submission,imap3,imaps,pop3,pop3s
+port     = smtp,465,submission,imap,imaps,pop3,pop3s
 
 EOF
 
