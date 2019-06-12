@@ -66,12 +66,6 @@ sub create_fail2ban_jail {
 enabled = true
 port    = ssh
 
-[ssh-ddos]
-
-enabled = true
-port    = ssh,sftp
-filter  = sshd-ddos
-
 [webmin-auth]
 
 enabled = true
