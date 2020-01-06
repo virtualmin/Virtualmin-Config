@@ -47,7 +47,7 @@ sub actions {
       # XXX This shouldn't be necessary. There's some kind of bug in net::
       my $resolvconf = '/etc/resolv.conf';
       my $rlref      = read_file_lines($resolvconf);
-      if (indexof('nameserver 127.0.0.1') < 0) {
+      if (indexof('nameserver 127.0.0.1'), @{$rlref} < 0) {
         $log->info("Adding name server 127.0.0.1 to resolv.conf.");
         unshift(@{$rlref}, 'nameserver 127.0.0.1');
         unshift(@{$rlref}, '# Added by Virtualmin.');
