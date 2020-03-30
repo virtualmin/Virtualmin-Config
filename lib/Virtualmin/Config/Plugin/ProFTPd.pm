@@ -92,11 +92,11 @@ sub actions {
     # Generate ssh key pairs
     if (!-f '/etc/proftpd/ssh_host_ecdsa_key') {
       $self->logsystem(
-        "ssh-keygen -f /etc/proftpd/ssh_host_ecdsa_key -t ecdsa -N ''");
+        "ssh-keygen -f /etc/proftpd/ssh_host_ecdsa_key -t ecdsa -N '' -m PEM");
     }
     if (!-f '/etc/proftpd/ssh_host_rsa_key') {
       $self->logsystem(
-        "ssh-keygen -f /etc/proftpd/ssh_host_rsa_key -t rsa -N ''");
+        "ssh-keygen -f /etc/proftpd/ssh_host_rsa_key -t rsa -N '' -m PEM");
     }
 
     my $vmconf = <<"EOF";
