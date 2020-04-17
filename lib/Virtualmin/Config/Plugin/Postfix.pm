@@ -85,7 +85,7 @@ sub actions {
 
     # Setup sender dependent map
     my ($major, $minor) = split(/\./, $postfix::postfix_version);
-    if ($major >= 2 && $minor >= 7) {
+    if (($major >= 2 && $minor >= 7) || $major >= 3) {
       if (!postfix::get_real_value("sender_dependent_default_transport_maps")) {
         postfix::set_current_value("sender_dependent_default_transport_maps",
           "$maptype:$postetc/dependent");
