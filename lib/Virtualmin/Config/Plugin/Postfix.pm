@@ -102,6 +102,7 @@ sub actions {
 
     # Add smtp auth stuff to main.cf
     postfix::set_current_value("smtpd_sasl_auth_enable",      "yes",         1);
+    postfix::set_current_value("smtpd_tls_security_level",    "may",         1);
     postfix::set_current_value("smtpd_sasl_security_options", "noanonymous", 1);
     postfix::set_current_value("broken_sasl_auth_clients",    "yes",         1);
     postfix::set_current_value("smtpd_recipient_restrictions",
@@ -126,8 +127,9 @@ sub actions {
     my $master = postfix::get_master_config();
     my ($smtp) = grep { $_->{'name'} eq 'smtp' && $_->{'enabled'} } @$master;
     $smtp || die "Failed to find SMTP postfix service!";
-    if ($smtp->{'command'} !~ /smtpd_sasl_auth_enable/) {
-      $smtp->{'command'} .= " -o smtpd_sasl_auth_enable=yes";
+    if ($smtp->{'command'} !~ /smtpd_sasl_auth_enable/ || $smtp->{'command'} !~ /smtpd_tls_security_level/) {
+      $smtp->{'command'} .= " -o smtpd_sasl_auth_enable=yes" if ($smtp->{'command'} !~ /smtpd_sasl_auth_enable/);
+      $smtp->{'command'} .= " -o smtpd_tls_security_level=may" if ($smtp->{'command'} !~ /smtpd_tls_security_level/);
       postfix::modify_master($smtp);
     }
 
