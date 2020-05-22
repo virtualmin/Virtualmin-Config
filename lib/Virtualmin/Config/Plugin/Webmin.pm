@@ -44,7 +44,7 @@ sub actions {
     $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
     put_miniserv_config(\%miniserv);
     webmin::build_installed_modules(1);
-    backquote_command('/etc/webmin/restart 2>&1');
+    system("/etc/webmin/restart > /dev/null 2>&1");
     $self->done(1);    # OK!
   };
   if ($@) {
