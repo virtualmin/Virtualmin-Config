@@ -1,4 +1,14 @@
-virtualmin-config (6.0.24) UNRELEASED; urgency=medium
+virtualmin-config (6.0.27) stable; urgency=medium
+
+  * Updates for CentOS 8
+  * smtpd_tls_security_level option
+  * Support sender maps in Postfix 3.x
+  * Use /ec/webmin/restart instead of function call
+  * PEM format for ProFTPd
+
+ -- Joe Cooper <joe@virtualmin.com>  Fri, 22 May 2020 09:24:35 -0600
+
+virtualmin-config (6.0.24) stable; urgency=medium
 
   * Remove SetHandler lines on newer Debian/Ubuntu versions
   * Catch DHCP config in cases where interfaces.d is in use

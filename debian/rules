@@ -12,3 +12,5 @@ override_dh_auto_install:
 	rm -rf debian/virtualmin-config/usr/lib
 	mkdir -p debian/virtualmin-config/usr/share/webmin/virtual-server
 	ln -s /usr/bin/virtualmin-config-system debian/virtualmin-config/usr/share/webmin/virtual-server/config-system.pl
+
+override_dh_strip_nondeterminism:
