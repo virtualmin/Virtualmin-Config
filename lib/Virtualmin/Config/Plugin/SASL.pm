@@ -116,7 +116,7 @@ sub actions {
         $self->logsystem("touch $cf");
       }
       my $smtpdconf = read_file_lines($cf) or die "Failed to open $cf!";
-      my $idx = indexof("", @$smtpdconf);
+      my $idx       = indexof("", @$smtpdconf);
       if ($idx < 0) {
         push(@$smtpdconf, "pwcheck_method: saslauthd");
         push(@$smtpdconf, "mech_list: plain login");

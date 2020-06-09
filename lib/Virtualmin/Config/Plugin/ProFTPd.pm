@@ -81,12 +81,12 @@ sub actions {
 
 
     # generate TLS cert/key pair
-    my $hostname = `hostname -f`;
+    my $hostname = get_system_hostname();
     my $org      = "Self-signed for $hostname";
 
     $log->info('Generating a self-signed certificate for TLS.');
     $self->logsystem(
-      "openssl req -new -x509 -nodes -out $certfile -keyout $keyfile -subj '/C=NA/ST=NA/L=NA/O=$org/CN=$hostname'"
+      "openssl req -new -x509 -days 3650 -nodes -out $certfile -keyout $keyfile -subj '/C=NA/ST=NA/L=NA/O=$org/CN=$hostname'"
     );
 
     # Generate ssh key pairs
@@ -109,7 +109,7 @@ TLSEngine                     on
 TLSRequired                   off
 TLSRSACertificateFile         $certfile
 TLSRSACertificateKeyFile      $keyfile
-TLSOptions                    NoCertRequest
+TLSOptions                    NoCertRequest NoSessionReuseRequired
 TLSVerifyClient               off
 TLSLog                        /var/log/proftpd/tls.log
 <IfModule mod_tls_shmcache.c>

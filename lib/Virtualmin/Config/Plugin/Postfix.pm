@@ -85,7 +85,7 @@ sub actions {
 
     # Setup sender dependent map
     my ($major, $minor) = split(/\./, $postfix::postfix_version);
-    if (($major >= 2 && $minor >= 7) || $major >=3) {
+    if (($major >= 2 && $minor >= 7) || $major >= 3) {
       if (!postfix::get_real_value("sender_dependent_default_transport_maps")) {
         postfix::set_current_value("sender_dependent_default_transport_maps",
           "$maptype:$postetc/dependent");
@@ -102,6 +102,7 @@ sub actions {
 
     # Add smtp auth stuff to main.cf
     postfix::set_current_value("smtpd_sasl_auth_enable",      "yes",         1);
+    postfix::set_current_value("smtpd_tls_security_level",    "may",         1);
     postfix::set_current_value("smtpd_sasl_security_options", "noanonymous", 1);
     postfix::set_current_value("broken_sasl_auth_clients",    "yes",         1);
     postfix::set_current_value("smtpd_recipient_restrictions",
@@ -109,6 +110,7 @@ sub actions {
       1);
     my $mydest = postfix::get_current_value("mydestination");
     my $myhost = get_system_hostname();
+
     if ($mydest !~ /\Q$myhost\E/) {
       postfix::set_current_value("mydestination", $mydest . ", " . $myhost, 1);
     }
@@ -126,8 +128,13 @@ sub actions {
     my $master = postfix::get_master_config();
     my ($smtp) = grep { $_->{'name'} eq 'smtp' && $_->{'enabled'} } @$master;
     $smtp || die "Failed to find SMTP postfix service!";
-    if ($smtp->{'command'} !~ /smtpd_sasl_auth_enable/) {
-      $smtp->{'command'} .= " -o smtpd_sasl_auth_enable=yes";
+    if ( $smtp->{'command'} !~ /smtpd_sasl_auth_enable/
+      || $smtp->{'command'} !~ /smtpd_tls_security_level/)
+    {
+      $smtp->{'command'} .= " -o smtpd_sasl_auth_enable=yes"
+        if ($smtp->{'command'} !~ /smtpd_sasl_auth_enable/);
+      $smtp->{'command'} .= " -o smtpd_tls_security_level=may"
+        if ($smtp->{'command'} !~ /smtpd_tls_security_level/);
       postfix::modify_master($smtp);
     }
 
