@@ -132,6 +132,8 @@ sub actions {
     my %umailconfig;
     read_file($ucfile, \%umailconfig);
     $umailconfig{'mailbox_dir'} = 'Maildir';
+    $umailconfig{'view_html'} = 2;
+    $umailconfig{'view_images'} = 1;
     write_file($ucfile, \%umailconfig);
 
     # Set the default Usermin ACL to only allow access to email modules
