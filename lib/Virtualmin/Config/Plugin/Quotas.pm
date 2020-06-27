@@ -90,7 +90,7 @@ sub actions {
       $mounts[$idx]->[5]
     );
     my $err = mount::remount_dir($dir, $dev, $type, $opts);
-    if ($type eq "xfs" || $err) {
+    if ($type ne "ext4" || $err) {
       print "\b" x 7 . " " x 7;
       print
         "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
