@@ -208,7 +208,7 @@ sub actions {
       $conf, $conf);
 
     # Turn off server signatures, which aren't PCI compliant
-    apache::save_directive("ServerTokens",    ["Minimal"], $conf, $conf);
+    apache::save_directive("ServerTokens",    ["Prod"], $conf, $conf);
     apache::save_directive("ServerSignature", ["Off"],     $conf, $conf);
     apache::save_directive("TraceEnable",     ["Off"],     $conf, $conf);
     flush_file_lines();
