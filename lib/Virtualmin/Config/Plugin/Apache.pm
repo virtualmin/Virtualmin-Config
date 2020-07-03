@@ -101,15 +101,11 @@ sub actions {
         "lbmethod_byrequests"
         )
       {
-        if (has_command('a2enmod')) {
-          $self->logsystem("a2enmod $mod");
-        } else {
-          if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
-            symlink("$adir/$mod.load", "$edir/$mod.load");
-          }
-          if (-r "$adir/$mod.conf" && !-r "$edir/$mod.conf") {
-            symlink("$adir/$mod.conf", "$edir/$mod.conf");
-          }
+        if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
+          symlink("$adir/$mod.load", "$edir/$mod.load");
+        }
+        if (-r "$adir/$mod.conf" && !-r "$edir/$mod.conf") {
+          symlink("$adir/$mod.conf", "$edir/$mod.conf");
         }
       }
 
