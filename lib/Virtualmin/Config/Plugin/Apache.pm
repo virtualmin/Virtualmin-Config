@@ -8,6 +8,7 @@ our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+my $delay = 3;
 
 sub new {
   my ($class, %args) = @_;
@@ -100,13 +101,22 @@ sub actions {
         "lbmethod_byrequests"
         )
       {
-        if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
-          symlink("$adir/$mod.load", "$edir/$mod.load");
-        }
-        if (-r "$adir/$mod.conf" && !-r "$edir/$mod.conf") {
-          symlink("$adir/$mod.conf", "$edir/$mod.conf");
+        if (has_command('a2enmod')) {
+          $self->logsystem("a2enmod $mod");
+        } else {
+          if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
+            symlink("$adir/$mod.load", "$edir/$mod.load");
+          }
+          if (-r "$adir/$mod.conf" && !-r "$edir/$mod.conf") {
+            symlink("$adir/$mod.conf", "$edir/$mod.conf");
+          }
         }
       }
+
+      # Delay, restart, delay is need for further `apache::get_config()` to be
+      # read accordingly, so that `SSLCipherSuite` won't be written twice
+      sleep $delay, $self->logsystem("systemctl restart apache2"), sleep $delay;
+
       my $fn            = "/etc/apache2/suexec/www-data";
       my $apache2suexec = read_file_lines($fn) or die "Failed to open $fn!";
       $apache2suexec->[0] = "/home";
