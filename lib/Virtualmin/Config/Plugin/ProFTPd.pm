@@ -155,7 +155,18 @@ EOF
 
     # Generate a basic config, subbing in the right variables.
     flush_file_lines();
+    
+    # Create initial site file to satisfy config check
+    my $site_conf = "$ENV{'WEBMIN_CONFIG'}/proftpd/site";
+    if (! -r $site_conf) {
+      my $ver;
+      my %site_conf;
+      $ver = proftpd::get_proftpd_version();
+      $site_conf{'version'} = $ver;
+      write_file($site_conf, \%site_conf);
+    }
 
+    # Restart ProFTPd
     init::restart_action("proftpd");
 
     $self->done(1);    # OK!
