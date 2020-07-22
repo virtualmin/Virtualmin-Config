@@ -45,8 +45,14 @@ sub actions {
     $vconfig{'avail_virtualmin-dav'} = '';
     $vconfig{'backup_feature_ssl'}   = 0;
 
-    $vconfig{'plugins'}
-      = 'virtualmin-awstats virtualmin-nginx virtualmin-nginx-ssl';
+    if ($self->bundle() eq "MiniLEMP") {
+      $vconfig{'plugins'}
+        = 'virtualmin-nginx virtualmin-nginx-ssl';
+    }
+    else {
+      $vconfig{'plugins'}
+        = 'virtualmin-awstats virtualmin-nginx virtualmin-nginx-ssl';
+    }
     save_module_config(\%vconfig, "virtual-server");
 
     $self->done(1);    # OK!
