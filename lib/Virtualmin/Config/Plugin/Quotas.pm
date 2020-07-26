@@ -91,14 +91,42 @@ sub actions {
     );
     my $err = mount::remount_dir($dir, $dev, $type, $opts);
     if ($type ne "ext4" || $err) {
+      my $xfs = $type eq 'xfs';
       print "\b" x 7 . " " x 7;
-      print
+      print 
         "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
-      print
-        "You may need to reboot your system, and/or enable quotas in the Disk\n";
-      print "Quotas module.";
-      print " " x 65;
+      print $xfs ? "You will need to reboot your system to enable quotas." :
+                   "You may need to reboot your system, and/or enable quotas\nmanually in Webmin/System/Disk Quotas module.";
+      print " " x ($xfs ? 26 : 34);
       $res = 2;
+      if ($xfs) {
+        # Update the grub config file source
+        my $grubfile = "/etc/default/grub";
+        my %grub;
+        &read_env_file($grubfile, \%grub) ||
+          ($res = 0);
+        my $v = $grub{'GRUB_CMDLINE_LINUX'};
+        if ($v =~ /rootflags=(\S+)/) {
+          $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
+          }
+        else {
+          $v .= " rootflags=uquota,gquota";
+          }
+        $grub{'GRUB_CMDLINE_LINUX'} = $v;
+        &write_env_file($grubfile, \%grub);
+
+        # Generate a new actual config file
+        my $grub_file = "/boot/grub2/grub.cfg";
+        # On EFI it's different config file
+        if (-d "/sys/firmware/efi") {
+          my %osrelease;
+          &read_env_file('/etc/os-release', \%osrelease);
+          my $osid = $osrelease{'ID'} || 'centos';
+          $grub_file = "/boot/efi/EFI/$osid/grub.cfg";
+        }
+        &copy_source_dest($grub_file, "$grub_file.orig");
+        $self->logsystem("grub2-mkconfig -o $grub_file");
+      }
     }
     else {
       # Activate quotas
