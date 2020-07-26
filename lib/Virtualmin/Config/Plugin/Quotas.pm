@@ -100,32 +100,34 @@ sub actions {
       print " " x ($xfs ? 26 : 34);
       $res = 2;
       if ($xfs) {
+
         # Update the grub config file source
         my $grubfile = "/etc/default/grub";
         my %grub;
-        &read_env_file($grubfile, \%grub) ||
-          ($res = 0);
+        &read_env_file($grubfile, \%grub) || ($res = 0);
         my $v = $grub{'GRUB_CMDLINE_LINUX'};
-        if ($v =~ /rootflags=(\S+)/) {
-          $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
-          }
-        else {
-          $v .= " rootflags=uquota,gquota";
-          }
-        $grub{'GRUB_CMDLINE_LINUX'} = $v;
-        &write_env_file($grubfile, \%grub);
+        if ($v !~ /rootflags=.*?([u|g]quota)/) {
+            if ($v =~ /rootflags=(\S+)/) {
+                $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
+            } else {
+                $v .= " rootflags=uquota,gquota";
+            }
+            $grub{'GRUB_CMDLINE_LINUX'} = $v;
+            &write_env_file($grubfile, \%grub);
 
-        # Generate a new actual config file
-        my $grub_file = "/boot/grub2/grub.cfg";
-        # On EFI it's different config file
-        if (-d "/sys/firmware/efi") {
-          my %osrelease;
-          &read_env_file('/etc/os-release', \%osrelease);
-          my $osid = $osrelease{'ID'} || 'centos';
-          $grub_file = "/boot/efi/EFI/$osid/grub.cfg";
+            # Generate a new actual config file
+            my $grub_file = "/boot/grub2/grub.cfg";
+
+            # On EFI it's different config file
+            if (-d "/sys/firmware/efi") {
+                my %osrelease;
+                &read_env_file('/etc/os-release', \%osrelease);
+                my $osid = $osrelease{'ID'} || 'centos';
+                $grub_file = "/boot/efi/EFI/$osid/grub.cfg";
+            }
+            &copy_source_dest($grub_file, "$grub_file.orig");
+            $self->logsystem("grub2-mkconfig -o $grub_file");
         }
-        &copy_source_dest($grub_file, "$grub_file.orig");
-        $self->logsystem("grub2-mkconfig -o $grub_file");
       }
     }
     else {
