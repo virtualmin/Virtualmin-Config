@@ -116,7 +116,10 @@ sub actions {
     }
 
     # Opportunistic encryption for outgoing mail
-    postfix::set_current_value("smtp_tls_security_level", "may", 1);
+    my $seclvl = 
+      compare_version_numbers($postfix::postfix_version, "2.11") >= 0 ?
+        "dane" : "may";
+    postfix::set_current_value("smtp_tls_security_level", $seclvl, 1);
 
     # Turn off limit on mailbox size
     postfix::set_current_value("mailbox_size_limit", "0");
