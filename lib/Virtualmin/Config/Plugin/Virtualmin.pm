@@ -38,13 +38,14 @@ sub actions {
     $vconfig{'mail_system'} = 0;
     $vconfig{'aliascopy'}   = 1;
     $vconfig{'home_base'}   = "/home";
-    if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
+    # XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
+    if (defined $self->bundle() && ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP")) {
       $vconfig{'spam'}       = 0;
       $vconfig{'virus'}      = 0;
       $vconfig{'postgresql'} = 0;
       $vconfig{'webalizer'}  = 0;
     }
-    else {
+    elsif (defined $self->bundle()) {
       $vconfig{'spam'}       = 1;
       $vconfig{'virus'}      = 1;
       $vconfig{'postgresql'} = 1;
