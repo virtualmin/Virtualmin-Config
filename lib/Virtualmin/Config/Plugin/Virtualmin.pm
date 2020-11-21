@@ -50,7 +50,7 @@ sub actions {
       $vconfig{'virus'}      = 1;
       $vconfig{'postgresql'} = 1;
     }
-    $vconfig{'ftp'}              = 2;
+    $vconfig{'ftp'}              = 0;
     $vconfig{'logrotate'}        = 3;
     $vconfig{'default_procmail'} = 1;
     $vconfig{'bind_spfall'}      = 0;
@@ -63,7 +63,6 @@ sub actions {
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
       $vconfig{'ssl'}                  = 0;
       $vconfig{'web'}                  = 0;
-      $vconfig{'avail_virtualmin-dav'} = '';
       $vconfig{'backup_feature_ssl'}   = 0;
     }
     else {
@@ -71,11 +70,11 @@ sub actions {
     }
     if (!defined($vconfig{'plugins'})) {
       if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
-        $vconfig{'plugins'} = 'virtualmin-dav virtualmin-htpasswd';
+        $vconfig{'plugins'} = 'virtualmin-htpasswd';
       }
       else {
         $vconfig{'plugins'}
-          = 'virtualmin-awstats virtualmin-dav virtualmin-htpasswd';
+          = 'virtualmin-awstats virtualmin-htpasswd';
       }
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
