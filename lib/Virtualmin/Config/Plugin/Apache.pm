@@ -91,14 +91,12 @@ sub actions {
       my $edir = "/etc/apache2/mods-enabled";
       foreach my $mod (
         "actions",        "suexec",
-        "auth_digest",    "dav_svn",
-        "ssl",            "dav",
-        "dav_fs",         "fcgid",
-        "rewrite",        "proxy",
-        "proxy_balancer", "proxy_connect",
-        "proxy_http",     "slotmem_shm",
-        "cgi",            "proxy_fcgi",
-        "lbmethod_byrequests"
+        "auth_digest",    "ssl",
+        "fcgid",          "rewrite",
+        "proxy",          "proxy_balancer",
+        "proxy_connect",  "proxy_http",
+        "slotmem_shm",    "cgi",
+        "proxy_fcgi",     "lbmethod_byrequests"
         )
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
@@ -150,7 +148,6 @@ sub actions {
       foreach my $l (@$apache22conf) {
         $l =~ s/#(Include .*httpd-ssl.conf)/$1/;
         $l =~ s/#(Include .*httpd-vhosts.conf)/$1/;
-        $l =~ s/#(Include .*httpd-dav.conf)/$1/;
       }
       flush_file_lines($fn);
 
