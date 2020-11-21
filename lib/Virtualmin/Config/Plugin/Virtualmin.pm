@@ -69,12 +69,17 @@ sub actions {
       $vconfig{'ssl'} = 2;
     }
     if (!defined($vconfig{'plugins'})) {
-      if ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP") {
-        $vconfig{'plugins'} = 'virtualmin-htpasswd';
+      # Module `virtualmin-htpasswd` is only meant for Apache
+      my $vmhtpass = 
+          ($self->bundle() ne "LEMP" && $self->bundle() ne "MiniLEMP") ? 'virtualmin-htpasswd' : '';
+      if ($self->bundle() eq "MiniLAMP") {
+        $vconfig{'plugins'} = $vmhtpass;
       }
       else {
         $vconfig{'plugins'}
-          = 'virtualmin-awstats virtualmin-htpasswd';
+          = 'virtualmin-awstats';
+        $vconfig{'plugins'}
+          .= " $vmhtpass" if ($vmhtpass);
       }
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
