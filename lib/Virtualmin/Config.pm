@@ -128,15 +128,11 @@ sub _gather_plugins {
   }
 
   # Check for excluded plugins
-  if (ref($self->{exclude}) eq 'ARRAY' || ref($self->{exclude}) eq 'STRING') {
-    for my $exclude ($self->{'exclude'}) {
-      my @dix = reverse(grep { $plugins[$_] eq $exclude } 0 .. $#plugins);
-      for (@dix) {
-        splice(@plugins, $_, 1);
-      }
-    }
+  my @noplugins = _flat($self->{'exclude'});
+  if (@noplugins) {
+    @plugins = _flat(@plugins);
+    @plugins = grep { my $noplugin = $_; !grep( /^$noplugin$/, @noplugins) } @plugins;
   }
-
   return @plugins;
 }
 
@@ -185,6 +181,11 @@ sub _topo_sort {
 sub _uniq {
   my %seen;
   return grep { !$seen{$_}++ } @_;
+}
+
+# Flatten into plain list
+sub _flat {
+  return map {ref eq 'ARRAY' ? @$_ : $_} @_;
 }
 
 1;
