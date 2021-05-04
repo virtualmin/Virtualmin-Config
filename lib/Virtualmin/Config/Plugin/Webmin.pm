@@ -34,6 +34,7 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("webmin", "webmin-lib.pl");
+    $gconfig{'nowebminup'}   = "1";
     $gconfig{'theme'}        = "authentic-theme";
     $gconfig{'mobile_theme'} = "authentic-theme";
     $gconfig{'logfiles'}     = 1;
