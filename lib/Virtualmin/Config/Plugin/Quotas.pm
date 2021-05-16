@@ -92,42 +92,58 @@ sub actions {
     my $err = mount::remount_dir($dir, $dev, $type, $opts);
     if ($type ne "ext4" || $err) {
       my $xfs = $type eq 'xfs';
-      print "\b" x 7 . " " x 7;
-      print 
-        "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
-      print $xfs ? "You will need to reboot your system to enable quotas." :
+      my $smsg1 = "\b" x 7 . " " x 7;
+      my $smsg2 = " " x ($xfs ? 26 : 34);
+      my $msg1 = "\nThe filesystem $dir could not be remounted with quotas enabled.\n";
+      my $msg2 = $xfs ? "You will need to reboot your system to enable quotas." :
                    "You may need to reboot your system, and/or enable quotas\nmanually in Webmin/System/Disk Quotas module.";
-      print " " x ($xfs ? 26 : 34);
       $res = 2;
+      my $prt_std_err = 1;
       if ($xfs) {
 
         # Update the grub config file source
-        my $grubfile = "/etc/default/grub";
-        my %grub;
-        &read_env_file($grubfile, \%grub) || ($res = 0);
-        my $v = $grub{'GRUB_CMDLINE_LINUX'};
-        if ($v !~ /rootflags=.*?([u|g]quota)/) {
+        my $grub_def_file = "/etc/default/grub";
+        if (-r $grub_def_file) {
+          my %grub;
+          &read_env_file($grub_def_file, \%grub) || ($res = 0);
+          my $v = $grub{'GRUB_CMDLINE_LINUX'};
+          if ($v !~ /rootflags=.*?([u|g]quota)/) {
             if ($v =~ /rootflags=(\S+)/) {
                 $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
             } else {
                 $v .= " rootflags=uquota,gquota";
             }
             $grub{'GRUB_CMDLINE_LINUX'} = $v;
-            &write_env_file($grubfile, \%grub);
+            &write_env_file($grub_def_file, \%grub);
 
             # Generate a new actual config file
-            my $grub_file = "/boot/grub2/grub.cfg";
+            my $grub_conf_file = "/boot/grub2/grub.cfg";
 
             # On EFI it's different config file
             if (-d "/sys/firmware/efi") {
                 my %osrelease;
                 &read_env_file('/etc/os-release', \%osrelease);
-                my $osid = $osrelease{'ID'} || 'centos';
-                $grub_file = "/boot/efi/EFI/$osid/grub.cfg";
+                my $osid = $osrelease{'ID'};
+                my $grub_conf_file_efi = "/boot/efi/EFI/$osid/grub.cfg";
+                if (-r $grub_conf_file_efi) {
+                  $grub_conf_file = $grub_conf_file_efi;
+                }
             }
-            &copy_source_dest($grub_file, "$grub_file.orig");
-            $self->logsystem("grub2-mkconfig -o $grub_file");
+            if (-r $grub_conf_file) {
+              &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
+              $self->logsystem("grub2-mkconfig -o $grub_conf_file");
+            }
+          } else {
+            $res = 1;
+            $prt_std_err = 0;
+          }
         }
+      }
+      if ($prt_std_err && $res) {
+        print $smsg1;
+        print $msg1;
+        print $msg2;
+        print $smsg2;
       }
     }
     else {
