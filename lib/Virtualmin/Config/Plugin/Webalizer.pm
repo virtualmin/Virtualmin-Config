@@ -4,6 +4,7 @@ use warnings;
 use 5.010;
 no warnings qw(once);
 use parent 'Virtualmin::Config::Plugin';
+use Cwd;
 
 our $config_directory;
 our (%gconfig, %miniserv);
@@ -22,8 +23,6 @@ sub new {
 # plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
-
-  use Cwd;
   my $cwd  = getcwd();
   my $root = $self->root();
   chdir($root);
@@ -33,17 +32,24 @@ sub actions {
   init_config();
 
   $self->spin();
-  eval {
-    foreign_require("webalizer", "webalizer-lib.pl");
-    my $conf = webalizer::get_config();
-    webalizer::save_directive($conf, "IncrementalName", "webalizer.current");
-    webalizer::save_directive($conf, "HistoryName",     "webalizer.hist");
-    webalizer::save_directive($conf, "DNSCache",        "dns_cache.db");
-    flush_file_lines($webalizer::config{'webalizer_conf'});
-    $self->done(1);         # OK!
-  };
-  if ($@) {
-    $self->done(0);
+
+  if (has_command("webalizer")) {
+    eval {
+      foreign_require("webalizer", "webalizer-lib.pl");
+      my $conf = webalizer::get_config();
+      webalizer::save_directive($conf, "IncrementalName", "webalizer.current");
+      webalizer::save_directive($conf, "HistoryName",     "webalizer.hist");
+      webalizer::save_directive($conf, "DNSCache",        "dns_cache.db");
+      flush_file_lines($webalizer::config{'webalizer_conf'});
+      $self->done(1);         # OK!
+    };
+    if ($@) {
+      $self->done(0);
+    }
+  } else {
+      print "\nWebalizer package is not available for installation on this distro";
+      print " " x 13;
+      $self->done(2);
   }
 }
 
