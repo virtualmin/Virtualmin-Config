@@ -22,9 +22,9 @@ sub plugins {
       "Postfix",      "MySQL",   "Firewalld",
       "Procmail",     "ProFTPd", "Quotas",
       "SASL",         "Shells",  "Status",
-      "Upgrade",      "Usermin", "Webalizer",
-      "Virtualmin",   "ClamAV",  "NTP",
-      "SpamAssassin", "Fail2banFirewalld"
+      "Upgrade",      "Usermin", "Virtualmin",
+      "ClamAV",       "NTP",     "SpamAssassin",
+      "Fail2banFirewalld"
     ];
   }
   else {
@@ -33,8 +33,8 @@ sub plugins {
       "Net",      "AWStats",      "Postfix",    "MySQL",
       "Firewall", "Procmail",     "ProFTPd",    "Quotas",
       "SASL",     "Shells",       "Status",     "Upgrade",
-      "Usermin",  "Webalizer",    "Virtualmin", "ClamAV",
-      "NTP",      "SpamAssassin", "Fail2ban"
+      "Usermin",  "Virtualmin",   "ClamAV",     "NTP",
+      "SpamAssassin", "Fail2ban"
     ];
   }
 }
