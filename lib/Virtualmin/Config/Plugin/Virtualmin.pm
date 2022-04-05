@@ -2,6 +2,7 @@ package Virtualmin::Config::Plugin::Virtualmin;
 use strict;
 use warnings;
 no warnings qw(once);
+no warnings 'uninitialized';
 use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
@@ -229,6 +230,31 @@ sub actions {
       $gconfig{'cache_size'} = 50 * 1024 * 1024;
       $gconfig{'cache_mods'} = "virtual-server";
       write_file("$config_directory/config", \%gconfig);
+    }
+
+    # Fix to extend Jailkit [basicshell] paths
+    if (&foreign_check('jailkit')) {
+      &foreign_require('jailkit');
+      my $jk_init_conf        = &jailkit::get_jk_init_ini();
+      my $jk_basicshell_paths = $jk_init_conf->val('basicshell', 'paths');
+      my @jk_basicshell_paths = split(/\s*,\s*/, $jk_basicshell_paths);
+      my @jk_params = (
+          ['zsh', '/etc/zsh/zshrc', '/etc/zsh/zshenv'],
+          ['rbash']
+      );
+
+      JKPARAMS:
+      foreach my $jk_params (@jk_params) {
+          foreach my $jk_param (@{$jk_params}) {
+              if (grep(/^$jk_param$/, @jk_basicshell_paths)) {
+                  next JKPARAMS;
+              }
+          }
+          $jk_basicshell_paths .= ", @{[join(', ', @{$jk_params})]}";
+      }
+
+      $jk_init_conf->newval('basicshell', 'paths', $jk_basicshell_paths);
+      &jailkit::write_jk_init_ini($jk_init_conf);
     }
 
     $self->done(1);    # OK!
