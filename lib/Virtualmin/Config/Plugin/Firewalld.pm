@@ -34,12 +34,9 @@ sub actions {
   init_config();
 
   $self->spin();
+  my @services = qw(ssh smtp smtps smtp-submission ftp pop3 pop3s imap imaps http https);
+  my @ports = qw(2222/tcp 10000-10100/tcp 20000/tcp);
   eval {
-    my @services = qw(ssh smtp smtps ftp pop3 pop3s imap imaps http https);
-    my @tcpports
-      = qw(submission domain ftp-data 2222 10000-10100 20000 1025-65535);
-    my @udpports = qw(domain);
-
     foreign_require('init', 'init-lib.pl');
     init::enable_at_boot('firewalld');
     if (init::action_status('iptables')) {
@@ -48,26 +45,19 @@ sub actions {
     }
     init::start_action('firewalld');
 
-    if (has_command('firewall-cmd')) {
+    my $firewall_cmd = has_command('firewall-cmd');
+    if ($firewall_cmd) {
+      $self->logsystem("$firewall_cmd --set-default-zone public");
       foreach my $s (@services) {
-        $self->logsystem(
-          "firewall-cmd --quiet --zone=public --add-service=${s}");
-        $self->logsystem(
-          "firewall-cmd --quiet --zone=public --permanent --add-service=${s}");
+        $self->logsystem("$firewall_cmd --zone=public --add-service=${s}");
+        $self->logsystem("$firewall_cmd --zone=public --permanent --add-service=${s}");
       }
-      foreach my $p (@tcpports) {
-        $self->logsystem("firewall-cmd --zone=public --add-port=${p}/tcp");
-        $self->logsystem(
-          "firewall-cmd --zone=public --permanent --add-port=${p}/tcp");
+      foreach my $s (@ports) {
+        $self->logsystem("$firewall_cmd --zone=public --add-port=${s}");
+        $self->logsystem("$firewall_cmd --zone=public --permanent --add-port=${s}");
       }
-      foreach my $p (@udpports) {
-        $self->logsystem("firewall-cmd --zone=public --add-port=${p}/udp");
-        $self->logsystem(
-          "firewall-cmd --zone=public --permanent --add-port=${p}/udp");
-      }
-      $self->logsystem("firewall-cmd --set-default-zone public");
+      $self->logsystem("$firewall_cmd --complete-reload");
     }
-
     $self->done(1);    # OK!
   };
   if ($@) {
