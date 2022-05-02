@@ -131,6 +131,7 @@ sub _gather_plugins {
   my @noplugins = _flat($self->{'exclude'});
   if (@noplugins) {
     @plugins = _flat(@plugins);
+    no warnings "uninitialized";
     @plugins = grep { my $noplugin = $_; !grep( /^$noplugin$/, @noplugins) } @plugins;
   }
   return @plugins;

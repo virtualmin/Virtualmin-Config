@@ -10,13 +10,13 @@ my @plugins = $bundle->_gather_plugins();
 ok(
   map {
     grep {/Test/}
-      @{$_}
+      $_
   } @plugins
 );
 ok(
   map {
     grep {/Test2/}
-      @{$_}
+      $_
   } @plugins
 );
 
@@ -25,7 +25,7 @@ my @plugins2 = $include->_gather_plugins();
 ok(
   map {
     grep {/^Test$/}
-      @{$_}
+      $_
   } @plugins2
 );
 ok(scalar @plugins2 == 1);
