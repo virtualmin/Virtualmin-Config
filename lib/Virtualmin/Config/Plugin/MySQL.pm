@@ -34,11 +34,11 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("init", "init-lib.pl");
-    if ($gconfig{'os_type'} eq "freebsd" || init::action_status("mysql")) {
-      init::enable_at_boot("mysql");
-    }
-    elsif (init::action_status("mariadb")) {
+    if (init::action_status("mariadb")) {
       init::enable_at_boot("mariadb");
+    }
+    elsif ($gconfig{'os_type'} eq "freebsd" || init::action_status("mysql")) {
+      init::enable_at_boot("mysql");
     }
     else {
       init::enable_at_boot("mysqld");
