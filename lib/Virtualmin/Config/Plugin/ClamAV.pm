@@ -60,7 +60,8 @@ sub actions {
       flush_file_lines($scanconf);
     }
 
-    if (has_command('freshclam')) {
+    foreign_require("init", "init-lib.pl");
+    if (!init::action_status("clamav-freshclam")) {
       $self->logsystem("freshclam");
     }
 
