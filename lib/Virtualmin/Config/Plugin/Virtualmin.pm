@@ -101,6 +101,12 @@ sub actions {
       $vconfig{'html_perms'} = "0750";
     }
     $vconfig{'php_suexec'} = 2;
+
+    # If system doesn't have Jailkit support, disable it
+    if (!has_command('jk_init')) {
+      $vconfig{'jailkit_disabled'} = 1;
+    }
+
     save_module_config(\%vconfig, "virtual-server");
 
     # Configure the Read User Mail module to look for sub-folders
