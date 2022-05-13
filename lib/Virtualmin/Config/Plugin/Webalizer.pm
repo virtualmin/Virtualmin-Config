@@ -47,8 +47,6 @@ sub actions {
       $self->done(0);
     }
   } else {
-      print "\nWebalizer package is not available for installation on this distro";
-      print " " x 13;
       $self->done(2);
   }
 }
