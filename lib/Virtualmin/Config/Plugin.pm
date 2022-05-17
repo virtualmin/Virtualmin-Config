@@ -21,7 +21,7 @@ our $count = 1;
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
 sub new {
-  my ($class, %args) = @_;
+  my ( $class, %args ) = @_;
 
   my $self = {
     name    => $args{name},
@@ -36,7 +36,7 @@ sub new {
 
 # Plugin short name, used in config definitions
 sub name {
-  my ($self, $name) = @_;
+  my ( $self, $name ) = @_;
   if ($name) { $self->{name} = $name }
   return $self->{name};
 }
@@ -44,20 +44,20 @@ sub name {
 # Return a ref to an array of plugins that have to run before this one.
 # Dep resolution is very stupid. Don't do anything complicated.
 sub depends {
-  my ($self, $name) = @_;
+  my ( $self, $name ) = @_;
   if ($name) { $self->{depends} = shift }
   return $self->{depends};
 }
 
 # Total number of plugins being run for running count
 sub total {
-  my ($self, $total) = @_;
+  my ( $self, $total ) = @_;
   if ($total) { $self->{total} = shift }
   return $self->{total};
 }
 
 sub bundle {
-  my ($self, $bundle) = @_;
+  my ( $self, $bundle ) = @_;
   if ($bundle) { $self->{bundle} = shift }
   return $self->{bundle};
 }
@@ -68,8 +68,7 @@ sub spin {
   my $message = shift // "Configuring " . $name;
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
-  $message
-    = "["
+  $message = "["
     . YELLOW
     . $count
     . RESET . "/"
@@ -77,10 +76,12 @@ sub spin {
     . $self->total()
     . RESET . "] "
     . $message;
-  my $color_correction = length(YELLOW . RESET . GREEN . RESET);
+  my $color_correction = length( YELLOW . RESET . GREEN . RESET );
   $count++;
-  $message = $message . " "
-    x (79 - length($message) - $spinner->{'last_size'} + $color_correction);
+  $message =
+    $message
+    . " " x
+    ( 79 - length($message) - $spinner->{'last_size'} + $color_correction );
   print $message;
   $spinner->auto_start();
 }
@@ -89,13 +90,13 @@ sub done {
   my $self = shift;
   my $res  = shift;
   $spinner->auto_done();
-  if ($res == 1) {
+  if ( $res == 1 ) {
 
     # Success!
     $log->info("Succeeded");
     $spinner->ok();
   }
-  elsif ($res == 2) {
+  elsif ( $res == 2 ) {
 
     # Not quite OK
     $log->warn("Non-fatal error");
@@ -114,7 +115,7 @@ sub root {
   $ENV{'WEBMIN_CONFIG'} ||= "/etc/webmin";
   $ENV{'WEBMIN_VAR'}    ||= "/var/webmin";
   $ENV{'MINISERV_CONFIG'} = $ENV{'WEBMIN_CONFIG'} . "/miniserv.conf";
-  open(my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf") || die RED,
+  open( my $CONF, "<", "$ENV{'WEBMIN_CONFIG'}/miniserv.conf" ) || die RED,
     "Failed to open miniserv.conf", RESET;
   my $root;
   while (<$CONF>) {
