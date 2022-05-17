@@ -43,6 +43,17 @@ sub actions {
         net::save_dns_config($dns);
       }
 
+      # Force 127.0.0.1 into name servers in resolv.conf
+      # XXX This shouldn't be necessary. There's some kind of bug in net::
+      my $resolvconf = '/etc/resolv.conf';
+      my $rlref      = read_file_lines($resolvconf);
+      if (indexof('nameserver 127.0.0.1'), @{$rlref} < 0) {
+        $log->info("Adding name server 127.0.0.1 to resolv.conf.");
+        unshift(@{$rlref}, 'nameserver 127.0.0.1');
+        unshift(@{$rlref}, '# Added by Virtualmin.');
+      }
+      flush_file_lines($resolvconf);
+
       # On Debian/Ubuntu, if there are extra interfaces files, we need
       # to update them, too.
       # Check for additional included config files.
