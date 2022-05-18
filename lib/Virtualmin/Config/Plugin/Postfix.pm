@@ -14,7 +14,7 @@ sub new {
   my ($class, %args) = @_;
 
   # inherit from Plugin
-  my $self = $class->SUPER::new(name => 'Postfix', depends => [], %args );
+  my $self = $class->SUPER::new(name => 'Postfix', %args);
 
   return $self;
 }
