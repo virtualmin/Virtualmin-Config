@@ -7,6 +7,7 @@ override_dh_auto_configure:
 	dh_auto_configure -- NO_PERLLOCAL=1
 
 override_dh_auto_install:
+	sed -i 's/\/vendor_perl//' Makefile
 	dh_auto_install
 	find debian/virtualmin-config -type f -name .packlist -delete
 	rm -rf debian/virtualmin-config/usr/lib
