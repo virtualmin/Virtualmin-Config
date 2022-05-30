@@ -19,16 +19,16 @@ sub plugins {
     return [
       "Webmin",    "Apache",   "Bind",    "Postfix",    "MySQL",
       "Firewalld", "Procmail", "ProFTPd", "Quotas",     "Shells",
-      "Status",    "Upgrade",  "Usermin", "Virtualmin", "NTP",
-      "Dovecot",   "SASL",
+      "Status",    "Upgrade",  "Usermin", "Virtualmin", "Dovecot",
+      "SASL",
     ];
   }
   else {
     return [
       "Webmin",   "Apache",   "Bind",    "Postfix",    "MySQL",
       "Firewall", "Procmail", "ProFTPd", "Quotas",     "Shells",
-      "Status",   "Upgrade",  "Usermin", "Virtualmin", "NTP",
-      "Dovecot",  "SASL"
+      "Status",   "Upgrade",  "Usermin", "Virtualmin", "Dovecot",
+      "SASL"
     ];
   }
 }
