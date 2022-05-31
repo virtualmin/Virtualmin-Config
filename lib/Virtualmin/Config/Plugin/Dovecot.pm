@@ -80,10 +80,8 @@ sub actions {
 
     #print "Enabling Dovecot POP3 and IMAP servers\n";
     init::enable_at_boot("dovecot");
-    if (!dovecot::is_dovecot_running()) {
-      my $err = dovecot::start_dovecot();
-
-      #print STDERR "Failed to start Dovecot POP3/IMAP server!\n" if ($err);
+    if (init::status_action('dovecot') != 1) {
+      my $err = init::start_action('dovecot');
     }
     $self->done(1);    # OK!
   };
