@@ -239,8 +239,8 @@ sub actions {
     }
 
     # Fix to extend Jailkit [basicshell] paths
-    if (&foreign_check('jailkit')) {
-      &foreign_require('jailkit');
+    if (has_command('jk_init') && foreign_check('jailkit')) {
+      foreign_require('jailkit');
       my $jk_init_conf        = &jailkit::get_jk_init_ini();
       my $jk_basicshell_paths = $jk_init_conf->val('basicshell', 'paths');
       my @jk_basicshell_paths = split(/\s*,\s*/, $jk_basicshell_paths);
