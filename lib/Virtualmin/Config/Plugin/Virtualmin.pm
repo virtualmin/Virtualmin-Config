@@ -107,6 +107,17 @@ sub actions {
       $vconfig{'jailkit_disabled'} = 1;
     }
 
+    # If system doesn't have AWStats support, disable it
+    if (foreign_check("virtualmin-awstats")) {
+      my %awstats_config = foreign_config("virtualmin-awstats");
+      if ($awstats_config{'awstats'} &&
+          !-r $awstats_config{'awstats'}) {
+        my @plugins = split(/\s/, $vconfig{'plugins'});
+        @plugins = grep { $_ ne 'virtualmin-awstats'} @plugins;
+        $vconfig{'plugins'} = join(' ', @plugins);
+      }
+    }
+
     save_module_config(\%vconfig, "virtual-server");
 
     # Configure the Read User Mail module to look for sub-folders
