@@ -20,7 +20,7 @@ sub plugins {
       "Webmin",    "Nginx",    "Bind",    "Postfix",    "MySQL",
       "Firewalld", "Procmail", "ProFTPd", "Quotas",     "Shells",
       "Status",    "Upgrade",  "Usermin", "Virtualmin",
-      "Dovecot",   "SASL"
+      "Dovecot",   "SASL",     "ETCKeeper"
     ];
   }
   else {
@@ -28,7 +28,7 @@ sub plugins {
       "Webmin",   "Nginx",    "Bind",    "Postfix",    "MySQL",
       "Firewall", "Procmail", "ProFTPd", "Quotas",     "Shells",
       "Status",   "Upgrade",  "Usermin", "Virtualmin",
-      "Dovecot",  "SASL"
+      "Dovecot",  "SASL",     "ETCKeeper"
     ];
   }
 }

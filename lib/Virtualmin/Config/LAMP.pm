@@ -23,7 +23,8 @@ sub plugins {
       "ProFTPd", "Quotas",       "SASL",
       "Shells",  "Status",       "Upgrade",
       "Usermin", "Virtualmin",   "ClamAV",
-      "SpamAssassin", "Fail2banFirewalld"
+      "SpamAssassin", "Fail2banFirewalld",
+      "ETCKeeper"
     ];
   }
   else {
@@ -33,7 +34,7 @@ sub plugins {
       "Procmail",   "ProFTPd", "Quotas",  "SASL",
       "Shells",     "Status",  "Upgrade", "Usermin",
       "Virtualmin", "ClamAV",  "SpamAssassin",
-      "Fail2ban"
+      "Fail2ban",   "ETCKeeper"
     ];
   }
 }
