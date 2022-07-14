@@ -163,7 +163,7 @@ sub actions {
     usermin::save_usermin_acl("user",
       ["mailbox", "changepass", "spam", "filter", 
        "language", "forward", "cron", "fetchmail", 
-       "updown", "schedule", "filemin"]);
+       "updown", "schedule", "filemin", "gnupg"]);
 
     # Lock down the Usermin file manager and browser to users' homes
     $cfile = "$usermin::config{'usermin_dir'}/file/config";
