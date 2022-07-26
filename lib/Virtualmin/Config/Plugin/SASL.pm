@@ -46,11 +46,15 @@ sub actions {
       my $fn          = "/etc/default/saslauthd";
       my $sasldefault = read_file_lines($fn) or die "Failed to open $fn!";
       my $idx         = indexof("# START=yes", @$sasldefault);
+      my $idx2        = grep {/START=/} @$sasldefault;
       if ($idx < 0) {
         $idx = indexof("START=no", @$sasldefault);
       }
       if ($idx >= 0) {
         $sasldefault->[$idx] = "START=yes";
+      }
+      if (!$idx2) {
+        push(@{$sasldefault}, "START=yes");
       }
 
       # Substitute options and params if already in file
