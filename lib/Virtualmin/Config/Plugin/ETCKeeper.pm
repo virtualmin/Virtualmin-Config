@@ -39,7 +39,7 @@ sub actions {
       }
     $self->done(1);    # OK!
   } else {
-    $self->done(0);    # Not installed but should have been
+    $self->done(2);    # Not installed but should have been
   }
 }
 
