@@ -40,7 +40,6 @@ sub actions {
 
   $self->spin();
   eval {
-
     if (has_command('fail2ban-server')) {
       
       foreign_require('init', 'init-lib.pl');

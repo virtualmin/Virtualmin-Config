@@ -55,22 +55,6 @@ sub actions {
       create_fail2ban_jail();
       create_fail2ban_firewalld();
 
-      # Fix systemd unit for firewalld
-      if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-        $self->logsystem(
-          'cp /lib/systemd/system/fail2ban.service /etc/systemd/system/');
-        $self->logsystem('touch /var/log/mail.warn');
-        my $fail2ban_service_ref
-          = read_file_lines('/etc/systemd/system/fail2ban.service');
-        foreach my $l (@$fail2ban_service_ref) {
-          if ($l =~ /^\s*After=/) {
-            $l = "After=network.target firewalld.service";
-          }
-        }
-        flush_file_lines('/etc/systemd/system/fail2ban.service');
-        $self->logsystem('systemctl daemon-reload');
-      }
-      
       # Switch backend to use systemd to avoid failure on
       # fail2ban starting when actual log file is missing
       # e.g.: Failed during configuration: Have not found any log file for [name] jail
@@ -85,6 +69,7 @@ sub actions {
       &fail2ban::save_directive("backend", 'systemd', $def);
       &fail2ban::unlock_all_config_files();
 
+      # Restart fail2ban
       init::restart_action('fail2ban');
       $self->done(1);
     } else {
