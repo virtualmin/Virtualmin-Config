@@ -46,14 +46,13 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require('init', 'init-lib.pl');
-    init::enable_at_boot('fail2ban');
-
-    my $err;
     if (has_command('fail2ban-server')) {
+      
+      foreign_require('init', 'init-lib.pl');
+      init::enable_at_boot('fail2ban');
 
       # Create a jail.local with some basic config
-      my $err = create_fail2ban_jail();
+      create_fail2ban_jail();
       create_fail2ban_firewalld();
 
       # Fix systemd unit for firewalld
@@ -71,24 +70,26 @@ sub actions {
         flush_file_lines('/etc/systemd/system/fail2ban.service');
         $self->logsystem('systemctl daemon-reload');
       }
+      
+      # Switch backend to use systemd to avoid failure on
+      # fail2ban starting when actual log file is missing
+      # e.g.: Failed during configuration: Have not found any log file for [name] jail
+      &foreign_require('fail2ban');
+      my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
+      my @jconf = &fail2ban::parse_config_file($jfile);
+      my @lconf = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
+      &fail2ban::merge_local_files(\@jconf, \@lconf);
+      my $jconf = &fail2ban::parse_config_file($jfile);
+      my ($def) = grep { $_->{'name'} eq 'DEFAULT' } @jconf;
+      &fail2ban::lock_all_config_files();
+      &fail2ban::save_directive("backend", 'systemd', $def);
+      &fail2ban::unlock_all_config_files();
+
+      init::restart_action('fail2ban');
+      $self->done(1);
+    } else {
+      $self->done(0); # Not available, as in Oracle 9
     }
-
-    # Switch backend to use systemd to avoid failure on
-    # fail2ban starting when actual log file is missing
-    # e.g.: Failed during configuration: Have not found any log file for [name] jail
-    &foreign_require('fail2ban');
-    my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
-    my @jconf = &fail2ban::parse_config_file($jfile);
-    my @lconf = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
-    &fail2ban::merge_local_files(\@jconf, \@lconf);
-    my $jconf = &fail2ban::parse_config_file($jfile);
-    my ($def) = grep { $_->{'name'} eq 'DEFAULT' } @jconf;
-    &fail2ban::lock_all_config_files();
-    &fail2ban::save_directive("backend", 'systemd', $def);
-    &fail2ban::unlock_all_config_files();
-
-    init::restart_action('fail2ban');
-    $self->done(1);
   };
   if ($@) {
     $self->done(0);    # NOK!

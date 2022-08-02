@@ -40,33 +40,36 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require('init', 'init-lib.pl');
-    init::enable_at_boot('fail2ban');
 
     if (has_command('fail2ban-server')) {
+      
+      foreign_require('init', 'init-lib.pl');
+      init::enable_at_boot('fail2ban');
 
       # Create a jail.local with some basic config
       create_fail2ban_jail();
       create_fail2ban_firewalld();
+
+      # Switch backend to use systemd to avoid failure on
+      # fail2ban starting when actual log file is missing
+      # e.g.: Failed during configuration: Have not found any log file for [name] jail
+      &foreign_require('fail2ban');
+      my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
+      my @jconf = &fail2ban::parse_config_file($jfile);
+      my @lconf = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
+      &fail2ban::merge_local_files(\@jconf, \@lconf);
+      my $jconf = &fail2ban::parse_config_file($jfile);
+      my ($def) = grep { $_->{'name'} eq 'DEFAULT' } @jconf;
+      &fail2ban::lock_all_config_files();
+      &fail2ban::save_directive("backend", 'systemd', $def);
+      &fail2ban::unlock_all_config_files();
+      
+      # Restart fail2ban
+      init::restart_action('fail2ban');
+      $self->done(1);
+    } else {
+      $self->done(0); # Not available, as in Oracle 9
     }
-
-    # Switch backend to use systemd to avoid failure on
-    # fail2ban starting when actual log file is missing
-    # e.g.: Failed during configuration: Have not found any log file for [name] jail
-    &foreign_require('fail2ban');
-    my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
-    my @jconf = &fail2ban::parse_config_file($jfile);
-    my @lconf = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
-    &fail2ban::merge_local_files(\@jconf, \@lconf);
-    my $jconf = &fail2ban::parse_config_file($jfile);
-    my ($def) = grep { $_->{'name'} eq 'DEFAULT' } @jconf;
-    &fail2ban::lock_all_config_files();
-    &fail2ban::save_directive("backend", 'systemd', $def);
-    &fail2ban::unlock_all_config_files();
-
-    # Restart fail2ban
-    init::restart_action('fail2ban');
-    $self->done(1);
   };
   if ($@) {
     $self->done(0);    # NOK!
