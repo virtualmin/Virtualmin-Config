@@ -73,7 +73,7 @@ sub actions {
       init::restart_action('fail2ban');
       $self->done(1);
     } else {
-      $self->done(0); # Not available, as in Oracle 9
+      $self->done(2); # Not available, as in Oracle 9
     }
   };
   if ($@) {
