@@ -39,7 +39,7 @@ sub actions {
     foreign_require("cron");
     my @jobs = cron::list_cron_jobs();
     my @dis  = grep {
-      $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic).sh/
+      $_->{'command'} =~ /\/usr\/share\/awstats\/tools\/(update|buildstatic)\.sh/
         && $_->{'active'}
     } @jobs;
     if (@dis) {
@@ -60,10 +60,23 @@ sub actions {
       }
       flush_file_lines($file);
     }
-    $self->done(1);    # OK!
   };
   if ($@) {
     $self->done(0);
+  } else {
+    # If system doesn't have AWStats support, disable it
+    if (foreign_check("virtualmin-awstats")) {
+      my %awstats_config = foreign_config("virtualmin-awstats");
+      if ($awstats_config{'awstats'} &&
+          !-r $awstats_config{'awstats'}) {
+        $self->done(2);    # Not installed!
+      }
+      else {
+        $self->done(1);    # OK
+      }
+    } else {
+      $self->done(2);    # Not installed!
+    }
   }
 }
 
