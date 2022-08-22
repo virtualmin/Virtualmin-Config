@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        6.0.27
+Version:        7.0.2
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -8,7 +8,7 @@ URL:            https://github.com/virtualmin/Virtualmin-Config/
 Source0:        Virtualmin-Config-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
-BuildRequires:  perl >= 0:5.010
+BuildRequires:  perl >= 0:5.016
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(File::Spec)
 BuildRequires:  perl(Log::Log4perl)
@@ -65,6 +65,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sat Jan 08 2022 Joe Cooper <joe@virtualmin.com> 7.0.0
+- New branch for Virtualmin 7
 * Sun Nov 04 2018 Joe Cooper <joe@virtualmin.com> 6.0.24-1
 - A bunch of changes for Ubuntu/Debian that don't impact RHEL
 * Fri Oct 13 2017 Joe Cooper <joe@virtualmin.com> 6.0.21-1

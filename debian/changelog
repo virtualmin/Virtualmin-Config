@@ -1,3 +1,12 @@
+virtualmin-config (7.0.2) stable; urgency=medium
+
+  * Various bugfixes
+  * Remove old hacks for Debian/Ubuntu no longer needed
+  * Gracefully handle missing packages
+  * Fix saslauthd start on newer Debian/Ubuntu
+
+ -- Joe Cooper <joe@virtualmin.com>  Sun, 21 Aug 2022 19:05:12 -0600
+
 virtualmin-config (7.0.0) stable; urgency=medium
 
   * Updates for Virtualmin 7
