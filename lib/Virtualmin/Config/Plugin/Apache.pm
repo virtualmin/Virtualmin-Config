@@ -96,7 +96,8 @@ sub actions {
         "proxy",          "proxy_balancer",
         "proxy_connect",  "proxy_http",
         "slotmem_shm",    "cgi",
-        "proxy_fcgi",     "lbmethod_byrequests"
+        "proxy_fcgi",     "lbmethod_byrequests",
+        "http2"
         )
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
@@ -174,25 +175,52 @@ sub actions {
       flush_file_lines($file);
     }
 
-    # Remove default SSL VirtualHost on RH systems
-    if (-r '/etc/httpd/conf.d/ssl.conf') {
-      my $file                 = '/etc/httpd/conf.d/ssl.conf';
-      my $lref                 = read_file_lines($file);
-      my $virtual_host_section = 0;
-      foreach my $l (@$lref) {
-        if ($l !~ /^\s*#/) {
-          if ($l =~ /^\s*<VirtualHost/) {
-            $virtual_host_section = 1;
-          }
-          if ($virtual_host_section == 1) {
-            $l = "#" . $l;
-          }
-          if ($l =~ /<\/VirtualHost/) {
-            $virtual_host_section = 0;
+    if ($gconfig{'os_type'} eq 'redhat-linux') {
+      # Remove default SSL VirtualHost on RH systems
+      my $httpdrestart;
+      if (-r '/etc/httpd/conf.d/ssl.conf') {
+        my $file                 = '/etc/httpd/conf.d/ssl.conf';
+        my $lref                 = read_file_lines($file);
+        my $virtual_host_section = 0;
+        foreach my $l (@$lref) {
+          if ($l !~ /^\s*#/) {
+            if ($l =~ /^\s*<VirtualHost/) {
+              $virtual_host_section = 1;
+            }
+            if ($virtual_host_section == 1) {
+              $l = "#" . $l;
+              $httpdrestart++;
+            }
+            if ($l =~ /<\/VirtualHost/) {
+              $virtual_host_section = 0;
+            }
           }
         }
+        flush_file_lines($file);
       }
-      flush_file_lines($file);
+      # Enable http2/h2 on RH systems
+      my $h2file = '/etc/httpd/conf.modules.d/10-h2.conf';
+      if (-r $h2file) {
+        my $lref = read_file_lines($h2file, 1);
+        my $h2_enabled;
+        foreach my $l (@$lref) {
+          $h2_enabled++
+            if ($l =~ /^\s*LoadModule\s+http2_module\s+modules\/mod_http2\.so\s*$/);
+          last
+            if ($h2_enabled);
+        }
+        if ($h2_enabled) {
+          $lref = "LoadModule http2_module modules/mod_http2.so\n" .
+           "<IfModule !mpm_prefork>\n" .
+           "    Protocols h2 h2c http/1.1\n" .
+           "</IfModule>\n";
+           write_file_contents($h2file, $lref);
+           $httpdrestart++;
+        }
+      }
+      if ($httpdrestart) {
+        apache::restart_apache();
+      }
     }
 
     # Disable global UserDir option
