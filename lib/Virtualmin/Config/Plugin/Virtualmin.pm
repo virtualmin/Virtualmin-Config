@@ -100,7 +100,9 @@ sub actions {
       }
       $vconfig{'html_perms'} = "0750";
     }
-    $vconfig{'php_suexec'} = 2;
+
+    # Always force PHP-FPM mode
+    $vconfig{'php_suexec'} = 3;
 
     # If system doesn't have Jailkit support, disable it
     if (!has_command('jk_init')) {
