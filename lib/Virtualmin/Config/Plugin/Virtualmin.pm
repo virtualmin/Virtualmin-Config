@@ -276,6 +276,14 @@ sub actions {
       &jailkit::write_jk_init_ini($jk_init_conf);
     }
 
+    # Disable and stop certbot timer
+    if (has_command('certbot')) {
+      foreign_require('init', 'init-lib.pl');
+
+      init::disable_at_boot('certbot.timer');
+      init::stop_action('certbot.timer');
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {
