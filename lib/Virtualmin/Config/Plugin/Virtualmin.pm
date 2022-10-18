@@ -284,10 +284,12 @@ sub actions {
       my @certbot_units =
         ('certbot-renew.timer', 'certbot.timer');
       foreach my $certbot_unit (@certbot_units) {
-        init::disable_at_boot($certbot_unit);
-        init::stop_action($certbot_unit);
-        if (defined(&init::mask_action)) {
-          init::mask_action($certbot_unit);
+        if (init::is_systemd_service($certbot_unit)) {
+          init::disable_at_boot($certbot_unit);
+          init::stop_action($certbot_unit);
+          if (defined(&init::mask_action)) {
+            init::mask_action($certbot_unit);
+          }
         }
       }
     }
