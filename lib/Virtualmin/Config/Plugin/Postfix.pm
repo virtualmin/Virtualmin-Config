@@ -80,8 +80,7 @@ sub actions {
       postfix::set_current_value("sender_bcc_maps", "$maptype:$postetc/bcc");
     }
     postfix::ensure_map("sender_bcc_maps");
-    postfix::regenerate_bcc_table()
-      if (defined(postfix::regenerate_bcc_table()));
+    postfix::regenerate_bcc_table();
 
     # Setup sender dependent map
     my ($major, $minor) = split(/\./, $postfix::postfix_version);
