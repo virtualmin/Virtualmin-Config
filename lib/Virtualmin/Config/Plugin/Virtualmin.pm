@@ -280,10 +280,15 @@ sub actions {
     if (has_command('certbot')) {
       foreign_require('init', 'init-lib.pl');
 
-      init::disable_at_boot('certbot.timer');
-      init::stop_action('certbot.timer');
-      if (defined(&init::mask_action)) {
-        init::mask_action('certbot.timer');
+      # Unit name is differnet on different distros
+      my @certbot_units =
+        ('certbot-renew.timer', 'certbot.timer');
+      foreach my $certbot_unit (@certbot_units) {
+        init::disable_at_boot($certbot_unit);
+        init::stop_action($certbot_unit);
+        if (defined(&init::mask_action)) {
+          init::mask_action($certbot_unit);
+        }
       }
     }
 
