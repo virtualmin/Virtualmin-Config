@@ -282,6 +282,9 @@ sub actions {
 
       init::disable_at_boot('certbot.timer');
       init::stop_action('certbot.timer');
+      if (defined(&init::mask_action)) {
+        init::mask_action('certbot.timer');
+      }
     }
 
     $self->done(1);    # OK!
