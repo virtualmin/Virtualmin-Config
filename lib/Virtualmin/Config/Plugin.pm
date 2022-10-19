@@ -65,7 +65,7 @@ sub bundle {
 sub spin {
   my $self    = shift;
   my $name    = $self->name();
-  my $message = shift // "Configuring " . $name;
+  my $message = shift // "Configuring " . format_plugin_name($name);
   $log->info($message);
   $spinner = Term::Spinner::Color->new();
   $message = "["
@@ -127,6 +127,19 @@ sub root {
   $root ||= "/usr/libexec/webmin";
 
   return $root;
+}
+
+# format_plugin_name(plugin-name)
+# Alters plugin name depending on the system software
+sub format_plugin_name {
+  my $name = shift;
+
+  # Variations of database
+  my $db = -x "/usr/bin/mariadb" ? "MariaDB" : "MySQL";
+  if ($name eq 'MySQL') {
+    $name = $db;
+  }
+  return $name;
 }
 
 # logsystem(command)
