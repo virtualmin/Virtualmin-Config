@@ -58,6 +58,14 @@ sub actions {
     }
 
     # Where are certs and keys stored?
+    my $get_openssl_version = sub {
+      my $out = &backquote_command("openssl version 2>/dev/null");
+      if ($out =~ /OpenSSL\s+(\d\.\d)/) {
+        return $1;
+      }
+      return 0;
+    };
+
     my ($keyfile, $certfile);
     if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
       $certfile = '/etc/ssl/certs/proftpd.crt';
@@ -83,10 +91,11 @@ sub actions {
     # generate TLS cert/key pair
     my $hostname = get_system_hostname();
     my $org      = "Self-signed for $hostname";
+    my $addtextsup = &$get_openssl_version() >= 1.1 ? "-addext subjectAltName=DNS:$hostname,DNS:localhost -addext extendedKeyUsage=serverAuth" : "";
 
     $log->info('Generating a self-signed certificate for TLS.');
     $self->logsystem(
-      "openssl req -new -x509 -days 3650 -nodes -out $certfile -keyout $keyfile -subj '/C=NA/ST=NA/L=NA/O=$org/CN=$hostname'"
+      "openssl req -newkey rsa:2048 -x509 -nodes -out $certfile -keyout $keyfile -days 3650 -sha256 -subj '/CN=$hostname/C=US/L=Santa Clara/O=$org' $addtextsup"
     );
 
     # Generate ssh key pairs
