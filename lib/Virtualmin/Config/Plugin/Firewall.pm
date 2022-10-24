@@ -36,7 +36,7 @@ sub actions {
   $self->spin();
   eval {
     my @tcpports
-      = qw(ssh smtp submission smtps domain ftp ftp-data pop3 pop3s imap imaps http https 2222 10000:10100 20000);
+      = qw(ssh smtp submission smtps domain ftp ftp-data pop3 pop3s imap imaps http https 2222 10000:10100 20000 49152:65535);
     my @udpports = qw(domain);
 
     foreign_require("firewall", "firewall-lib.pl");

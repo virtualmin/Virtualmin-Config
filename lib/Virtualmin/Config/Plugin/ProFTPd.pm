@@ -100,6 +100,11 @@ sub actions {
     }
 
     my $vmconf = <<"EOF";
+# Use standard passive ports
+<Global>
+  PassivePorts 49152 65535
+</Global>
+
 # chroot users into their home by default
 DefaultRoot ~
 

@@ -35,7 +35,7 @@ sub actions {
 
   $self->spin();
   my @services = qw(ssh smtp smtps smtp-submission ftp pop3 pop3s imap imaps http https dns mdns dns-over-tls);
-  my @ports = qw(20/tcp 2222/tcp 10000-10100/tcp 20000/tcp);
+  my @ports = qw(20/tcp 2222/tcp 10000-10100/tcp 20000/tcp 49152-65535/tcp);
   eval {
     foreign_require('init', 'init-lib.pl');
     init::enable_at_boot('firewalld');
