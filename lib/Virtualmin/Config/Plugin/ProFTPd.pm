@@ -118,7 +118,10 @@ sub actions {
 DefaultRoot ~
 
 # Enable TLS
-LoadModule mod_tls.c
+<IfModule !mod_tls.c>
+  LoadModule mod_tls.c
+</IfModule>
+
 TLSEngine                     on
 TLSRequired                   off
 TLSRSACertificateFile         $certfile
@@ -131,7 +134,10 @@ TLSLog                        /var/log/proftpd/tls.log
 </IfModule>
 
 # VirtualHost for SFTP (FTP over SSH) port
-LoadModule mod_sftp.c
+<IfModule !mod_sftp.c>
+  LoadModule mod_sftp.c
+</IfModule>
+
 <VirtualHost 0.0.0.0>
   SFTPEngine on
   SFTPLog /var/log/proftpd/sftp.log
