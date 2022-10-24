@@ -126,7 +126,7 @@ TLSEngine                     on
 TLSRequired                   off
 TLSRSACertificateFile         $certfile
 TLSRSACertificateKeyFile      $keyfile
-TLSOptions                    NoCertRequest NoSessionReuseRequired
+TLSOptions                    NoSessionReuseRequired
 TLSVerifyClient               off
 TLSLog                        /var/log/proftpd/tls.log
 <IfModule mod_tls_shmcache.c>
