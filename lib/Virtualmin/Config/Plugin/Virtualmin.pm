@@ -294,6 +294,12 @@ sub actions {
       }
     }
 
+    # Terminal on the new installs
+    # is allowed to have colors on
+    my %xterm_config = foreign_config("xterm");
+    $xterm_config{'rcfile'} = 1;
+    save_module_config(\%xterm_config, "xterm");
+
     $self->done(1);    # OK!
   };
   if ($@) {
