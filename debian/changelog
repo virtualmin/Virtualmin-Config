@@ -1,3 +1,15 @@
+virtualmin-config (7.0.6) stable; urgency=medium
+  * Fix to allow a new Terminal module to have colors for the new installs
+  * Fix to avoid enabling Apache SSL if ran without bundle (using `-i` param)
+
+virtualmin-config (7.0.5) stable; urgency=medium
+  * Add support for displaying conditional database name upon configuration
+  * Fix to drop NoCertRequest deprecated and removed option for ProFTPd
+  * Fix support for ProFTPd in passive mode
+  * Fix to improve self-signed SSL certificate for ProFTPd
+  * Fix to prevent loading modules if already loaded in ProFTPd
+  * Fix to disable certbot.timer
+
 virtualmin-config (7.0.4) stable; urgency=medium
   * Fix to disable certbot auto-renewals
 
