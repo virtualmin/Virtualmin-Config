@@ -66,7 +66,7 @@ sub actions {
       $vconfig{'web'}                  = 0;
       $vconfig{'backup_feature_ssl'}   = 0;
     }
-    else {
+    elsif (defined $self->bundle()) {
       $vconfig{'ssl'} = 2;
     }
     if (!defined($vconfig{'plugins'})) {
