@@ -1,3 +1,7 @@
+virtualmin-config (7.0.7) stable; urgency=medium
+  * Fix spinner color
+  * Fix to drop dependency from `Term::Spinner::Color` package
+
 virtualmin-config (7.0.6) stable; urgency=medium
   * Fix to allow a new Terminal module to have colors for the new installs
   * Fix to avoid enabling Apache SSL if ran without bundle (using `-i` param)
