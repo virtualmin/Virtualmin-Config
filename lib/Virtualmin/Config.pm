@@ -7,7 +7,6 @@ no warnings qw(once);    # We've got some globals that effect Webmin behavior
 use 5.010_001;           # Version shipped with CentOS 6. Nothing older.
 use Module::Load;
 use Term::ANSIColor qw(:constants);
-use Term::Spinner::Color;
 use Log::Log4perl qw(:easy);
 
 # globals

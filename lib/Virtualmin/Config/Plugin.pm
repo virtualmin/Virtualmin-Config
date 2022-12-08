@@ -2,21 +2,16 @@ package Virtualmin::Config::Plugin;
 use strict;
 use warnings;
 use 5.010_001;
-use Time::HiRes qw( sleep );
-
-# Plugin base class, just runs stuff with spinner and status
+use POSIX;
 use Virtualmin::Config;
-use Term::ANSIColor qw(:constants);
-use Term::Spinner::Color;
-
-# TODO I don't like this, but can't figure out how to put it into
-# $self->{spinner}
-our $spinner;
+use Time::HiRes qw( sleep );
+use feature 'state';
+use Term::ANSIColor qw(:constants colored);
+use utf8;
+use open ':std', ':encoding(UTF-8)';
 
 our $trust_unknown_referers = 1;
 our $error_must_die         = 1;
-
-our $count = 1;
 
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
@@ -63,11 +58,12 @@ sub bundle {
 }
 
 sub spin {
+  state $count = 1;
   my $self    = shift;
   my $name    = $self->name();
   my $message = shift // "Configuring " . format_plugin_name($name);
   $log->info($message);
-  $spinner = Term::Spinner::Color->new();
+  spinner("new");
   $message = "["
     . YELLOW
     . $count
@@ -81,31 +77,31 @@ sub spin {
   $message =
     $message
     . " " x
-    ( 79 - length($message) - $spinner->{'last_size'} + $color_correction );
+    ( 79 - length($message) - spinner("lastsize") + $color_correction );
   print $message;
-  $spinner->auto_start();
+  spinner("auto_start");
 }
 
 sub done {
   my $self = shift;
   my $res  = shift;
-  $spinner->auto_done();
+  spinner('auto_done');
   if ( $res == 1 ) {
 
     # Success!
     $log->info("Succeeded");
-    $spinner->ok();
+    spinner("ok");
   }
   elsif ( $res == 2 ) {
 
     # Not quite OK
     $log->warn("Non-fatal error");
-    $spinner->meh();
+    spinner("meh");
   }
   else {
     # Failure!
     $log->warn("Failed");
-    $spinner->nok();
+    spinner("nok");
   }
 }
 
@@ -152,6 +148,85 @@ sub logsystem {
   my $res = `$cmd 2>&1` // "[]";
   $log->info("Code: $? Result: $res");
   return $?;
+}
+
+sub spinner {
+  my ($cmd) = @_;
+  state $slastsize = 7;
+  state $pos       = 1;
+  state $schild;
+  state $whitecolor;
+
+  # Do we have shades of white?
+  if (!$whitecolor) {
+    my $colors = `tput colors 2>&1`;
+    $whitecolor = 'white';
+    $whitecolor = 'bright_white'
+      if ($colors && $colors > 8);
+  }
+
+  # Is new spinner
+  $slastsize = 7, $pos = 1, $schild = undef, return
+    if ($cmd eq 'new');
+
+  my $sseq =
+    [ qw(▒▒▒▒▒▒▒ █▒▒▒▒▒▒ ██▒▒▒▒▒ ███▒▒▒▒ ████▒▒▒ █████▒▒ ██████▒ ███████ ▒██████ ▒▒█████ ▒▒▒████ ▒▒▒▒███ ▒▒▒▒▒██ ▒▒▒▒▒█ ▒▒▒▒▒▒)
+    ];
+  my $sbksp = chr(0x08);
+  my $start = sub {print "\x1b[?25l"; $slastsize = 7; print colored("$sseq->[0]", 'cyan');};
+  my $done  = sub {print $sbksp x $slastsize; print "\x1b[?25h";};
+  my $ok    = sub {say colored("[  ✔  ]", "$whitecolor on_green");};
+  my $meh   = sub {say colored("[  ⚠  ]", "$whitecolor on_yellow");};
+  my $nok   = sub {say colored("[  ✘  ]", "$whitecolor on_red");};
+
+  my $next = sub {
+      print $sbksp x $slastsize;
+      print colored("$sseq->[$pos]", 'cyan');
+      $pos       = ++$pos % scalar @{$sseq};
+      $slastsize = length($sseq->[$pos]);
+  };
+
+  # Fork and run spinner asynchronously, until signal received.
+  my $auto_start = sub {
+      my $ppid = $$;
+      my $pid  = fork();
+      die("Failed to fork progress indicator.\n") unless defined $pid;
+
+      if ($pid) {    # Parent
+          $schild = $pid;
+          return;
+      } else {       # Kid stuff
+          &$start();
+          my $exists;
+          while (1) {
+              sleep 0.2;
+              &$next();
+
+              # Check to be sure parent is still running, if not, die
+              $exists = kill 0, $ppid;
+              unless ($exists) {
+                  &$done();
+                  exit 0;
+              }
+              $exists = "";
+          }
+          exit 0;    # Should never get here?
+      }
+  };
+
+  my $auto_done = sub {
+      kill 'KILL', $schild;
+      my $pid = wait();
+      &$done();
+  };
+
+  # Returns
+  &$auto_start()    if ($cmd eq 'auto_start');
+  &$auto_done()     if ($cmd eq 'auto_done');
+  &$ok()            if ($cmd eq 'ok');
+  &$meh()           if ($cmd eq 'meh');
+  &$nok()           if ($cmd eq 'nok');
+  return $slastsize if ($cmd eq 'lastsize');
 }
 
 1;

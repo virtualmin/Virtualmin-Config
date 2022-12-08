@@ -17,7 +17,6 @@ BuildRequires:	perl(Module::Load)
 Requires:	webmin
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
-Requires:       perl(Term::Spinner::Color)
 Requires:	perl(Module::Load)
 
 %description

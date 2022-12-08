@@ -16,7 +16,7 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION"   => "5.010",
   "NAME"               => "Virtualmin::Config",
   "PREREQ_PM" =>
-    {"Log::Log4perl" => 0, "Term::ANSIColor" => 0, "Term::Spinner::Color" => 0},
+    {"Log::Log4perl" => 0, "Term::ANSIColor" => 0},
   "TEST_REQUIRES" =>
     {"ExtUtils::MakeMaker" => 0, "File::Spec" => 0, "Test::More" => 0},
   "VERSION" => "6.0.27",
@@ -29,7 +29,6 @@ my %FallbackPrereqs = (
   "File::Spec"           => 0,
   "Log::Log4perl"        => 0,
   "Term::ANSIColor"      => 0,
-  "Term::Spinner::Color" => 0,
   "Test::More"           => 0
 );
 
