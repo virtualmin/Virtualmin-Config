@@ -260,7 +260,7 @@ sub actions {
       my @jk_params = (
           ['zsh', '/etc/zsh/zshrc', '/etc/zsh/zshenv'],
           ['rbash'],
-          ['groups'],
+          ['id', 'groups'],
       );
 
       JKPARAMS:
