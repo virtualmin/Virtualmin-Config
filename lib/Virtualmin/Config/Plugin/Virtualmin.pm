@@ -259,7 +259,8 @@ sub actions {
       my @jk_basicshell_paths = split(/\s*,\s*/, $jk_basicshell_paths);
       my @jk_params = (
           ['zsh', '/etc/zsh/zshrc', '/etc/zsh/zshenv'],
-          ['rbash']
+          ['rbash'],
+          ['groups'],
       );
 
       JKPARAMS:
