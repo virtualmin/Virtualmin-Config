@@ -1,3 +1,8 @@
+virtualmin-config (7.0.8) stable; urgency=medium
+  * Add a smaller spinners
+  * Fix to add `id` and `groups` command to jail env
+  * Fix logger complain about wide character in Etckeeper
+
 virtualmin-config (7.0.7) stable; urgency=medium
   * Fix spinner color
   * Fix to drop dependency from `Term::Spinner::Color` package

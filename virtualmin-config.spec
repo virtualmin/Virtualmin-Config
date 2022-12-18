@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.7
+Version:        7.0.8
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sat Dec 18 2022 Joe Cooper <joe@virtualmin.com> 7.0.8
+- Fix PHP-FPM, ProFTPd, self-signed SSL and spinners
 * Sat Jan 08 2022 Joe Cooper <joe@virtualmin.com> 7.0.0
 - New branch for Virtualmin 7
 * Sun Nov 04 2018 Joe Cooper <joe@virtualmin.com> 6.0.24-1
