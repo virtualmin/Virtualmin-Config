@@ -175,9 +175,9 @@ sub spinner {
   my $sbksp = chr(0x08);
   my $start = sub {print "\x1b[?25l"; $slastsize = 7; print colored("$sseq->[0]", 'cyan');};
   my $done  = sub {print $sbksp x $slastsize; print "\x1b[?25h";};
-  my $ok    = sub {say colored("[  ✔  ]", "$whitecolor on_green");};
-  my $meh   = sub {say colored("[  ⚠  ]", "$whitecolor on_yellow");};
-  my $nok   = sub {say colored("[  ✘  ]", "$whitecolor on_red");};
+  my $ok    = sub {say colored("   ✔   ", "bold $whitecolor on_green");};
+  my $meh   = sub {say colored("   ⚠   ", "bold $whitecolor on_yellow");};
+  my $nok   = sub {say colored("   ✘   ", "bold $whitecolor on_red");};
 
   my $next = sub {
       print $sbksp x $slastsize;
