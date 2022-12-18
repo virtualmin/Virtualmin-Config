@@ -152,32 +152,23 @@ sub logsystem {
 
 sub spinner {
   my ($cmd) = @_;
-  state $slastsize = 7;
+  state $slastsize = 3;
   state $pos       = 1;
   state $schild;
-  state $whitecolor;
-
-  # Do we have shades of white?
-  if (!$whitecolor) {
-    my $colors = `tput colors 2>&1`;
-    $whitecolor = 'white';
-    $whitecolor = 'bright_white'
-      if ($colors && $colors > 8);
-  }
 
   # Is new spinner
-  $slastsize = 7, $pos = 1, $schild = undef, return
+  $slastsize = 3, $pos = 1, $schild = undef, return
     if ($cmd eq 'new');
 
   my $sseq =
-    [ qw(▒▒▒▒▒▒▒ █▒▒▒▒▒▒ ██▒▒▒▒▒ ███▒▒▒▒ ████▒▒▒ █████▒▒ ██████▒ ███████ ▒██████ ▒▒█████ ▒▒▒████ ▒▒▒▒███ ▒▒▒▒▒██ ▒▒▒▒▒█ ▒▒▒▒▒▒)
+    [ qw(▒▒▒ █▒▒ ██▒ ███ ▒██ ▒▒█ ▒▒▒)
     ];
   my $sbksp = chr(0x08);
-  my $start = sub {print "\x1b[?25l"; $slastsize = 7; print colored("$sseq->[0]", 'cyan');};
+  my $start = sub {print "\x1b[?25l"; $slastsize = 3; print colored("$sseq->[0]", 'cyan');};
   my $done  = sub {print $sbksp x $slastsize; print "\x1b[?25h";};
-  my $ok    = sub {say colored("   ✔   ", "bold $whitecolor on_green");};
-  my $meh   = sub {say colored("   ⚠   ", "bold $whitecolor on_yellow");};
-  my $nok   = sub {say colored("   ✘   ", "bold $whitecolor on_red");};
+  my $ok    = sub {say colored(" ✔ ", "black on_green");};
+  my $meh   = sub {say colored(" ⚠ ", "black on_yellow");};
+  my $nok   = sub {say colored(" ✘ ", "black on_red");};
 
   my $next = sub {
       print $sbksp x $slastsize;
