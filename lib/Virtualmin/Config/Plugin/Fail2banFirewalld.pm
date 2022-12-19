@@ -82,6 +82,9 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
+  my $backend;
+  $backend = "\nbackend = auto"
+    if ($gconfig{'os_type'} eq "debian-linux");
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
 [dovecot]
@@ -91,7 +94,7 @@ enabled = true
 enabled = true
 
 [postfix-sasl]
-enabled = true
+enabled = true$backend
 
 [proftpd]
 enabled = true
