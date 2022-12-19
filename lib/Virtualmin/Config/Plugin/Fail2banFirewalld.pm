@@ -84,35 +84,23 @@ sub actions {
 sub create_fail2ban_jail {
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
-[sshd]
-
+[dovecot]
 enabled = true
-port    = ssh
-
-[webmin-auth]
-
-enabled = true
-port    = 10000
-
-[proftpd]
-
-enabled  = true
-port     = ftp,ftp-data,ftps,ftps-data
 
 [postfix]
-
-enabled  = true
-port     = smtp,465,submission
-
-[dovecot]
-
 enabled = true
-port    = pop3,pop3s,imap,imaps,submission,465,sieve
 
 [postfix-sasl]
+enabled = true
 
-enabled  = true
-port     = smtp,465,submission,imap,imaps,pop3,pop3s
+[proftpd]
+enabled = true
+
+[sshd]
+enabled = true
+
+[webmin-auth]
+enabled = true
 
 EOF
 
