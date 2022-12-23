@@ -68,7 +68,7 @@ sub actions {
       $vconfig{'backup_feature_ssl'}   = 0;
     }
     elsif (defined $self->bundle()) {
-      $vconfig{'ssl'} = 2;
+      $vconfig{'ssl'} = 3;
     }
     if (!defined($vconfig{'plugins'})) {
       # Module `virtualmin-htpasswd` is only meant for Apache
