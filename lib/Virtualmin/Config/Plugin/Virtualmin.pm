@@ -37,6 +37,7 @@ sub actions {
   eval {
     my %vconfig = foreign_config("virtual-server");
     $vconfig{'mail_system'} = 0;
+    $vconfig{'nopostfix_extra_user'} = 1;
     $vconfig{'aliascopy'}   = 1;
     $vconfig{'home_base'}   = "/home";
     $vconfig{'webalizer'}   = 0;
