@@ -130,6 +130,9 @@ sub actions {
     # Turn off % hack, which breaks user%domain mailboxes
     postfix::set_current_value("allow_percent_hack", "no");
 
+    # Allow @ in usernames for receiving mail
+    postfix::set_current_value("resolve_dequoted_address", "no", 1);
+
     # And master.cf
     my $master = postfix::get_master_config();
     my ($smtp) = grep { $_->{'name'} eq 'smtp' && $_->{'enabled'} } @$master;
