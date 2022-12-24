@@ -110,7 +110,7 @@ sub actions {
     my $mydest = postfix::get_current_value("mydestination");
     my $myhost = get_system_hostname();
 
-    if ($mydest !~ /\Q$myhost\E/) {
+    if ($mydest !~ /\Q$myhost\E/ && $mydest !~ /\$myhostname/) {
       postfix::set_current_value("mydestination", $mydest . ", " . $myhost, 1);
     }
 
