@@ -164,6 +164,8 @@ sub actions {
     $umailconfig{'top_buttons'} = 2;
     # Configure the Usermin Mailbox module not to display send buttons twice
     $umailconfig{'send_buttons'} = 0;
+    # Configure the Usermin Mailbox module to always start with one attachment for type
+    $umailconfig{'def_attach'} = 1;
     write_file($ucfile, \%umailconfig);
 
     # Set the default Usermin ACL to only allow access to email modules
