@@ -162,6 +162,8 @@ sub actions {
     $umailconfig{'view_images'} = 1;
     # Configure the Usermin Mailbox module to display buttons on the top too
     $umailconfig{'top_buttons'} = 2;
+    # Configure the Usermin Mailbox module not to display send buttons twice
+    $umailconfig{'send_buttons'} = 0;
     write_file($ucfile, \%umailconfig);
 
     # Set the default Usermin ACL to only allow access to email modules
