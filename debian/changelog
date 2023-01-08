@@ -1,3 +1,9 @@
+virtualmin-config (7.0.9) stable; urgency=medium
+  * Fix to test if `$myhostname` is set too in Postfix
+  * Fix a warning `Use of uninitialized value $backend` for Fail2Ban
+  * Fix Postfix banning failed logins
+  * Fix to allow using `@` in usernames for receiving mail
+
 virtualmin-config (7.0.8) stable; urgency=medium
   * Add a smaller spinners
   * Fix to add `id` and `groups` command to jail env
