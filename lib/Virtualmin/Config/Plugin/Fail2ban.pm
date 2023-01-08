@@ -76,7 +76,7 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
-  my $backend;
+  my $backend = "";
   $backend = "\nbackend = auto"
     if ($gconfig{'os_type'} eq "debian-linux");
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
