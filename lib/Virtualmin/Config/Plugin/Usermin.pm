@@ -56,12 +56,7 @@ sub actions {
 
     # Start Usermin at boot
     foreign_require("init", "init-lib.pl");
-    init::enable_at_boot(
-      "usermin",
-      "Start the Usermin webserver",
-      "$usermin::config{'usermin_dir'}/start",
-      "$usermin::config{'usermin_dir'}/stop"
-    );
+    init::enable_at_boot("usermin");
 
     $self->done(1);    # OK!
   };
