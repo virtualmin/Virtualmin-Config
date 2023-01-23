@@ -60,8 +60,28 @@ sub actions {
       flush_file_lines($scanconf);
     }
 
-    if (has_command('freshclam')) {
-      $self->logsystem("freshclam");
+    # Do not run freshclam if there is a daemon
+    foreign_require('init');
+    if (!init::action_status('clamav-freshclam')) {
+      if (has_command('freshclam')) {
+        $self->logsystem("freshclam");
+      }
+    }
+    else {
+      # Restart daemon to refresh the database in background,
+      # it will have higher chances of avoiding post-install
+      # false positive errors on Debian systems
+      if (init::action_status('clamav-freshclam') == 2) {
+        # Restart it only if already running
+        init::restart_action('clamav-freshclam');
+      }
+      elsif (init::action_status('clamav-freshclam') == 1) {
+        # We have a daemon but it's not running, then run
+        # freshclam to avoid issues on RHEL system (dumb!)
+        if (has_command('freshclam')) {
+          $self->logsystem("freshclam");
+        }
+      }
     }
 
     $self->done(1);    # OK!
