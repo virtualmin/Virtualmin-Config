@@ -166,6 +166,8 @@ sub actions {
     $umailconfig{'send_buttons'} = 0;
     # Configure the Usermin Mailbox module to always start with one attachment for type
     $umailconfig{'def_attach'} = 1;
+    # Default mailbox name for Sent mail
+    $umailconfig{'sent_name'} = 'Sent';
     write_file($ucfile, \%umailconfig);
 
     # Set the default Usermin ACL to only allow access to email modules
