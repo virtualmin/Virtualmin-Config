@@ -1,3 +1,8 @@
+virtualmin-config (7.0.10) stable; urgency=medium
+  * Fix to just enable and start Usermin
+  * Fix to accomodate ClamAV logic depending on the distro
+  * Fix default mailbox name for Sent mail
+
 virtualmin-config (7.0.9) stable; urgency=medium
   * Fix to test if `$myhostname` is set too in Postfix
   * Fix a warning `Use of uninitialized value $backend` for Fail2Ban

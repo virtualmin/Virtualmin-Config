@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.9
+Version:        7.0.10
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Apr 13 2023 iliajie <ilia@virtualmin.com> 7.0.10
+- Fix Usermin and ClamAV related issues
 * Mon Jan 09 2023 iliajie <ilia@virtualmin.com> 7.0.9
 - Fix minor issues
 * Sat Dec 18 2022 Joe Cooper <joe@virtualmin.com> 7.0.8
