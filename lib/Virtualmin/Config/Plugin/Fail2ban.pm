@@ -76,9 +76,22 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
-  my $backend = "";
-  $backend = "\nbackend = auto"
-    if ($gconfig{'os_type'} eq "debian-linux");
+  # Postfix addendum
+  my $postfix_jail_extra = "";
+  $postfix_jail_extra = "\nbackend = auto"
+    if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/);
+  # Proftpd addendum
+  my $proftpd_jail_extra = "";
+  if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
+    $proftpd_jail_extra = "\nbackend = auto\nlogpath = /var/log/proftpd/proftpd.log";
+  } elsif ($gconfig{'os_type'} eq 'redhat-linux') {
+    $proftpd_jail_extra = "\nprefregex =\n";
+    $proftpd_jail_extra .= 'failregex = \(\S+\[<HOST>\]\)[: -]+ USER \S+: no such user found from \S+ \[[0-9.]+\] to \S+:\S+\s*$'."\n";
+    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ USER \S+ \(Login failed\):.*\s+$'."\n";
+    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \([0-9]+\) exceeded, connection refused.*\s+$'."\n";
+    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ SECURITY VIOLATION: \S+ login attempted\.\s+$'."\n";
+    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \(\d+\) exceeded\s+$';
+  }
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
 [dovecot]
@@ -88,10 +101,10 @@ enabled = true
 enabled = true
 
 [postfix-sasl]
-enabled = true$backend
+enabled = true$postfix_jail_extra
 
 [proftpd]
-enabled = true
+enabled = true$proftpd_jail_extra
 
 [sshd]
 enabled = true
