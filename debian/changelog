@@ -1,3 +1,7 @@
+virtualmin-config (7.0.11) stable; urgency=medium
+  * Fix Fail2ban ProFTPd jail work
+  * Fix Fail2ban Webmin jail use `journalmatch` for speed
+
 virtualmin-config (7.0.10) stable; urgency=medium
   * Fix to just enable and start Usermin
   * Fix to accomodate ClamAV logic depending on the distro
