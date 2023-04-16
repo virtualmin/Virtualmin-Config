@@ -111,6 +111,7 @@ enabled = true
 
 [webmin-auth]
 enabled = true
+journalmatch = _SYSTEMD_UNIT=webmin.service
 
 EOF
 
