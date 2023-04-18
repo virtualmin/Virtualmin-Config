@@ -1,3 +1,6 @@
+virtualmin-config (7.0.12) stable; urgency=medium
+  * Fix missing Fail2banFirewalld changes
+
 virtualmin-config (7.0.11) stable; urgency=medium
   * Fix Fail2ban ProFTPd jail work
   * Fix Fail2ban Webmin jail use `journalmatch` for speed
