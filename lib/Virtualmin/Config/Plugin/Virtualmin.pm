@@ -312,6 +312,18 @@ sub actions {
       save_module_config(\%xterm_config, "xterm");
     }
 
+    # Add PHP alias so users could execute
+    # specific to virtual server PHP version
+    my $profiled = "/etc/profile.d";
+    if (-d $profiled) {
+      my $profiledphpalias = "$profiled/virtualmin-phpalias.sh";
+      my $phpalias =
+        "if php -v 1>/dev/null 2>&1; then\n".
+          "  alias php='\\\$\\\(phpdom=\\\"bin/php\\\" ; phpdef=\\\"/bin/php\\\" ; \\\(while [ ! -f \\\"\\\$phpdom\\\" ] && [ \\\"\\\$PWD\\\" != \\\"/\\\" ]; do cd \\\"\\\$\\\(dirname \\\"\\\$PWD\\\"\\\)\\\" || \\\"\\\$phpdef\\\" ; done ; if [ -f \\\"\\\$phpdom\\\" ] ; then echo \\\"\\\$PWD/\\\$phpdom\\\" ; else echo \\\"\\\$phpdef\\\" ; fi\\\)\\\)'\n".
+        "fi\n";
+       write_file_contents($profiledphpalias, $phpalias);
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {
