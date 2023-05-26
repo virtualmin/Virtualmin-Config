@@ -318,8 +318,9 @@ sub actions {
     if (-d $profiled) {
       my $profiledphpalias = "$profiled/virtualmin-phpalias.sh";
       my $phpalias =
-        "if php -v 1>/dev/null 2>&1; then\n".
-          "  alias php='\\\$\\\(phpdom=\\\"bin/php\\\" ; phpdef=\\\"/bin/php\\\" ; \\\(while [ ! -f \\\"\\\$phpdom\\\" ] && [ \\\"\\\$PWD\\\" != \\\"/\\\" ]; do cd \\\"\\\$\\\(dirname \\\"\\\$PWD\\\"\\\)\\\" || \\\"\\\$phpdef\\\" ; done ; if [ -f \\\"\\\$phpdom\\\" ] ; then echo \\\"\\\$PWD/\\\$phpdom\\\" ; else echo \\\"\\\$phpdef\\\" ; fi\\\)\\\)'\n".
+        "php=\`which php 2>/dev/null\`\n".
+        "if \[ -x \"\$php\" \]; then\n".
+          "  alias php='\$\(phpdom=\"bin/php\" ; \(while [ ! -f \"\$phpdom\" ] && [ \"\$PWD\" != \"/\" ]; do cd \"\$\(dirname \"\$PWD\"\)\" || \"\$php\" ; done ; if [ -f \"\$phpdom\" ] ; then echo \"\$PWD/\$phpdom\" ; else echo \"\$php\" ; fi\)\)'\n".
         "fi\n";
        write_file_contents($profiledphpalias, $phpalias);
     }
