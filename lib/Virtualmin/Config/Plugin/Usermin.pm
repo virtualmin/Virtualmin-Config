@@ -45,6 +45,20 @@ sub actions {
     $uminiserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
     $uminiserv{'domainuser'}      = 1;
     $uminiserv{'domainstrip'}     = 1;
+
+    # Enable 2FA
+    $uminiserv{'twofactor_provider'} = 'totp';
+    $uminiserv{'twofactorfile'} ||= "$usermin::config{'usermin_dir'}/twofactor-users";
+    $uminiserv{'twofactor_wrapper'} = "$usermin::config{'usermin_dir'}/twofactor/twofactor.pl";
+    foreign_require("cron");
+    usermin::create_cron_wrapper($uminiserv{'twofactor_wrapper'}, "twofactor", "twofactor.pl");
+    my (%uacl, %umdirs);
+    lock_file(usermin::usermin_acl_filename());
+    usermin::read_usermin_acl(\%uacl, \%umdirs);
+    push(@{$umdirs{'user'}}, 'twofactor');
+    usermin::save_usermin_acl("user", $umdirs{'user'});
+    unlock_file(usermin::usermin_acl_filename());
+
     usermin::put_usermin_miniserv_config(\%uminiserv);
 
     if (init::status_action("usermin")) {
