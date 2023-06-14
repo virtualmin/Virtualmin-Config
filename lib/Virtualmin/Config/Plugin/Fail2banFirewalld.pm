@@ -6,7 +6,7 @@ package Virtualmin::Config::Plugin::Fail2banFirewalld;
 # back to one file. This will do for now.
 use strict;
 use warnings;
-no warnings qw(once);
+no warnings qw(once numeric);
 use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
@@ -84,11 +84,20 @@ sub actions {
 sub create_fail2ban_jail {
   # Postfix addendum
   my $postfix_jail_extra = "";
-  $postfix_jail_extra = "\nbackend = auto"
-    if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/);
+  
+  my $is_debian = $gconfig{'real_os_type'} =~ /debian/i;
+  my $is_ubuntu = $gconfig{'real_os_type'} =~ /ubuntu/i;
+  my $debian10_or_older = $is_debian && $gconfig{'real_os_version'} <= 10;
+  my $ubuntu20_or_older = $is_ubuntu && int($gconfig{'real_os_version'}) <= 20;
+
+  if ($debian10_or_older || $ubuntu20_or_older) {
+    $postfix_jail_extra = "\nbackend = auto\nlogpath = /var/log/mail.log";
+  } elsif ($is_debian || $is_ubuntu) {
+    $postfix_jail_extra = "\nbackend = systemd\njournalmatch = _SYSTEMD_UNIT=postfix\@-.service";
+  }
   # Proftpd addendum
   my $proftpd_jail_extra = "";
-  if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
+  if ($is_debian || $is_ubuntu) {
     $proftpd_jail_extra = "\nbackend = auto\nlogpath = /var/log/proftpd/proftpd.log";
   } elsif ($gconfig{'os_type'} eq 'redhat-linux') {
     $proftpd_jail_extra = "\nprefregex =\n";
