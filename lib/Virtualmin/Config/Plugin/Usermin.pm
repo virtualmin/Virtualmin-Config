@@ -48,9 +48,12 @@ sub actions {
 
     # Enable 2FA
     $uminiserv{'twofactor_provider'} = 'totp';
-    $uminiserv{'twofactorfile'} ||= "$usermin::config{'usermin_dir'}/twofactor-users";
-    $uminiserv{'twofactor_wrapper'} = "$usermin::config{'usermin_dir'}/twofactor/twofactor.pl";
-    usermin::create_cron_wrapper($uminiserv{'twofactor_wrapper'}, "twofactor", "twofactor.pl");
+    $uminiserv{'twofactorfile'}
+      ||= "$usermin::config{'usermin_dir'}/twofactor-users";
+    $uminiserv{'twofactor_wrapper'}
+      = "$usermin::config{'usermin_dir'}/twofactor/twofactor.pl";
+    usermin::create_cron_wrapper($uminiserv{'twofactor_wrapper'},
+      "twofactor", "twofactor.pl");
     my (%uacl, %umdirs);
     lock_file(usermin::usermin_acl_filename());
     usermin::read_usermin_acl(\%uacl, \%umdirs);

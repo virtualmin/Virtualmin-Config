@@ -91,7 +91,10 @@ sub actions {
     # generate TLS cert/key pair
     my $hostname = get_system_hostname();
     my $org      = "Self-signed for $hostname";
-    my $addtextsup = &$get_openssl_version() >= 1.1 ? "-addext subjectAltName=DNS:$hostname,DNS:localhost -addext extendedKeyUsage=serverAuth" : "";
+    my $addtextsup
+      = &$get_openssl_version() >= 1.1
+      ? "-addext subjectAltName=DNS:$hostname,DNS:localhost -addext extendedKeyUsage=serverAuth"
+      : "";
 
     $log->info('Generating a self-signed certificate for TLS.');
     $self->logsystem(
@@ -175,10 +178,10 @@ EOF
 
     # Generate a basic config, subbing in the right variables.
     flush_file_lines();
-    
+
     # Create initial site file to satisfy config check
     my $site_conf = "$ENV{'WEBMIN_CONFIG'}/proftpd/site";
-    if (! -r $site_conf) {
+    if (!-r $site_conf) {
       my $ver;
       my %site_conf;
       $ver = proftpd::get_proftpd_version();

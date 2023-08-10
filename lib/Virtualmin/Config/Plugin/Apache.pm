@@ -7,7 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
-my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+my $log   = Log::Log4perl->get_logger("virtualmin-config-system");
 my $delay = 3;
 
 sub new {
@@ -90,13 +90,13 @@ sub actions {
       my $adir = "/etc/apache2/mods-available";
       my $edir = "/etc/apache2/mods-enabled";
       foreach my $mod (
-        "actions",        "suexec",
-        "auth_digest",    "ssl",
-        "fcgid",          "rewrite",
-        "proxy",          "proxy_balancer",
-        "proxy_connect",  "proxy_http",
-        "slotmem_shm",    "cgi",
-        "proxy_fcgi",     "lbmethod_byrequests",
+        "actions",       "suexec",
+        "auth_digest",   "ssl",
+        "fcgid",         "rewrite",
+        "proxy",         "proxy_balancer",
+        "proxy_connect", "proxy_http",
+        "slotmem_shm",   "cgi",
+        "proxy_fcgi",    "lbmethod_byrequests",
         "http2"
         )
       {
@@ -176,6 +176,7 @@ sub actions {
     }
 
     if ($gconfig{'os_type'} eq 'redhat-linux') {
+
       # Remove default SSL VirtualHost on RH systems
       my $httpdrestart;
       if (-r '/etc/httpd/conf.d/ssl.conf') {
@@ -198,6 +199,7 @@ sub actions {
         }
         flush_file_lines($file);
       }
+
       # Enable http2/h2 on RH systems
       my $h2file = '/etc/httpd/conf.modules.d/10-h2.conf';
       if (-r $h2file) {
@@ -205,17 +207,18 @@ sub actions {
         my $h2_enabled;
         foreach my $l (@$lref) {
           $h2_enabled++
-            if ($l =~ /^\s*LoadModule\s+http2_module\s+modules\/mod_http2\.so\s*$/);
-          last
-            if ($h2_enabled);
+            if (
+            $l =~ /^\s*LoadModule\s+http2_module\s+modules\/mod_http2\.so\s*$/);
+          last if ($h2_enabled);
         }
         if ($h2_enabled) {
-          $lref = "LoadModule http2_module modules/mod_http2.so\n" .
-           "<IfModule !mpm_prefork>\n" .
-           "    Protocols h2 h2c http/1.1\n" .
-           "</IfModule>\n";
-           write_file_contents($h2file, $lref);
-           $httpdrestart++;
+          $lref
+            = "LoadModule http2_module modules/mod_http2.so\n"
+            . "<IfModule !mpm_prefork>\n"
+            . "    Protocols h2 h2c http/1.1\n"
+            . "</IfModule>\n";
+          write_file_contents($h2file, $lref);
+          $httpdrestart++;
         }
       }
       if ($httpdrestart) {
@@ -233,15 +236,20 @@ sub actions {
 
     # Force use of PCI-compliant SSL ciphers
     foreign_require("webmin", "webmin-lib.pl");
-    apache::save_directive("SSLProtocol", ["all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1"], $conf, $conf);
-    apache::save_directive("SSLCipherSuite",
-      ["ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"],
+    apache::save_directive("SSLProtocol", ["all -SSLv2 -SSLv3 -TLSv1 -TLSv1.1"],
       $conf, $conf);
+    apache::save_directive(
+      "SSLCipherSuite",
+      [
+        "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384"
+      ],
+      $conf, $conf
+    );
 
     # Turn off server signatures, which aren't PCI compliant
     apache::save_directive("ServerTokens",    ["Prod"], $conf, $conf);
-    apache::save_directive("ServerSignature", ["Off"],     $conf, $conf);
-    apache::save_directive("TraceEnable",     ["Off"],     $conf, $conf);
+    apache::save_directive("ServerSignature", ["Off"],  $conf, $conf);
+    apache::save_directive("TraceEnable",     ["Off"],  $conf, $conf);
     flush_file_lines();
 
     if (!apache::is_apache_running()) {

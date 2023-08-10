@@ -72,10 +72,12 @@ sub actions {
       # it will have higher chances of avoiding post-install
       # false positive errors on Debian systems
       if (init::action_status('clamav-freshclam') == 2) {
+
         # Restart it only if already running
         init::restart_action('clamav-freshclam');
       }
       elsif (init::action_status('clamav-freshclam') == 1) {
+
         # We have a daemon but it's not running, then run
         # freshclam to avoid issues on RHEL system (dumb!)
         if (has_command('freshclam')) {

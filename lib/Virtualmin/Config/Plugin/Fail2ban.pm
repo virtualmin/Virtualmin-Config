@@ -41,7 +41,7 @@ sub actions {
   $self->spin();
   eval {
     if (has_command('fail2ban-server')) {
-      
+
       foreign_require('init', 'init-lib.pl');
       init::enable_at_boot('fail2ban');
 
@@ -49,36 +49,39 @@ sub actions {
       create_fail2ban_jail();
       create_fail2ban_firewalld();
 
-      # Switch backend to use systemd to avoid failure on
-      # fail2ban starting when actual log file is missing
-      # e.g.: Failed during configuration: Have not found any log file for [name] jail
+# Switch backend to use systemd to avoid failure on
+# fail2ban starting when actual log file is missing
+# e.g.: Failed during configuration: Have not found any log file for [name] jail
       &foreign_require('fail2ban');
       my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
       my @jconf = &fail2ban::parse_config_file($jfile);
-      my @lconf = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
+      my @lconf
+        = &fail2ban::parse_config_file(&fail2ban::make_local_file($jfile));
       &fail2ban::merge_local_files(\@jconf, \@lconf);
       my $jconf = &fail2ban::parse_config_file($jfile);
       my ($def) = grep { $_->{'name'} eq 'DEFAULT' } @jconf;
       &fail2ban::lock_all_config_files();
       &fail2ban::save_directive("backend", 'systemd', $def);
       &fail2ban::unlock_all_config_files();
-      
+
       # Restart fail2ban
       init::restart_action('fail2ban');
       $self->done(1);
-    } else {
-      $self->done(2); # Not available, as in Oracle 9
+    }
+    else {
+      $self->done(2);    # Not available, as in Oracle 9
     }
   };
   if ($@) {
-    $self->done(0);    # NOK!
+    $self->done(0);      # NOK!
   }
 }
 
 sub create_fail2ban_jail {
+
   # Postfix addendum
   my $postfix_jail_extra = "";
-  
+
   my $is_debian = $gconfig{'real_os_type'} =~ /debian/i;
   my $is_ubuntu = $gconfig{'real_os_type'} =~ /ubuntu/i;
   my $debian10_or_older = $is_debian && $gconfig{'real_os_version'} <= 10;
@@ -86,20 +89,34 @@ sub create_fail2ban_jail {
 
   if ($debian10_or_older || $ubuntu20_or_older) {
     $postfix_jail_extra = "\nbackend = auto\nlogpath = /var/log/mail.log";
-  } elsif ($is_debian || $is_ubuntu) {
-    $postfix_jail_extra = "\nbackend = systemd\njournalmatch = _SYSTEMD_UNIT=postfix\@-.service";
   }
+  elsif ($is_debian || $is_ubuntu) {
+    $postfix_jail_extra
+      = "\nbackend = systemd\njournalmatch = _SYSTEMD_UNIT=postfix\@-.service";
+  }
+
   # Proftpd addendum
   my $proftpd_jail_extra = "";
   if ($is_debian || $is_ubuntu) {
-    $proftpd_jail_extra = "\nbackend = auto\nlogpath = /var/log/proftpd/proftpd.log";
-  } elsif ($gconfig{'os_type'} eq 'redhat-linux') {
+    $proftpd_jail_extra
+      = "\nbackend = auto\nlogpath = /var/log/proftpd/proftpd.log";
+  }
+  elsif ($gconfig{'os_type'} eq 'redhat-linux') {
     $proftpd_jail_extra = "\nprefregex =\n";
-    $proftpd_jail_extra .= 'failregex = \(\S+\[<HOST>\]\)[: -]+ USER \S+: no such user found from \S+ \[[0-9.]+\] to \S+:\S+\s*$'."\n";
-    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ USER \S+ \(Login failed\):.*\s+$'."\n";
-    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \([0-9]+\) exceeded, connection refused.*\s+$'."\n";
-    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ SECURITY VIOLATION: \S+ login attempted\.\s+$'."\n";
-    $proftpd_jail_extra .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \(\d+\) exceeded\s+$';
+    $proftpd_jail_extra
+      .= 'failregex = \(\S+\[<HOST>\]\)[: -]+ USER \S+: no such user found from \S+ \[[0-9.]+\] to \S+:\S+\s*$'
+      . "\n";
+    $proftpd_jail_extra
+      .= '            \(\S+\[<HOST>\]\)[: -]+ USER \S+ \(Login failed\):.*\s+$'
+      . "\n";
+    $proftpd_jail_extra
+      .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \([0-9]+\) exceeded, connection refused.*\s+$'
+      . "\n";
+    $proftpd_jail_extra
+      .= '            \(\S+\[<HOST>\]\)[: -]+ SECURITY VIOLATION: \S+ login attempted\.\s+$'
+      . "\n";
+    $proftpd_jail_extra
+      .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \(\d+\) exceeded\s+$';
   }
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;

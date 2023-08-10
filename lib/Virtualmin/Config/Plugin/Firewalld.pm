@@ -34,7 +34,8 @@ sub actions {
   init_config();
 
   $self->spin();
-  my @services = qw(ssh smtp smtps smtp-submission ftp pop3 pop3s imap imaps http https dns mdns dns-over-tls);
+  my @services
+    = qw(ssh smtp smtps smtp-submission ftp pop3 pop3s imap imaps http https dns mdns dns-over-tls);
   my @ports = qw(20/tcp 2222/tcp 10000-10100/tcp 20000/tcp 49152-65535/tcp);
   eval {
     foreign_require('init', 'init-lib.pl');
@@ -50,11 +51,13 @@ sub actions {
       $self->logsystem("$firewall_cmd --set-default-zone public");
       foreach my $s (@services) {
         $self->logsystem("$firewall_cmd --zone=public --add-service=${s}");
-        $self->logsystem("$firewall_cmd --zone=public --permanent --add-service=${s}");
+        $self->logsystem(
+          "$firewall_cmd --zone=public --permanent --add-service=${s}");
       }
       foreach my $s (@ports) {
         $self->logsystem("$firewall_cmd --zone=public --add-port=${s}");
-        $self->logsystem("$firewall_cmd --zone=public --permanent --add-port=${s}");
+        $self->logsystem(
+          "$firewall_cmd --zone=public --permanent --add-port=${s}");
       }
       $self->logsystem("$firewall_cmd --complete-reload");
     }

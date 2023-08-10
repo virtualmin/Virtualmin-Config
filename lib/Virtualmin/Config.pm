@@ -132,7 +132,8 @@ sub _gather_plugins {
   if (@noplugins) {
     @plugins = _flat(@plugins);
     no warnings "uninitialized";
-    @plugins = grep { my $noplugin = $_; !grep( /^$noplugin$/, @noplugins) } @plugins;
+    @plugins
+      = grep { my $noplugin = $_; !grep(/^$noplugin$/, @noplugins) } @plugins;
   }
   return @plugins;
 }
@@ -186,7 +187,7 @@ sub _uniq {
 
 # Flatten into plain list
 sub _flat {
-  return map {ref eq 'ARRAY' ? @$_ : $_} @_;
+  return map { ref eq 'ARRAY' ? @$_ : $_ } @_;
 }
 
 1;

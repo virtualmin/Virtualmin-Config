@@ -41,13 +41,14 @@ sub actions {
       webalizer::save_directive($conf, "HistoryName",     "webalizer.hist");
       webalizer::save_directive($conf, "DNSCache",        "dns_cache.db");
       flush_file_lines($webalizer::config{'webalizer_conf'});
-      $self->done(1);         # OK!
+      $self->done(1);    # OK!
     };
     if ($@) {
       $self->done(0);
     }
-  } else {
-      $self->done(2);
+  }
+  else {
+    $self->done(2);
   }
 }
 

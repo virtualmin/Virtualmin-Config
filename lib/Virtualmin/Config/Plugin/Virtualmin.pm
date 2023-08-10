@@ -36,13 +36,16 @@ sub actions {
   $self->spin();
   eval {
     my %vconfig = foreign_config("virtual-server");
-    $vconfig{'mail_system'} = 0;
+    $vconfig{'mail_system'}          = 0;
     $vconfig{'nopostfix_extra_user'} = 1;
-    $vconfig{'aliascopy'}   = 1;
-    $vconfig{'home_base'}   = "/home";
-    $vconfig{'webalizer'}   = 0;
-    # XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
-    if (defined $self->bundle() && ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP")) {
+    $vconfig{'aliascopy'}            = 1;
+    $vconfig{'home_base'}            = "/home";
+    $vconfig{'webalizer'}            = 0;
+
+# XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
+    if (defined $self->bundle()
+      && ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP"))
+    {
       $vconfig{'spam'}       = 0;
       $vconfig{'virus'}      = 0;
       $vconfig{'postgresql'} = 0;
@@ -63,25 +66,26 @@ sub actions {
     $vconfig{'append_style'}     = 6;
 
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
-      $vconfig{'ssl'}                  = 0;
-      $vconfig{'web'}                  = 0;
-      $vconfig{'backup_feature_ssl'}   = 0;
+      $vconfig{'ssl'}                = 0;
+      $vconfig{'web'}                = 0;
+      $vconfig{'backup_feature_ssl'} = 0;
     }
     elsif (defined $self->bundle()) {
       $vconfig{'ssl'} = 3;
     }
     if (!defined($vconfig{'plugins'})) {
+
       # Module `virtualmin-htpasswd` is only meant for Apache
-      my $vmhtpass = 
-          ($self->bundle() ne "LEMP" && $self->bundle() ne "MiniLEMP") ? 'virtualmin-htpasswd' : '';
+      my $vmhtpass
+        = ($self->bundle() ne "LEMP" && $self->bundle() ne "MiniLEMP")
+        ? 'virtualmin-htpasswd'
+        : '';
       if ($self->bundle() eq "MiniLAMP") {
         $vconfig{'plugins'} = $vmhtpass;
       }
       else {
-        $vconfig{'plugins'}
-          = 'virtualmin-awstats';
-        $vconfig{'plugins'}
-          .= " $vmhtpass" if ($vmhtpass);
+        $vconfig{'plugins'} = 'virtualmin-awstats';
+        $vconfig{'plugins'} .= " $vmhtpass" if ($vmhtpass);
       }
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
@@ -113,10 +117,9 @@ sub actions {
     # If system doesn't have AWStats support, disable it
     if (foreign_check("virtualmin-awstats")) {
       my %awstats_config = foreign_config("virtualmin-awstats");
-      if ($awstats_config{'awstats'} &&
-          !-r $awstats_config{'awstats'}) {
+      if ($awstats_config{'awstats'} && !-r $awstats_config{'awstats'}) {
         my @plugins = split(/\s/, $vconfig{'plugins'});
-        @plugins = grep { $_ ne 'virtualmin-awstats'} @plugins;
+        @plugins = grep { $_ ne 'virtualmin-awstats' } @plugins;
         $vconfig{'plugins'} = join(' ', @plugins);
       }
     }
@@ -158,23 +161,31 @@ sub actions {
     my %umailconfig;
     read_file($ucfile, \%umailconfig);
     $umailconfig{'mailbox_dir'} = 'Maildir';
-    $umailconfig{'view_html'} = 2;
+    $umailconfig{'view_html'}   = 2;
     $umailconfig{'view_images'} = 1;
+
     # Configure the Usermin Mailbox module to display buttons on the top too
     $umailconfig{'top_buttons'} = 2;
+
     # Configure the Usermin Mailbox module not to display send buttons twice
     $umailconfig{'send_buttons'} = 0;
-    # Configure the Usermin Mailbox module to always start with one attachment for type
+
+# Configure the Usermin Mailbox module to always start with one attachment for type
     $umailconfig{'def_attach'} = 1;
+
     # Default mailbox name for Sent mail
     $umailconfig{'sent_name'} = 'Sent';
     write_file($ucfile, \%umailconfig);
 
     # Set the default Usermin ACL to only allow access to email modules
-    usermin::save_usermin_acl("user",
-      ["mailbox", "changepass", "spam", "filter", 
-       "language", "forward", "cron", "fetchmail", 
-       "updown", "schedule", "filemin", "gnupg"]);
+    usermin::save_usermin_acl(
+      "user",
+      [
+        "mailbox",  "changepass", "spam",    "filter",
+        "language", "forward",    "cron",    "fetchmail",
+        "updown",   "schedule",   "filemin", "gnupg"
+      ]
+    );
 
     # Update user.acl
     my $afile = "$usermin::config{'usermin_dir'}/user.acl";
@@ -261,20 +272,19 @@ sub actions {
       my $jk_init_conf        = &jailkit::get_jk_init_ini();
       my $jk_basicshell_paths = $jk_init_conf->val('basicshell', 'paths');
       my @jk_basicshell_paths = split(/\s*,\s*/, $jk_basicshell_paths);
-      my @jk_params = (
-          ['zsh', '/etc/zsh/zshrc', '/etc/zsh/zshenv'],
-          ['rbash'],
-          ['id', 'groups'],
+      my @jk_params           = (
+        ['zsh', '/etc/zsh/zshrc', '/etc/zsh/zshenv'],
+        ['rbash'], ['id', 'groups'],
       );
 
-      JKPARAMS:
+    JKPARAMS:
       foreach my $jk_params (@jk_params) {
-          foreach my $jk_param (@{$jk_params}) {
-              if (grep(/^$jk_param$/, @jk_basicshell_paths)) {
-                  next JKPARAMS;
-              }
+        foreach my $jk_param (@{$jk_params}) {
+          if (grep(/^$jk_param$/, @jk_basicshell_paths)) {
+            next JKPARAMS;
           }
-          $jk_basicshell_paths .= ", @{[join(', ', @{$jk_params})]}";
+        }
+        $jk_basicshell_paths .= ", @{[join(', ', @{$jk_params})]}";
       }
 
       $jk_init_conf->newval('basicshell', 'paths', $jk_basicshell_paths);
@@ -286,8 +296,7 @@ sub actions {
       foreign_require('init', 'init-lib.pl');
 
       # Unit name is differnet on different distros
-      my @certbot_units =
-        ('certbot-renew.timer', 'certbot.timer');
+      my @certbot_units = ('certbot-renew.timer', 'certbot.timer');
       foreach my $certbot_unit (@certbot_units) {
         if (init::is_systemd_service($certbot_unit)) {
           init::disable_at_boot($certbot_unit);
@@ -312,12 +321,12 @@ sub actions {
     my $profiled = "/etc/profile.d";
     if (-d $profiled) {
       my $profiledphpalias = "$profiled/virtualmin-phpalias.sh";
-      my $phpalias =
-        "php=\`which php 2>/dev/null\`\n".
-        "if \[ -x \"\$php\" \]; then\n".
-          "  alias php='\$\(phpdom=\"bin/php\" ; \(while [ ! -f \"\$phpdom\" ] && [ \"\$PWD\" != \"/\" ]; do cd \"\$\(dirname \"\$PWD\"\)\" || \"\$php\" ; done ; if [ -f \"\$phpdom\" ] ; then echo \"\$PWD/\$phpdom\" ; else echo \"\$php\" ; fi\)\)'\n".
-        "fi\n";
-       write_file_contents($profiledphpalias, $phpalias);
+      my $phpalias
+        = "php=\`which php 2>/dev/null\`\n"
+        . "if \[ -x \"\$php\" \]; then\n"
+        . "  alias php='\$\(phpdom=\"bin/php\" ; \(while [ ! -f \"\$phpdom\" ] && [ \"\$PWD\" != \"/\" ]; do cd \"\$\(dirname \"\$PWD\"\)\" || \"\$php\" ; done ; if [ -f \"\$phpdom\" ] ; then echo \"\$PWD/\$phpdom\" ; else echo \"\$php\" ; fi\)\)'\n"
+        . "fi\n";
+      write_file_contents($profiledphpalias, $phpalias);
     }
 
     $self->done(1);    # OK!

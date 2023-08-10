@@ -40,9 +40,9 @@ sub actions {
     $gconfig{'logfiles'}     = 1;
     write_file("$config_directory/config", \%gconfig);
     get_miniserv_config(\%miniserv);
-    $miniserv{'preroot'}         = "authentic-theme";
-    $miniserv{'ssl'}             = 1;
-    $miniserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
+    $miniserv{'preroot'}            = "authentic-theme";
+    $miniserv{'ssl'}                = 1;
+    $miniserv{'ssl_cipher_list'}    = $webmin::strong_ssl_ciphers;
     $miniserv{'twofactor_provider'} = 'totp';
     put_miniserv_config(\%miniserv);
     webmin::build_installed_modules(1);

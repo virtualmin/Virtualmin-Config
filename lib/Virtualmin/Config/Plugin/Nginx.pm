@@ -46,8 +46,7 @@ sub actions {
     $vconfig{'backup_feature_ssl'}   = 0;
 
     if ($self->bundle() eq "MiniLEMP") {
-      $vconfig{'plugins'}
-        = 'virtualmin-nginx virtualmin-nginx-ssl';
+      $vconfig{'plugins'} = 'virtualmin-nginx virtualmin-nginx-ssl';
     }
     else {
       $vconfig{'plugins'}

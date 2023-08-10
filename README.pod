@@ -3,14 +3,6 @@
 
 =encoding utf8
 
-=for html <a href="https://app.travis-ci.com/github/virtualmin/Virtualmin-Config">
-<img src="https://app.travis-ci.com/virtualmin/Virtualmin-Config.svg?branch=master">
-</a>&nbsp;
-<a href='https://coveralls.io/github/virtualmin/Virtualmin-Config?branch=master'>
-<img src='https://coveralls.io/repos/github/virtualmin/Virtualmin-Config/badge.svg?branch=master'
-alt='Coverage Status' /></a>
-
-
 =head1 NAME
 
 Virtualmin::Config - A collection of plugins to initialize the configuration
