@@ -176,12 +176,7 @@ sub actions {
        "language", "forward", "cron", "fetchmail", 
        "updown", "schedule", "filemin", "gnupg"]);
 
-    # Lock down the Usermin file manager and browser to users' homes
-    $cfile = "$usermin::config{'usermin_dir'}/file/config";
-    my %fileconfig;
-    read_file($cfile, \%fileconfig);
-    $fileconfig{'home_only'} = 1;
-    write_file($cfile, \%fileconfig);
+    # Update user.acl
     my $afile = "$usermin::config{'usermin_dir'}/user.acl";
     my %uacl;
     read_file($afile, \%uacl);
