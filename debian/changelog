@@ -1,14 +1,25 @@
+virtualmin-config (7.0.13) stable; urgency=medium
+  * Remove old Java File Manager code
+
+ -- Joe Cooper <joe@virtualmin.com>  Wed, 10 Aug 2023 00:16:15 -0600
+
 virtualmin-config (7.0.12) stable; urgency=medium
   * Fix missing Fail2banFirewalld changes
+
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
 
 virtualmin-config (7.0.11) stable; urgency=medium
   * Fix Fail2ban ProFTPd jail work
   * Fix Fail2ban Webmin jail use `journalmatch` for speed
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.10) stable; urgency=medium
   * Fix to just enable and start Usermin
   * Fix to accomodate ClamAV logic depending on the distro
   * Fix default mailbox name for Sent mail
+
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
 
 virtualmin-config (7.0.9) stable; urgency=medium
   * Fix to test if `$myhostname` is set too in Postfix
@@ -16,18 +27,26 @@ virtualmin-config (7.0.9) stable; urgency=medium
   * Fix Postfix banning failed logins
   * Fix to allow using `@` in usernames for receiving mail
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.8) stable; urgency=medium
   * Add a smaller spinners
   * Fix to add `id` and `groups` command to jail env
   * Fix logger complain about wide character in Etckeeper
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.7) stable; urgency=medium
   * Fix spinner color
   * Fix to drop dependency from `Term::Spinner::Color` package
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.6) stable; urgency=medium
   * Fix to allow a new Terminal module to have colors for the new installs
   * Fix to avoid enabling Apache SSL if ran without bundle (using `-i` param)
+
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
 
 virtualmin-config (7.0.5) stable; urgency=medium
   * Add support for displaying conditional database name upon configuration
@@ -37,11 +56,17 @@ virtualmin-config (7.0.5) stable; urgency=medium
   * Fix to prevent loading modules if already loaded in ProFTPd
   * Fix to disable certbot.timer
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.4) stable; urgency=medium
   * Fix to disable certbot auto-renewals
 
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
+
 virtualmin-config (7.0.3) stable; urgency=high
   * Fix to always force PHP-FPM
+
+ -- iliajie <ilia@virtualmin.com>  Tue, 18 Apr 2023 12:00:00 -0000
 
 virtualmin-config (7.0.2) stable; urgency=medium
 
