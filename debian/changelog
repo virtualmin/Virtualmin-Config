@@ -1,7 +1,7 @@
 virtualmin-config (7.0.14) stable; urgency=medium
   * Fix to support Webmin distributed Perl modules
 
- -- Ilia Ross <ilia@virtualmin.com>  Wed, 20 Aug 2023 15:13:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 20 Aug 2023 15:14:00 +0300
 
 virtualmin-config (7.0.13) stable; urgency=medium
   * Remove old Java File Manager code
