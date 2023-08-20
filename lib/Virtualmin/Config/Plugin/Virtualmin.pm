@@ -332,7 +332,8 @@ sub actions {
 
     # Try to request SSL certificate for the hostname
     foreign_require("virtual-server");
-    if (defined(&virtual_server::setup_virtualmin_default_hostname_ssl)) {
+    if (!$vconfig{'default_domain_ssl'} && !$vconfig{'wizard_run'} &&
+        defined(&virtual_server::setup_virtualmin_default_hostname_ssl)) {
       my ($defdom_status) = virtual_server::setup_virtualmin_default_hostname_ssl();
       virtual_server::delete_virtualmin_default_hostname_ssl() if (!$defdom_status);
       mkdir("$ENV{'tempdir'}/virtualmin_ssl_host_success") if ($defdom_status);
