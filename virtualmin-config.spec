@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.14
+Version:        7.0.15
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sun Aug 20 2023 Ilia Ross <ilia@virtualmin.com> 7.0.15
+- Add ability to create host default domain with Let's Encrypt SSL
 * Sun Aug 20 2023 Ilia Ross <ilia@virtualmin.com> 7.0.14
 - Fix to support Webmin distributed Perl modules
 * Wed Aug 10 2023 Joe Cooper <joe@virtualmin.com> 7.0.13
