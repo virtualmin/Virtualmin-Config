@@ -26,6 +26,7 @@ sub actions {
   chdir($root);
   $0 = "$root/virtual-server/config-system.pl";
   push(@INC, $root);
+  push(@INC, "$root/vendor_perl");
 
   #use lib $root;
   eval 'use WebminCore';    ## no critic
