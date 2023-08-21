@@ -111,7 +111,7 @@ sub actions {
           my %grub;
           &read_env_file($grub_def_file, \%grub) || ($res = 0);
           my $v = $grub{'GRUB_CMDLINE_LINUX'};
-          if ($v !~ /rootflags=.*?([u|g]quota)/) {
+          if ($v && $v !~ /rootflags=.*?([u|g]quota)/) {
             if ($v =~ /rootflags=(\S+)/) {
               $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
             }
