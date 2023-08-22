@@ -40,6 +40,8 @@ sub actions {
     # Stop it, so a default install is small. Can be enabled during wizard.
     init::disable_at_boot("spamassassin");
     init::stop_action("spamassassin");
+    init::disable_at_boot("spamd");
+    init::stop_action("spamd");
     $self->done(1);    # OK!
   };
   if ($@) {
