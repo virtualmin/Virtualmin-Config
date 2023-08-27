@@ -1,3 +1,8 @@
+virtualmin-config (7.0.16) stable; urgency=medium
+  * Fix to also disable a new `spamd` service in Debian 12
+
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 27 Aug 2023 18:45:00 +0300
+
 virtualmin-config (7.0.15) stable; urgency=medium
   * Add ability to create host default domain with Let's Encrypt SSL
 
