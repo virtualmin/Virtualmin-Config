@@ -83,11 +83,15 @@ sub actions {
       $keyfile  = '/etc/pki/tls/private/proftpd.pem';
       proftpd::save_directive('Include', ['/etc/proftpd/conf.d'], $conf, $conf);
     }
+    elsif ($gconfig{'os_type'} eq 'suse-linux') {
+      $certfile = '/etc/proftpd/ssl/proftpd.cert.pem';
+      $keyfile  = '/etc/proftpd/ssl/proftpd.key.pem';
+      proftpd::save_directive('Include', ['/etc/proftpd/conf.d'], $conf, $conf);
+    }
     else {
       $log->warn("No configuration available for OS type $gconfig{'os_type'}.");
       die "Skipping additional ProFTPd configuration for this OS.";
     }
-
 
     # generate TLS cert/key pair
     my $hostname = get_system_hostname();
