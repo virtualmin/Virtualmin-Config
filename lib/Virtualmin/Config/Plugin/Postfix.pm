@@ -90,8 +90,7 @@ sub actions {
         "$maptype:/etc/aliases", 1);
     }
     postfix::ensure_map("alias_database");
-    postfix::regenerate_aliases();
-
+    
     # Setup BCC map
     if (!postfix::get_real_value("sender_bcc_maps")) {
       postfix::set_current_value("sender_bcc_maps", "$maptype:$postetc/bcc");
