@@ -68,7 +68,8 @@ sub actions {
     $postetc =~ s/\/[^\/]+$//;
     my @maptypes = `$postfix::config{'postfix_config_command'} -m`;
     chop(@maptypes);
-    my $maptype = indexof("hash", @maptypes) >= 0 ? "hash" : "dbm";
+    my $maptype = indexof("hash", @maptypes) >= 0 ? "hash" :
+                  indexof("lmdb", @maptypes) >= 0 ? "lmdb" : "dbm";
     if (!postfix::get_real_value("virtual_alias_maps")) {
       postfix::set_current_value("virtual_alias_maps",
         "$maptype:$postetc/virtual", 1);
