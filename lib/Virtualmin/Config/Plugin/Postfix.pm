@@ -197,7 +197,8 @@ sub actions {
     postfix::regenerate_aliases();
 
     foreign_require("init", "init-lib.pl");
-    if (-e "/usr/sbin/alternatives") {
+    if (-e "/usr/sbin/alternatives" &&
+        -e "/usr/sbin/sendmail.postfix") {
       system("/usr/sbin/alternatives --set mta /usr/sbin/sendmail.postfix");
     }
     if ($gconfig{'os_type'} eq 'freebsd') {
