@@ -77,6 +77,21 @@ sub actions {
     postfix::ensure_map("virtual_alias_maps");
     postfix::regenerate_virtual_table();
 
+    # Setup aliases
+    if (!postfix::get_real_value("alias_maps")) {
+      postfix::set_current_value("alias_maps",
+        "$maptype:/etc/aliases", 1);
+    }
+    postfix::ensure_map("alias_maps");
+
+    # Setup aliases database
+    if (!postfix::get_real_value("alias_database")) {
+      postfix::set_current_value("alias_database",
+        "$maptype:/etc/aliases", 1);
+    }
+    postfix::ensure_map("alias_database");
+    postfix::regenerate_aliases();
+
     # Setup BCC map
     if (!postfix::get_real_value("sender_bcc_maps")) {
       postfix::set_current_value("sender_bcc_maps", "$maptype:$postetc/bcc");
