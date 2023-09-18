@@ -55,6 +55,26 @@ sub actions {
       init::disable_at_boot('nginx');
     }
 
+    # Fix up some SUSE stuff
+    if ($gconfig{'os_type'} eq "suse-linux") {
+      my $listen_file = "/etc/apache2/listen.conf";
+      if (-f $listen_file) {
+        my $listen_file_contents = read_file_contents($listen_file);
+        my $listen_file_changed = 0;
+        if ($listen_file_contents =~ /^Listen\s+80/m &&
+            $listen_file_contents !~ /^Listen\s+443/m) {
+          $listen_file_contents =~ s/^Listen\s+80/Listen 80\nListen 443/m;
+          $listen_file_changed++;
+        } elsif ($listen_file_contents !~ /^Listen\s+80/m &&
+                 $listen_file_contents !~ /^Listen\s+443/m) {
+          $listen_file_contents .= "\nListen 80\nListen 443";
+          $listen_file_changed++;
+        }
+        write_file_contents($listen_file, $listen_file_contents)
+          if ($listen_file_changed);
+      }
+    }
+
     # Fix up some Debian stuff
     if ($gconfig{'os_type'} eq "debian-linux") {
       if (-e "/etc/init.d/apache") { init::disable_at_boot("apache"); }
