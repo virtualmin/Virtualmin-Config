@@ -33,7 +33,8 @@ sub actions {
 
   # Configure etckeeper on RHEL
   if (&has_command('etckeeper')) {
-    if ($gconfig{'os_type'} eq 'redhat-linux') {
+    if ($gconfig{'os_type'} eq 'redhat-linux' ||
+        $gconfig{'os_type'} eq "suse-linux") {
       $self->logsystem("etckeeper init");
       $self->logsystem("systemctl enable etckeeper.timer");
       $self->logsystem("systemctl start etckeeper.timer");
