@@ -332,7 +332,7 @@ sub actions {
 
     # Try to request SSL certificate for the hostname
     foreign_require("virtual-server");
-    if (defined($ENV{'vminstalltempdir'}) && defined(&virtual_server::setup_virtualmin_default_hostname_ssl) &&
+    if (defined($ENV{'vminstalltempdir'}) &&
         !$vconfig{'default_domain_ssl'} && !$vconfig{'wizard_run'}) {
       my ($ok, $error) = virtual_server::setup_virtualmin_default_hostname_ssl();
       write_file_contents("$ENV{'vminstalltempdir'}/virtualmin_ssl_host_status",
