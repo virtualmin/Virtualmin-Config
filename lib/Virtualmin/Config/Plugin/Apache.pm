@@ -107,10 +107,7 @@ sub actions {
     }
 
     # On Debian and Ubuntu, enable some modules which are disabled by default
-    if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-      my $adir = "/etc/apache2/mods-available";
-      my $edir = "/etc/apache2/mods-enabled";
-      foreach my $mod (
+    my @apache_mods = (
         "actions",       "suexec",
         "auth_digest",   "ssl",
         "fcgid",         "rewrite",
@@ -119,7 +116,11 @@ sub actions {
         "slotmem_shm",   "cgi",
         "proxy_fcgi",    "lbmethod_byrequests",
         "http2"
-        )
+        );
+    if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
+      my $adir = "/etc/apache2/mods-available";
+      my $edir = "/etc/apache2/mods-enabled";
+      foreach my $mod (@apache_mods)
       {
         if (-r "$adir/$mod.load" && !-r "$edir/$mod.load") {
           symlink("$adir/$mod.load", "$edir/$mod.load");
@@ -138,6 +139,16 @@ sub actions {
       $apache2suexec->[0] = "/home";
       $apache2suexec->[1] = "public_html";
       flush_file_lines($fn);
+    }
+
+    # openSUSE fixes
+    if ($gconfig{'os_type'} eq "suse-linux") {
+      foreach my $mod (@apache_mods)
+      {
+        system("a2enmod $mod >/dev/null 2>&1");
+      }
+      $self->logsystem("systemctl enable apache2");
+      sleep $delay, $self->logsystem("systemctl restart apache2"), sleep $delay;
     }
 
     # On Debian/Ubuntu, PHP is enabled in php*.conf in a way that makes it
