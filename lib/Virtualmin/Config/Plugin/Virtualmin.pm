@@ -332,12 +332,13 @@ sub actions {
 
     # Try to request SSL certificate for the hostname
     foreign_require("virtual-server");
-    if (defined($ENV{'VMITMPDIR'}) && !$vconfig{'default_domain_ssl'} && !$vconfig{'wizard_run'}) {
+    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
+               !$vconfig{'default_domain_ssl'} && !$vconfig{'wizard_run'}) {
       my ($ok, $error) = virtual_server::setup_virtualmin_default_hostname_ssl();
-      write_file_contents("$ENV{'VMITMPDIR'}/virtualmin_ssl_host_status",
+      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
                           "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
       if ($ok) {
-          mkdir("$ENV{'VMITMPDIR'}/virtualmin_ssl_host_success");
+          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
       } else {
         virtual_server::delete_virtualmin_default_hostname_ssl();
       }
