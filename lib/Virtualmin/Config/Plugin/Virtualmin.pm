@@ -343,6 +343,11 @@ sub actions {
       }
     }
 
+    # OpenSUSE PHP related fixes
+    if ($gconfig{'os_type'} eq "suse-linux") {
+      system("mv /etc/php8/fpm/php-fpm.conf.default /etc/php8/fpm/php-fpm.conf >/dev/null 2>&1");
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {
