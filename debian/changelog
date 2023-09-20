@@ -1,3 +1,8 @@
+virtualmin-config (7.0.17) stable; urgency=medium
+  * Fix temp directory environmental variable name and improve support for openSUSE
+
+ -- Ilia Ross <ilia@virtualmin.com>  Wed Sep 20 2023 20:21:00 +0300
+
 virtualmin-config (7.0.16) stable; urgency=medium
   * Fix to also disable a new `spamd` service in Debian 12
 

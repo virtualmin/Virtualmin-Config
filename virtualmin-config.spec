@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.16
+Version:        7.0.17
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Wed Sep 20 2023 Ilia Ross <ilia@virtualmin.com> 7.0.17
+- Fix temp directory environmental variable name and improve support for openSUSE
 * Sun Aug 27 2023 Ilia Ross <ilia@virtualmin.com> 7.0.16
 - Fix to also disable a new `spamd` service in Debian 12
 * Sun Aug 20 2023 Ilia Ross <ilia@virtualmin.com> 7.0.15
