@@ -1,22 +1,22 @@
 virtualmin-config (7.0.16) stable; urgency=medium
   * Fix to also disable a new `spamd` service in Debian 12
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun, 27 Aug 2023 18:45:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 27 2023 18:45:00 +0300
 
 virtualmin-config (7.0.15) stable; urgency=medium
   * Add ability to create host default domain with Let's Encrypt SSL
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun, 20 Aug 2023 20:41:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 20 2023 20:41:00 +0300
 
 virtualmin-config (7.0.14) stable; urgency=medium
   * Fix to support Webmin distributed Perl modules
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun, 20 Aug 2023 15:20:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 20 2023 15:20:00 +0300
 
 virtualmin-config (7.0.13) stable; urgency=medium
   * Remove old Java File Manager code
 
- -- Joe Cooper <joe@virtualmin.com>  Wed, 10 Aug 2023 00:16:15 -0600
+ -- Joe Cooper <joe@virtualmin.com>  Wed Aug 10 2023 00:16:15 -0600
 
 virtualmin-config (7.0.12) stable; urgency=medium
   * Fix missing Fail2banFirewalld changes
