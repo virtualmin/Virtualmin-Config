@@ -153,6 +153,9 @@ TLSLog                        /var/log/proftpd/tls.log
   # Configure the server to listen on 2222 (openssh owns 22)
   Port 2222
 
+  # chroot users into their home by default
+  DefaultRoot ~
+
   # Configure the RSA and ECDSA host keys, using the same host key
   # files that OpenSSH uses.
   SFTPHostKey /etc/proftpd/ssh_host_rsa_key
