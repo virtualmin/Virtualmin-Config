@@ -156,6 +156,9 @@ TLSLog                        /var/log/proftpd/tls.log
   # chroot users into their home by default
   DefaultRoot ~
 
+  # Allow file overwrites
+  AllowOverwrite on
+
   # Configure the RSA and ECDSA host keys, using the same host key
   # files that OpenSSH uses.
   SFTPHostKey /etc/proftpd/ssh_host_rsa_key
