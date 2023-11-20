@@ -105,9 +105,17 @@ sub actions {
       my $prt_std_err = 1;
       if ($xfs) {
 
-        # Update the grub config file source
+        my $grubby_cmd = &has_command('grubby');
         my $grub_def_file = "/etc/default/grub";
-        if (-r $grub_def_file) {
+        
+        # Use grubby command to enable user and group quotas
+        if (-x $grubby_cmd) {
+          $self->logsystem(
+            "$grubby_cmd --update-kernel=ALL --args=rootflags=uquota,gquota"
+          );
+        }
+        # Update configuration manually
+        elsif (-r $grub_def_file) {
           my %grub;
           &read_env_file($grub_def_file, \%grub) || ($res = 0);
           my $v = $grub{'GRUB_CMDLINE_LINUX'};
