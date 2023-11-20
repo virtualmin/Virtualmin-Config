@@ -115,7 +115,7 @@ sub actions {
         "proxy_connect", "proxy_http",
         "slotmem_shm",   "cgi",
         "proxy_fcgi",    "lbmethod_byrequests",
-        "http2"
+        "http2",         "include"
         );
     if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
       my $adir = "/etc/apache2/mods-available";
