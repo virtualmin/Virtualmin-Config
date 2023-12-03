@@ -107,12 +107,31 @@ sub actions {
 
         my $grubby_cmd = &has_command('grubby');
         my $grub_def_file = "/etc/default/grub";
+        my $grub_generate_config = sub {
+            my $grub_conf_file = "/boot/grub2/grub.cfg";
+            # On EFI it's different config file
+            if (-d "/sys/firmware/efi") {
+              my %osrelease;
+              &read_env_file('/etc/os-release', \%osrelease);
+              my $osid               = $osrelease{'ID'};
+              my $grub_conf_file_efi = "/boot/efi/EFI/$osid/grub.cfg";
+              if (-r $grub_conf_file_efi) {
+                $grub_conf_file = $grub_conf_file_efi;
+              }
+            }
+            if (-r $grub_conf_file) {
+              &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
+              $self->logsystem("grub2-mkconfig -o $grub_conf_file");
+            }
+        };
         
         # Use grubby command to enable user and group quotas
         if (-x $grubby_cmd) {
           $self->logsystem(
             "$grubby_cmd --update-kernel=ALL --args=rootflags=uquota,gquota"
           );
+          # Generate a new actual config file
+          &$grub_generate_config();
         }
         # Update configuration manually
         elsif (-r $grub_def_file) {
@@ -130,22 +149,7 @@ sub actions {
             &write_env_file($grub_def_file, \%grub);
 
             # Generate a new actual config file
-            my $grub_conf_file = "/boot/grub2/grub.cfg";
-
-            # On EFI it's different config file
-            if (-d "/sys/firmware/efi") {
-              my %osrelease;
-              &read_env_file('/etc/os-release', \%osrelease);
-              my $osid               = $osrelease{'ID'};
-              my $grub_conf_file_efi = "/boot/efi/EFI/$osid/grub.cfg";
-              if (-r $grub_conf_file_efi) {
-                $grub_conf_file = $grub_conf_file_efi;
-              }
-            }
-            if (-r $grub_conf_file) {
-              &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
-              $self->logsystem("grub2-mkconfig -o $grub_conf_file");
-            }
+            &$grub_generate_config();
           }
           else {
             $res         = 1;
