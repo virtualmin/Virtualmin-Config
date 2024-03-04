@@ -75,19 +75,8 @@ sub actions {
       $vconfig{'ssl'} = 3;
     }
     if (!defined($vconfig{'plugins'})) {
-
-      # Module `virtualmin-htpasswd` is only meant for Apache
-      my $vmhtpass
-        = ($self->bundle() ne "LEMP" && $self->bundle() ne "MiniLEMP")
-        ? 'virtualmin-htpasswd'
-        : '';
-      if ($self->bundle() eq "MiniLAMP") {
-        $vconfig{'plugins'} = $vmhtpass;
-      }
-      else {
-        $vconfig{'plugins'} = 'virtualmin-awstats';
-        $vconfig{'plugins'} .= " $vmhtpass" if ($vmhtpass);
-      }
+      # Enable extra default modules
+      $vconfig{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
       $vconfig{'proftpd_config'}
