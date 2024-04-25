@@ -109,6 +109,11 @@ sub actions {
         my $grub_def_file = "/etc/default/grub";
         my $grub_generate_config = sub {
             my $grub_conf_file = "/boot/grub2/grub.cfg";
+            my $grub_conf_cmd = "grub2-mkconfig";
+            if (!-r $grub_conf_file) {
+              $grub_conf_file = "/boot/grub/grub.cfg";
+              $grub_conf_cmd = "grub-mkconfig";
+            }
             # On EFI it's different config file
             if (-d "/sys/firmware/efi") {
               my %osrelease;
@@ -121,7 +126,7 @@ sub actions {
             }
             if (-r $grub_conf_file) {
               &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
-              $self->logsystem("grub2-mkconfig -o $grub_conf_file");
+              $self->logsystem("$grub_conf_cmd -o $grub_conf_file");
             }
         };
         
@@ -138,7 +143,7 @@ sub actions {
           my %grub;
           &read_env_file($grub_def_file, \%grub) || ($res = 0);
           my $v = $grub{'GRUB_CMDLINE_LINUX'};
-          if ($v && $v !~ /rootflags=.*?([u|g]quota)/) {
+          if (defined($v) && $v !~ /rootflags=.*?([u|g]quota)/) {
             if ($v =~ /rootflags=(\S+)/) {
               $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
             }
