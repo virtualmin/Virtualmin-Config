@@ -114,6 +114,25 @@ sub actions {
       }
     }
 
+    # Enable DKIM at install time
+    if (-r "/etc/opendkim.conf") {
+      foreign_require("virtual-server");
+      my $dkim = virtual_server::get_dkim_config();
+      if (ref($dkim) && !$dkim->{'enabled'}) {
+        $dkim->{'selector'} = virtual_server::get_default_dkim_selector();
+        $dkim->{'sign'} = 1;
+        $dkim->{'enabled'} = 1;
+        $dkim->{'extra'} = [ get_system_hostname() ];
+        virtual_server::push_all_print();
+        virtual_server::set_all_null_print();
+        my $ok = virtual_server::enable_dkim($dkim, 1, 2048);
+        virtual_server::pop_all_print();
+        if ($ok) {
+          $vconfig{'dkim_enabled'} = 1;
+        }
+      }
+    }
+
     save_module_config(\%vconfig, "virtual-server");
 
     # Configure the Read User Mail module to look for sub-folders

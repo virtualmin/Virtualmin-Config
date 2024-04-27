@@ -260,21 +260,6 @@ sub actions {
       print STDERR "Failed to start Postfix!\n" if ($err);
     }
 
-    # Enable DKIM at install time
-    my $dkim = &get_dkim_config();
-    if (!$dkim) {
-      $dkim = { 'selector' => get_default_dkim_selector(),
-	        'sign' => 1,
-		'enabled' => 1,
-		'extra' => [ get_system_hostname() ],
-	      };
-      my $ok = enable_dkim($dkim, 0, 2048);
-      if ($ok) {
-        $config{'dkim_enabled'} = 1;
-	save_module_config();
-      }
-    }
-
     $self->done(1);    # OK!
   };
   if ($@) {
