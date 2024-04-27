@@ -59,29 +59,43 @@ sub actions {
       }
 
       # Substitute options and params if already in file
+      my $added_opts = 0;
+      my $added_params = 0;
       foreach my $l (@$sasldefault) {
-        if ($l =~ /OPTIONS/) {
+        if ($l =~ /^OPTIONS/) {
           $l = 'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"';
+          $added_opts++;
         }
-        if ($l =~ /PARAMS/) {
+        if ($l =~ /^PARAMS/) {
           $l = 'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"';
+          $added_params++;
         }
       }
 
       # Add them, if not
-      if (!grep {/OPTIONS/} @$sasldefault) {
-        push(@$sasldefault,
-          'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"');
-      }
-      if (!grep {/PARAMS/} @$sasldefault) {
-        push(@$sasldefault,
-          'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"');
-      }
+      push(@$sasldefault,
+        'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"')
+          if (!$added_opts && !grep {/^OPTIONS/} @$sasldefault);
+      push(@$sasldefault,
+        'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"')
+          if (!$added_params && !grep {/^PARAMS/} @$sasldefault);
       flush_file_lines($fn);
+
       $cf = "/etc/postfix/sasl/smtpd.conf";
       $self->logsystem("mkdir -p -m 755 /var/spool/postfix/var/run/saslauthd");
       $self->logsystem("adduser postfix sasl");
       $saslinit = "/etc/init.d/saslauthd";
+      # Ubuntu 24.04 uses native saslauthd.service, so we need
+      # to fix PIDFile location because chroot Postfix expects
+      # it to be in /var/spool/postfix/var/run/saslauthd
+      my $os_ver = $gconfig{'real_os_version'};
+      if ($os_ver && $os_ver =~ /^(24)/) {
+        my $tmp = transname();
+        write_file_contents($tmp, "[Service]\nPIDFile=/var/spool/postfix/var/run/saslauthd/saslauthd.pid");
+        $self->logsystem("systemd-run --collect --pty --service-type=oneshot --setenv=SYSTEMD_EDITOR=tee --system -- sh -c 'systemctl edit --force --system -- saslauthd.service < $tmp'");
+        $self->logsystem("systemctl daemon-reload");
+        $self->logsystem("systemctl restart saslauthd.service");
+      }
     }
     elsif ($gconfig{'os_type'} eq 'solaris') {
 
@@ -121,15 +135,12 @@ sub actions {
         $self->logsystem("touch $cf");
       }
       my $smtpdconf = read_file_lines($cf) or die "Failed to open $cf!";
-      my $idx       = indexof("", @$smtpdconf);
-      if ($idx < 0) {
-        push(@$smtpdconf, "pwcheck_method: saslauthd");
-        push(@$smtpdconf, "mech_list: plain login");
-        flush_file_lines($cf);
-      }
+      push(@$smtpdconf, "pwcheck_method: saslauthd")
+        if (!grep {/^pwcheck_method/} @$smtpdconf);
+      push(@$smtpdconf, "mech_list: plain login")
+        if (!grep {/^mech_list/} @$smtpdconf);
+      flush_file_lines($cf);
 
-      #$cmd = "$saslinit start";
-      #proc::safe_process_exec($cmd, 0, 0, *STDOUT, undef, 1);
       init::start_action('saslauthd');
     }
 
