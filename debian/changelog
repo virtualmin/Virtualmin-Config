@@ -1,3 +1,10 @@
+virtualmin-config (7.0.19) stable; urgency=medium
+  * Add Ubuntu 24.04 support
+  * Fix Nginx start correctly after reboot
+  * Enable DKIM at install time
+
+ -- Ilia Ross <ilia@virtualmin.com>  Say Apr 27 2024 22:43:41 +0300
+
 virtualmin-config (7.0.18) stable; urgency=medium
   * Fix ProFTPd chroot jail work when a user logs in via SFTP
   * Fix to enable quotas using `grubby` command
