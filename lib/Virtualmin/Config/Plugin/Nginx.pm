@@ -55,6 +55,13 @@ sub actions {
     }
     save_module_config(\%vconfig, "virtual-server");
 
+    # Fix Nginx to start correctly after reboot
+    my $tmp = transname();
+    write_file_contents($tmp, "[Unit]\nStartLimitBurst=3\nStartLimitIntervalSec=30\n\n[Service]\nRestart=on-failure\nRestartSec=5s");
+    $self->logsystem("systemd-run --collect --pty --service-type=oneshot --setenv=SYSTEMD_EDITOR=tee --system -- sh -c 'systemctl edit --force --system -- nginx.service < $tmp'");
+    $self->logsystem("systemctl daemon-reload");
+    $self->logsystem("systemctl restart nginx.service");
+
     $self->done(1);    # OK!
   };
   if ($@) {
