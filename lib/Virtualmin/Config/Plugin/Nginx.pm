@@ -57,7 +57,7 @@ sub actions {
 
     # Fix Nginx to start correctly after reboot
     my $tmp = transname();
-    write_file_contents($tmp, "[Unit]\nStartLimitBurst=2\nStartLimitIntervalSec=15\n\n[Service]\nRestart=on-failure\nRestartSec=5s");
+    write_file_contents($tmp, "[Unit]\nStartLimitBurst=2\nStartLimitIntervalSec=15\n\n[Service]\nRestart=on-failure\nRestartSec=5s\nSuccessExitStatus=SIGKILL");
     $self->logsystem("systemd-run --collect --pty --service-type=oneshot --setenv=SYSTEMD_EDITOR=tee --system -- sh -c 'systemctl edit --force --system -- nginx.service < $tmp'");
     $self->logsystem("systemctl daemon-reload");
     $self->logsystem("systemctl restart nginx.service");
