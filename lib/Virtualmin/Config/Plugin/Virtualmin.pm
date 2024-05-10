@@ -357,6 +357,42 @@ sub actions {
       system("mv /etc/php8/fpm/php-fpm.conf.default /etc/php8/fpm/php-fpm.conf >/dev/null 2>&1");
     }
 
+    # Disable mod_php in package managers
+    if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
+      # Disable libapache2-mod-php* in Ubuntu/Debian
+      my $fpref = $gconfig{'real_os_type'} =~ /ubuntu/i ? 'ubuntu' : 'debian';
+      my $apt_pref_dir = "/etc/apt/preferences.d";
+      # Create a file to restrict libapache2-mod-php* packages
+      $self->logsystem(
+        "echo \"Package: libapache2-mod-php*\nPin: release *\nPin-Priority: -1\" > ".
+          "$apt_pref_dir/$fpref-virtualmin-restricted-packages");
+    } else {
+      # Disable php and php*-php in RHEL and derivatives
+      my $dnf_conf = "/etc/dnf/dnf.conf";
+      if (-f $dnf_conf) {
+        lock_file($dnf_conf);
+        my $lref = read_file_lines($dnf_conf);
+        my $lnum;
+        foreach my $i (0 .. $#$lref) {
+          # If main section is found
+          if ($lref->[$i] =~ /^\[main\]/) {
+              $lnum = $i;
+          }
+          # If exclude= line is found, don't add another one
+          if ($lref->[$i] =~ /^exclude=/) {
+              $lnum = undef;
+          }
+        }
+        # Add exclude= line if it's not
+        # found right after [main]
+        if (defined($lnum)) {
+          $lref->[$lnum] .= "\nexclude=php php*-php";
+        }
+        flush_file_lines($dnf_conf);
+        unlock_file($dnf_conf);
+      }
+    }
+
     $self->done(1);    # OK!
   };
   if ($@) {
