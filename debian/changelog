@@ -1,88 +1,103 @@
 virtualmin-config (7.0.19) stable; urgency=medium
+
   * Add Ubuntu 24.04 support
   * Fix Nginx start correctly after reboot
   * Enable DKIM at install time
 
- -- Ilia Ross <ilia@virtualmin.com>  Say Apr 27 2024 22:43:41 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sat, 27 Apr 2024 22:43:41 +0300
 
 virtualmin-config (7.0.18) stable; urgency=medium
+
   * Fix ProFTPd chroot jail work when a user logs in via SFTP
   * Fix to enable quotas using `grubby` command
   * Fix to enable `mod_include` in Apache
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Dec 03 2023 23:33:36 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 03 Dec 2023 23:33:36 +0200
 
 virtualmin-config (7.0.17) stable; urgency=medium
+
   * Fix temp directory environmental variable name and improve support for openSUSE
 
- -- Ilia Ross <ilia@virtualmin.com>  Wed Sep 20 2023 20:21:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Wed, 20 Sep 2023 20:21:00 +0300
 
 virtualmin-config (7.0.16) stable; urgency=medium
+
   * Fix to also disable a new `spamd` service in Debian 12
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 27 2023 18:45:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 27 Aug 2023 18:45:00 +0300
 
 virtualmin-config (7.0.15) stable; urgency=medium
+
   * Add ability to create host default domain with Let's Encrypt SSL
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 20 2023 20:41:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 20 Aug 2023 20:41:00 +0300
 
 virtualmin-config (7.0.14) stable; urgency=medium
+
   * Fix to support Webmin distributed Perl modules
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Aug 20 2023 15:20:00 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 20 Aug 2023 15:20:00 +0300
 
 virtualmin-config (7.0.13) stable; urgency=medium
+
   * Remove old Java File Manager code
 
- -- Joe Cooper <joe@virtualmin.com>  Wed Aug 10 2023 00:16:15 -0600
+ -- Joe Cooper <joe@virtualmin.com>  Wed, 10 Aug 2023 00:16:15 -0600
 
 virtualmin-config (7.0.12) stable; urgency=medium
+
   * Fix missing Fail2banFirewalld changes
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Apr 16 13:02:40 2023 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 16 Apr 13:02:40 2023 +0300
 
 virtualmin-config (7.0.11) stable; urgency=medium
+
   * Fix Fail2ban ProFTPd jail work
   * Fix Fail2ban Webmin jail use `journalmatch` for speed
 
- -- Ilia Ross <ilia@virtualmin.com>  Thu Apr 13 23:15:30 2023 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Thu, 13 Apr 23:15:30 2023 +0300
 
 virtualmin-config (7.0.10) stable; urgency=medium
+
   * Fix to just enable and start Usermin
   * Fix to accomodate ClamAV logic depending on the distro
   * Fix default mailbox name for Sent mail
 
- -- Ilia Ross <ilia@virtualmin.com>  Mon Jan 9 00:20:47 2023 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Mon, 09 Jan 00:20:47 2023 +0200
 
 virtualmin-config (7.0.9) stable; urgency=medium
+
   * Fix to test if `$myhostname` is set too in Postfix
   * Fix a warning `Use of uninitialized value $backend` for Fail2Ban
   * Fix Postfix banning failed logins
   * Fix to allow using `@` in usernames for receiving mail
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Dec 18 23:16:22 2022 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 18 Dec 23:16:22 2022 +0200
 
 virtualmin-config (7.0.8) stable; urgency=medium
+
   * Add a smaller spinners
   * Fix to add `id` and `groups` command to jail env
   * Fix logger complain about wide character in Etckeeper
 
- -- Ilia Ross <ilia@virtualmin.com>  Thu Dec 8 15:33:19 2022 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Thu, 08 Dec 15:33:19 2022 +0200
 
 virtualmin-config (7.0.7) stable; urgency=medium
+
   * Fix spinner color
   * Fix to drop dependency from `Term::Spinner::Color` package
 
- -- Ilia Ross <ilia@virtualmin.com>  Tue Nov 15 19:32:13 2022 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Tue, 15 Nov 19:32:13 2022 +0200
 
 virtualmin-config (7.0.6) stable; urgency=medium
+
   * Fix to allow a new Terminal module to have colors for the new installs
   * Fix to avoid enabling Apache SSL if ran without bundle (using `-i` param)
 
- -- Ilia Ross <ilia@virtualmin.com>  Mon Oct 24 14:58:55 2022 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Mon, 24 Oct 14:58:55 2022 +0300
 
 virtualmin-config (7.0.5) stable; urgency=medium
+
   * Add support for displaying conditional database name upon configuration
   * Fix to drop NoCertRequest deprecated and removed option for ProFTPd
   * Fix support for ProFTPd in passive mode
@@ -90,17 +105,19 @@ virtualmin-config (7.0.5) stable; urgency=medium
   * Fix to prevent loading modules if already loaded in ProFTPd
   * Fix to disable certbot.timer
 
- -- Ilia Ross <ilia@virtualmin.com>  Sun Oct 16 17:14:38 2022 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 16 Oct 17:14:38 2022 +0300
 
 virtualmin-config (7.0.4) stable; urgency=medium
+
   * Fix to disable certbot auto-renewals
 
- -- Ilia Ross <ilia@virtualmin.com>  Mon Oct 10 22:01:20 2022 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Mon, 10 Oct 22:01:20 2022 +0300
 
 virtualmin-config (7.0.3) stable; urgency=high
+
   * Fix to always force PHP-FPM
 
- -- Ilia Ross <ilia@virtualmin.com>  Tue Sep 6 21:05:56 2022 +0300
+ -- Ilia Ross <ilia@virtualmin.com>  Tue, 06 Sep 21:05:56 2022 +0300
 
 virtualmin-config (7.0.2) stable; urgency=medium
 
