@@ -143,7 +143,7 @@ sub actions {
       write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
                           "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
       if ($ok) {
-          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
+        mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
       }
       else {
         virtual_server::delete_virtualmin_default_hostname_ssl();
