@@ -7,6 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
 our (%gconfig, %miniserv);
+our (%config, $module_config_file);
 our $trust_unknown_referers = 1;
 
 sub new {
@@ -36,50 +37,51 @@ sub actions {
 
   $self->spin();
   eval {
-    my %vconfig = foreign_config("virtual-server");
-    $vconfig{'mail_system'}          = 0;
-    $vconfig{'nopostfix_extra_user'} = 1;
-    $vconfig{'aliascopy'}            = 1;
-    $vconfig{'home_base'}            = "/home";
-    $vconfig{'webalizer'}            = 0;
+    foreign_require("virtual-server");
+    $config{'mail_system'}          = 0;
+    $config{'nopostfix_extra_user'} = 1;
+    $config{'aliascopy'}            = 1;
+    $config{'home_base'}            = "/home";
+    $config{'webalizer'}            = 0;
 
-# XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
-    if (defined $self->bundle()
-      && ($self->bundle() eq "MiniLEMP" || $self->bundle() eq "MiniLAMP"))
+    # XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
+    if (defined $self->bundle() &&
+        ($self->bundle() eq "MiniLEMP" ||
+         $self->bundle() eq "MiniLAMP"))
     {
-      $vconfig{'spam'}       = 0;
-      $vconfig{'virus'}      = 0;
-      $vconfig{'postgresql'} = 0;
+      $config{'spam'}       = 0;
+      $config{'virus'}      = 0;
+      $config{'postgresql'} = 0;
     }
     elsif (defined $self->bundle()) {
-      $vconfig{'spam'}       = 1;
-      $vconfig{'virus'}      = 1;
-      $vconfig{'postgresql'} = 1;
+      $config{'spam'}       = 1;
+      $config{'virus'}      = 1;
+      $config{'postgresql'} = 1;
     }
-    $vconfig{'ftp'}              = 0;
-    $vconfig{'logrotate'}        = 3;
-    $vconfig{'default_procmail'} = 1;
-    $vconfig{'bind_spfall'}      = 0;
-    $vconfig{'bind_spf'}         = "yes";
-    $vconfig{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
-    $vconfig{'bccs'}             = 1;
-    $vconfig{'reseller_theme'}   = "authentic-theme";
-    $vconfig{'append_style'}     = 6;
+    $config{'ftp'}              = 0;
+    $config{'logrotate'}        = 3;
+    $config{'default_procmail'} = 1;
+    $config{'bind_spfall'}      = 0;
+    $config{'bind_spf'}         = "yes";
+    $config{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
+    $config{'bccs'}             = 1;
+    $config{'reseller_theme'}   = "authentic-theme";
+    $config{'append_style'}     = 6;
 
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
-      $vconfig{'ssl'}                = 0;
-      $vconfig{'web'}                = 0;
-      $vconfig{'backup_feature_ssl'} = 0;
+      $config{'ssl'}                = 0;
+      $config{'web'}                = 0;
+      $config{'backup_feature_ssl'} = 0;
     }
     elsif (defined $self->bundle()) {
-      $vconfig{'ssl'} = 3;
+      $config{'ssl'} = 3;
     }
-    if (!defined($vconfig{'plugins'})) {
+    if (!defined($config{'plugins'})) {
       # Enable extra default modules
-      $vconfig{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
+      $config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
-      $vconfig{'proftpd_config'}
+      $config{'proftpd_config'}
         = 'ServerName ${DOM}	<Anonymous ${HOME}/ftp>	User ftp	Group nogroup	UserAlias anonymous ftp	<Limit WRITE>	DenyAll	</Limit>	RequireValidShell off	</Anonymous>';
     }
 
@@ -88,52 +90,70 @@ sub actions {
     # XXX ACLs can reportedly deal with this...needs research.
     unless ($gconfig{'os_type'} eq 'freebsd') {
       if (defined(getpwnam("www-data"))) {
-        $vconfig{'web_user'} = "www-data";
+        $config{'web_user'} = "www-data";
       }
       else {
-        $vconfig{'web_user'} = "apache";
+        $config{'web_user'} = "apache";
       }
-      $vconfig{'html_perms'} = "0750";
+      $config{'html_perms'} = "0750";
     }
 
     # Always force PHP-FPM mode
-    $vconfig{'php_suexec'} = 3;
+    $config{'php_suexec'} = 3;
 
     # If system doesn't have Jailkit support, disable it
     if (!has_command('jk_init')) {
-      $vconfig{'jailkit_disabled'} = 1;
+      $config{'jailkit_disabled'} = 1;
     }
 
     # If system doesn't have AWStats support, disable it
     if (foreign_check("virtualmin-awstats")) {
       my %awstats_config = foreign_config("virtualmin-awstats");
       if ($awstats_config{'awstats'} && !-r $awstats_config{'awstats'}) {
-        my @plugins = split(/\s/, $vconfig{'plugins'});
+        my @plugins = split(/\s/, $config{'plugins'});
         @plugins = grep { $_ ne 'virtualmin-awstats' } @plugins;
-        $vconfig{'plugins'} = join(' ', @plugins);
+        $config{'plugins'} = join(' ', @plugins);
+      }
+    }
+
+    # Try to request SSL certificate for the hostname
+    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
+               !$config{'default_domain_ssl'} && !$config{'wizard_run'}) {
+      my ($ok, $error, $dom) = virtual_server::setup_virtualmin_default_hostname_ssl();
+      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
+                          "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
+      if ($ok) {
+          $config{'defaultdomain_name'} = $dom->{'dom'};
+          $config{'default_domain_ssl'} = 1;
+          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
+      } else {
+        virtual_server::delete_virtualmin_default_hostname_ssl();
       }
     }
 
     # Enable DKIM at install time
     if (-r "/etc/opendkim.conf") {
-      foreign_require("virtual-server");
       my $dkim = virtual_server::get_dkim_config();
       if (ref($dkim) && !$dkim->{'enabled'}) {
+        my $hostname = get_system_hostname();
         $dkim->{'selector'} = virtual_server::get_default_dkim_selector();
         $dkim->{'sign'} = 1;
         $dkim->{'enabled'} = 1;
-        $dkim->{'extra'} = [ get_system_hostname() ];
+        $dkim->{'extra'} = [ $hostname ];
         virtual_server::push_all_print();
         virtual_server::set_all_null_print();
         my $ok = virtual_server::enable_dkim($dkim, 1, 2048);
         virtual_server::pop_all_print();
         if ($ok) {
-          $vconfig{'dkim_enabled'} = 1;
+          $config{'dkim_enabled'} = 1;
+          $config{'dkim_extra'} = $hostname;
         }
       }
     }
 
-    save_module_config(\%vconfig, "virtual-server");
+    lock_file($module_config_file);
+    save_module_config();
+    unlock_file($module_config_file);
 
     # Configure the Read User Mail module to look for sub-folders
     # under ~/Maildir
@@ -179,7 +199,7 @@ sub actions {
     # Configure the Usermin Mailbox module not to display send buttons twice
     $umailconfig{'send_buttons'} = 0;
 
-# Configure the Usermin Mailbox module to always start with one attachment for type
+    # Configure the Usermin Mailbox module to always start with one attachment for type
     $umailconfig{'def_attach'} = 1;
 
     # Default mailbox name for Sent mail
@@ -336,20 +356,6 @@ sub actions {
         . "  alias php='\$\(phpdom=\"bin/php\" ; \(while [ ! -f \"\$phpdom\" ] && [ \"\$PWD\" != \"/\" ]; do cd \"\$\(dirname \"\$PWD\"\)\" || \"\$php\" ; done ; if [ -f \"\$phpdom\" ] ; then echo \"\$PWD/\$phpdom\" ; else echo \"\$php\" ; fi\)\)'\n"
         . "fi\n";
       write_file_contents($profiledphpalias, $phpalias);
-    }
-
-    # Try to request SSL certificate for the hostname
-    foreign_require("virtual-server");
-    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
-               !$vconfig{'default_domain_ssl'} && !$vconfig{'wizard_run'}) {
-      my ($ok, $error) = virtual_server::setup_virtualmin_default_hostname_ssl();
-      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
-                          "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
-      if ($ok) {
-          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
-      } else {
-        virtual_server::delete_virtualmin_default_hostname_ssl();
-      }
     }
 
     # OpenSUSE PHP related fixes
