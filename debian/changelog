@@ -1,3 +1,9 @@
+virtualmin-config (7.0.20) stable; urgency=high
+
+  * Fix saving Virtualmin configuration
+
+ -- Ilia Ross <ilia@virtualmin.com>  Tue, 14 May 2024 20:30:00 +0300
+
 virtualmin-config (7.0.19) stable; urgency=medium
 
   * Add Ubuntu 24.04 support

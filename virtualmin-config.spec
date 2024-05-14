@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.19
+Version:        7.0.20
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Tue May 14 2024 Ilia Ross <ilia@virtualmin.com> 7.0.20
+- Fix bug when saving Virtualmin configuration
 * Sat Apr 27 2024 Ilia Ross <ilia@virtualmin.com> 7.0.19
 - Add Ubuntu 24.04 support, fix Nginx start after reboot, enable DKIM at install time
 * Sun Dec 03 2023 Ilia Ross <ilia@virtualmin.com> 7.0.18
