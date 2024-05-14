@@ -1,3 +1,9 @@
+virtualmin-config (7.0.21) stable; urgency=high
+
+  * Fix to save Virtualmin configuration reliably
+
+ -- Ilia Ross <ilia@virtualmin.com>  Tue, 14 May 2024 22:30:00 +0300
+
 virtualmin-config (7.0.20) stable; urgency=high
 
   * Fix saving Virtualmin configuration
