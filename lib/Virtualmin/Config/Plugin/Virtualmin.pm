@@ -38,50 +38,50 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("virtual-server");
-    $config{'mail_system'}          = 0;
-    $config{'nopostfix_extra_user'} = 1;
-    $config{'aliascopy'}            = 1;
-    $config{'home_base'}            = "/home";
-    $config{'webalizer'}            = 0;
+    $virtual_server::config{'mail_system'}          = 0;
+    $virtual_server::config{'nopostfix_extra_user'} = 1;
+    $virtual_server::config{'aliascopy'}            = 1;
+    $virtual_server::config{'home_base'}            = "/home";
+    $virtual_server::config{'webalizer'}            = 0;
 
     # XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
     if (defined $self->bundle() &&
         ($self->bundle() eq "MiniLEMP" ||
          $self->bundle() eq "MiniLAMP"))
     {
-      $config{'spam'}       = 0;
-      $config{'virus'}      = 0;
-      $config{'postgresql'} = 0;
+      $virtual_server::config{'spam'}       = 0;
+      $virtual_server::config{'virus'}      = 0;
+      $virtual_server::config{'postgresql'} = 0;
     }
     elsif (defined $self->bundle()) {
-      $config{'spam'}       = 1;
-      $config{'virus'}      = 1;
-      $config{'postgresql'} = 1;
+      $virtual_server::config{'spam'}       = 1;
+      $virtual_server::config{'virus'}      = 1;
+      $virtual_server::config{'postgresql'} = 1;
     }
-    $config{'ftp'}              = 0;
-    $config{'logrotate'}        = 3;
-    $config{'default_procmail'} = 1;
-    $config{'bind_spfall'}      = 0;
-    $config{'bind_spf'}         = "yes";
-    $config{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
-    $config{'bccs'}             = 1;
-    $config{'reseller_theme'}   = "authentic-theme";
-    $config{'append_style'}     = 6;
+    $virtual_server::config{'ftp'}              = 0;
+    $virtual_server::config{'logrotate'}        = 3;
+    $virtual_server::config{'default_procmail'} = 1;
+    $virtual_server::config{'bind_spfall'}      = 0;
+    $virtual_server::config{'bind_spf'}         = "yes";
+    $virtual_server::config{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
+    $virtual_server::config{'bccs'}             = 1;
+    $virtual_server::config{'reseller_theme'}   = "authentic-theme";
+    $virtual_server::config{'append_style'}     = 6;
 
     if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
-      $config{'ssl'}                = 0;
-      $config{'web'}                = 0;
-      $config{'backup_feature_ssl'} = 0;
+      $virtual_server::config{'ssl'}                = 0;
+      $virtual_server::config{'web'}                = 0;
+      $virtual_server::config{'backup_feature_ssl'} = 0;
     }
     elsif (defined $self->bundle()) {
-      $config{'ssl'} = 3;
+      $virtual_server::config{'ssl'} = 3;
     }
-    if (!defined($config{'plugins'})) {
+    if (!defined($virtual_server::config{'plugins'})) {
       # Enable extra default modules
-      $config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
+      $virtual_server::config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
-      $config{'proftpd_config'}
+      $virtual_server::config{'proftpd_config'}
         = 'ServerName ${DOM}	<Anonymous ${HOME}/ftp>	User ftp	Group nogroup	UserAlias anonymous ftp	<Limit WRITE>	DenyAll	</Limit>	RequireValidShell off	</Anonymous>';
     }
 
@@ -90,44 +90,29 @@ sub actions {
     # XXX ACLs can reportedly deal with this...needs research.
     unless ($gconfig{'os_type'} eq 'freebsd') {
       if (defined(getpwnam("www-data"))) {
-        $config{'web_user'} = "www-data";
+        $virtual_server::config{'web_user'} = "www-data";
       }
       else {
-        $config{'web_user'} = "apache";
+        $virtual_server::config{'web_user'} = "apache";
       }
-      $config{'html_perms'} = "0750";
+      $virtual_server::config{'html_perms'} = "0750";
     }
 
     # Always force PHP-FPM mode
-    $config{'php_suexec'} = 3;
+    $virtual_server::config{'php_suexec'} = 3;
 
     # If system doesn't have Jailkit support, disable it
     if (!has_command('jk_init')) {
-      $config{'jailkit_disabled'} = 1;
+      $virtual_server::config{'jailkit_disabled'} = 1;
     }
 
     # If system doesn't have AWStats support, disable it
     if (foreign_check("virtualmin-awstats")) {
       my %awstats_config = foreign_config("virtualmin-awstats");
       if ($awstats_config{'awstats'} && !-r $awstats_config{'awstats'}) {
-        my @plugins = split(/\s/, $config{'plugins'});
+        my @plugins = split(/\s/, $virtual_server::config{'plugins'});
         @plugins = grep { $_ ne 'virtualmin-awstats' } @plugins;
-        $config{'plugins'} = join(' ', @plugins);
-      }
-    }
-
-    # Try to request SSL certificate for the hostname
-    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
-               !$config{'default_domain_ssl'} && !$config{'wizard_run'}) {
-      my ($ok, $error, $dom) = virtual_server::setup_virtualmin_default_hostname_ssl();
-      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
-                          "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
-      if ($ok) {
-          $config{'defaultdomain_name'} = $dom->{'dom'};
-          $config{'default_domain_ssl'} = 1;
-          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
-      } else {
-        virtual_server::delete_virtualmin_default_hostname_ssl();
+        $virtual_server::config{'plugins'} = join(' ', @plugins);
       }
     }
 
@@ -135,24 +120,39 @@ sub actions {
     if (-r "/etc/opendkim.conf") {
       my $dkim = virtual_server::get_dkim_config();
       if (ref($dkim) && !$dkim->{'enabled'}) {
-        my $hostname = get_system_hostname();
         $dkim->{'selector'} = virtual_server::get_default_dkim_selector();
         $dkim->{'sign'} = 1;
         $dkim->{'enabled'} = 1;
-        $dkim->{'extra'} = [ $hostname ];
+        $dkim->{'extra'} = [ get_system_hostname() ];
         virtual_server::push_all_print();
         virtual_server::set_all_null_print();
         my $ok = virtual_server::enable_dkim($dkim, 1, 2048);
         virtual_server::pop_all_print();
         if ($ok) {
-          $config{'dkim_enabled'} = 1;
-          $config{'dkim_extra'} = $hostname;
+          $virtual_server::config{'dkim_enabled'} = 1;
         }
       }
     }
 
+    # Try to request SSL certificate for the hostname
+    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
+        !$virtual_server::config{'default_domain_ssl'} &&
+        !$virtual_server::config{'wizard_run'})
+    {
+      my ($ok, $error) = virtual_server::setup_virtualmin_default_hostname_ssl();
+      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
+                          "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
+      if ($ok) {
+          mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
+      }
+      else {
+        virtual_server::delete_virtualmin_default_hostname_ssl();
+      }
+    }
+
+    # Save Virtualmin configuration after all changes are made
     lock_file($module_config_file);
-    save_module_config();
+    save_module_config(\%virtual_server::config);
     unlock_file($module_config_file);
 
     # Configure the Read User Mail module to look for sub-folders
