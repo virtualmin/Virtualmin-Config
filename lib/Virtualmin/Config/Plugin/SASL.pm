@@ -90,9 +90,12 @@ sub actions {
       # it to be in /var/spool/postfix/var/run/saslauthd
       my $os_ver = $gconfig{'real_os_version'};
       if ($os_ver && $os_ver =~ /^(24)/) {
-        my $tmp = transname();
-        write_file_contents($tmp, "[Service]\nPIDFile=/var/spool/postfix/var/run/saslauthd/saslauthd.pid");
-        $self->logsystem("systemd-run --collect --pty --service-type=oneshot --setenv=SYSTEMD_EDITOR=tee --system -- sh -c 'systemctl edit --force --system -- saslauthd.service < $tmp'");
+        my $systemd_saslauthd_override_path = "/etc/systemd/system/saslauthd.service.d";
+        $self->logsystem("mkdir -p -m 755 $systemd_saslauthd_override_path")
+          if (!-d $systemd_saslauthd_override_path);
+        write_file_contents($systemd_saslauthd_override_path . "/override.conf",
+          "[Service]\n".
+          "PIDFile=/var/spool/postfix/var/run/saslauthd/saslauthd.pid\n");
         $self->logsystem("systemctl daemon-reload");
         $self->logsystem("systemctl restart saslauthd.service");
       }
