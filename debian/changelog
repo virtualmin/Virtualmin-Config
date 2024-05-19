@@ -1,3 +1,9 @@
+virtualmin-config (7.0.22) stable; urgency=medium
+
+  * Fix to directly create `systemd` override files
+
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 19 May 2024 20:40:00 +0300
+
 virtualmin-config (7.0.21) stable; urgency=high
 
   * Fix to save Virtualmin configuration reliably
