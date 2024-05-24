@@ -33,12 +33,11 @@ sub actions {
   init_config();
 
   $self->spin();
-  sleep 0.3;    # XXX Useless sleep, prevent spin from ending before it starts
+  sleep 0.3;
   eval {
-    foreign_require('init', 'init-lib.pl');
 
-    init::enable_at_boot('nginx');
-    init::start_action('nginx');
+    $self->logsystem("systemctl enable nginx.service");
+    $self->logsystem("systemctl restart nginx.service");
 
     my %vconfig = foreign_config("virtual-server");
     $vconfig{'web'}                  = 0;
@@ -56,16 +55,21 @@ sub actions {
     save_module_config(\%vconfig, "virtual-server");
 
     # Fix Nginx to start correctly after reboot
-    my $systemd_nginx_override_path = "/etc/systemd/system/nginx.service.d";
-    $self->logsystem("mkdir -p -m 755 $systemd_nginx_override_path")
-      if (!-d $systemd_nginx_override_path);
-    write_file_contents($systemd_nginx_override_path . "/override.conf",
-      "[Unit]\nStartLimitBurst=3\n" .
-      "StartLimitIntervalSec=15\n\n" .
-      "[Service]\nRestart=on-failure\n" .
-      "RestartSec=10s\nSuccessExitStatus=SIGKILL\n");
-    $self->logsystem("systemctl daemon-reload");
-    $self->logsystem("systemctl restart nginx.service");
+    my $systemd_path = "/etc/systemd/system";
+    if (-d $systemd_path) {
+      write_file_contents($systemd_path . "/nginx.timer",
+        "[Unit]\n" .
+        "Description=Start Nginx after boot\n" .
+        "PartOf=nginx.service\n\n" .
+        "[Timer]\n" .
+        "OnActiveSec=10\n" .
+        "Unit=nginx.service\n\n" .
+        "[Install]\n" .
+        "WantedBy=multi-user.target\n");
+      $self->logsystem("systemctl daemon-reload");
+      $self->logsystem("systemctl enable nginx.timer");
+      $self->logsystem("systemctl restart nginx.timer");
+    }
 
     $self->done(1);    # OK!
   };
