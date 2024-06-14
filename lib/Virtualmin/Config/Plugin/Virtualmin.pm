@@ -79,6 +79,11 @@ sub actions {
     if (!defined($virtual_server::config{'plugins'})) {
       # Enable extra default modules
       $virtual_server::config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
+    } else {
+      # When defined make sure plugins we consider default are enabled
+      my @plugins = split(/\s/, $virtual_server::config{'plugins'});
+      push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
+      $virtual_server::config{'plugins'} = join(' ', unique(@plugins));
     }
     if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
       $virtual_server::config{'proftpd_config'}
