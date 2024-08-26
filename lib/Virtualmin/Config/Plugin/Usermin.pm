@@ -39,6 +39,7 @@ sub actions {
     usermin::get_usermin_config(\%uconfig);
     $uconfig{'theme'}      = "authentic-theme";
     $uconfig{'gotomodule'} = 'mailbox';
+    $uconfig{'ui_show'}    = 'host time';
     usermin::put_usermin_config(\%uconfig);
     usermin::get_usermin_miniserv_config(\%uminiserv);
     $uminiserv{'preroot'}         = "authentic-theme";
