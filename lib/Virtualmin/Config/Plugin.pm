@@ -189,6 +189,7 @@ sub spinner {
   # Fork and run spinner asynchronously, until signal received.
   my $auto_start = sub {
     my $ppid = $$;
+    system('stty -echo 1>/dev/null 2>&1');
     my $pid  = fork();
     die("Failed to fork progress indicator.\n") unless defined $pid;
 
@@ -217,6 +218,7 @@ sub spinner {
 
   my $auto_done = sub {
     kill 'KILL', $schild;
+    system('stty echo 1>/dev/null 2>&1');
     my $pid = wait();
     &$done();
   };
