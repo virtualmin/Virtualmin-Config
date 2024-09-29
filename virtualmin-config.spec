@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.22
+Version:        7.0.30
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sun Sep 29 2024 Ilia Ross <ilia@virtualmin.com> 7.0.30
+- Fix to prevent breaking spinners on user input
 * Sun May 19 2024 Ilia Ross <ilia@virtualmin.com> 7.0.22
 - Fix to directly create systemd override files
 * Tue May 14 2024 Ilia Ross <ilia@virtualmin.com> 7.0.21

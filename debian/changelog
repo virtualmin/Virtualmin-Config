@@ -1,3 +1,11 @@
+virtualmin-config (7.0.30) stable; urgency=medium
+
+  * Fix to prevent breaking spinners on user input
+  * Fix to only show host and time in Usermin dashboard
+  * Fix to enable plugins we consider default (on re-run)
+
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 29 Sep 2024 03:45:00 +0300
+
 virtualmin-config (7.0.22) stable; urgency=medium
 
   * Fix to directly create `systemd` override files
