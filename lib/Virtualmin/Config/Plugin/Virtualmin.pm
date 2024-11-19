@@ -165,6 +165,7 @@ sub actions {
     my %mconfig = foreign_config("mailboxes");
     $mconfig{'mail_usermin'}    = "Maildir";
     $mconfig{'from_virtualmin'} = 1;
+    $mconfig{'spam_buttons'} = 'list,mail';
     save_module_config(\%mconfig, "mailboxes");
 
     # Setup the Usermin read mail module
