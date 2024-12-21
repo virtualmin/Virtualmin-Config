@@ -123,12 +123,6 @@ sub actions {
     postfix::set_current_value("smtpd_recipient_restrictions",
       "permit_mynetworks permit_sasl_authenticated reject_unauth_destination",
       1);
-    my $mydest = postfix::get_current_value("mydestination");
-    my $myhost = get_system_hostname();
-
-    if ($mydest !~ /\Q$myhost\E/ && $mydest !~ /\$myhostname/) {
-      postfix::set_current_value("mydestination", $mydest . ", " . $myhost, 1);
-    }
 
     # Opportunistic encryption for outgoing mail
     my $seclvl
