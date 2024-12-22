@@ -14,7 +14,7 @@ sub new {
 
 sub plugins {
   my ($self, $stack) = @_;
-  return $stack->list('lamp');
+  return $stack->list('lamp', 'mini');
 }
 
 1;
