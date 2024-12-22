@@ -13,28 +13,8 @@ sub new {
 }
 
 sub plugins {
-
-  # Modern system with firewalld?
-  if (-x "/usr/bin/firewall-cmd" || -x "/bin/firewall-cmd") {
-    return [
-      "Webmin",       "Apache",            "Bind",
-      "Dovecot",      "AWStats",           "Postfix",
-      "MySQL",        "Firewalld",         "Procmail",
-      "ProFTPd",      "Quotas",            "SASL",
-      "Shells",       "Status",            "Upgrade",
-      "Usermin",      "Virtualmin",        "ClamAV",
-      "SpamAssassin", "Fail2banFirewalld", "Etckeeper"
-    ];
-  }
-  else {
-    return [
-      "Webmin",  "Apache",     "Bind",     "Dovecot",      "AWStats",
-      "Postfix", "MySQL",      "Firewall", "Procmail",     "ProFTPd",
-      "Quotas",  "SASL",       "Shells",   "Status",       "Upgrade",
-      "Usermin", "Virtualmin", "ClamAV",   "SpamAssassin", "Fail2ban",
-      "Etckeeper"
-    ];
-  }
+  my ($self, $stack) = @_;
+  return $stack->list('lamp', 'full');
 }
 
 1;

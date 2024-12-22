@@ -111,12 +111,16 @@ sub _gather_plugins {
 
   # If bundle specified, load it up.
   if ($self->{bundle}) {
+    # Get bundle
     my $pkg = "Virtualmin::Config::$self->{bundle}";
     load $pkg;
-    my $bundle = $pkg->new();
-
+    my $bundle = $pkg->new();    
+    # Get stack
+    my $pkg2 = "Virtualmin::Config::Stack";
+    load $pkg2;
+    my $stack = $pkg2->new();
     # Ask the bundle for a list of plugins
-    @plugins = $bundle->plugins();
+    @plugins = $bundle->plugins($stack);
   }
 
   # Check with the command arguments

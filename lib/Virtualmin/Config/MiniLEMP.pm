@@ -13,24 +13,8 @@ sub new {
 }
 
 sub plugins {
-
-  # Modern system with firewalld?
-  if (-x "/usr/bin/firewall-cmd" || -x "/bin/firewall-cmd") {
-    return [
-      "Webmin",    "Nginx",    "Bind",    "Postfix",    "MySQL",
-      "Firewalld", "Procmail", "ProFTPd", "Quotas",     "Shells",
-      "Status",    "Upgrade",  "Usermin", "Virtualmin", "Dovecot",
-      "SASL",      "Etckeeper"
-    ];
-  }
-  else {
-    return [
-      "Webmin",   "Nginx",    "Bind",    "Postfix",    "MySQL",
-      "Firewall", "Procmail", "ProFTPd", "Quotas",     "Shells",
-      "Status",   "Upgrade",  "Usermin", "Virtualmin", "Dovecot",
-      "SASL",     "Etckeeper"
-    ];
-  }
+  my ($self, $stack) = @_;
+  return $stack->list('lemp', 'mini');
 }
 
 1;
