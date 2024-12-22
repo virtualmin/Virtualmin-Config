@@ -37,17 +37,25 @@ sub actions {
 
   $self->spin();
   eval {
+    my $mini_stack =
+      (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
+        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
+    my $micro_stack =
+      (defined $self->bundle() && $self->bundle() =~ /micro/i) ?
+        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
+    my $nano_stack =
+      (defined $self->bundle() && $self->bundle() =~ /nano/i) ? 
+        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
     foreign_require("virtual-server");
-    $virtual_server::config{'mail_system'}          = 0;
+    $virtual_server::config{'mail_system'}          =
+      ($micro_stack || $nano_stack) ? 99 : 0;
     $virtual_server::config{'nopostfix_extra_user'} = 1;
     $virtual_server::config{'aliascopy'}            = 1;
     $virtual_server::config{'home_base'}            = "/home";
     $virtual_server::config{'webalizer'}            = 0;
 
-    # XXX If not run as part of bundle, it'll skip doing these mail-related configs, which is maybe sub-optimal
-    if (defined $self->bundle() &&
-        ($self->bundle() eq "MiniLEMP" ||
-         $self->bundle() eq "MiniLAMP"))
+    # Unless full stack
+    if ($mini_stack || $micro_stack || $nano_stack)
     {
       $virtual_server::config{'spam'}       = 0;
       $virtual_server::config{'virus'}      = 0;
@@ -60,15 +68,17 @@ sub actions {
     }
     $virtual_server::config{'ftp'}              = 0;
     $virtual_server::config{'logrotate'}        = 3;
-    $virtual_server::config{'default_procmail'} = 1;
+    if (!$micro_stack && !$nano_stack) {
+      $virtual_server::config{'default_procmail'} = 1,
+      $virtual_server::config{'spam_delivery'}    = "\$HOME/Maildir/.spam/"
+    }
     $virtual_server::config{'bind_spfall'}      = 0;
     $virtual_server::config{'bind_spf'}         = "yes";
-    $virtual_server::config{'spam_delivery'}    = "\$HOME/Maildir/.spam/";
     $virtual_server::config{'bccs'}             = 1;
     $virtual_server::config{'reseller_theme'}   = "authentic-theme";
     $virtual_server::config{'append_style'}     = 6;
 
-    if ($self->bundle() eq "LEMP" || $self->bundle() eq "MiniLEMP") {
+    if (defined $self->bundle() && $self->bundle() =~ /LEMP/i) {
       $virtual_server::config{'ssl'}                = 0;
       $virtual_server::config{'web'}                = 0;
       $virtual_server::config{'backup_feature_ssl'} = 0;
@@ -76,6 +86,8 @@ sub actions {
     elsif (defined $self->bundle()) {
       $virtual_server::config{'ssl'} = 3;
     }
+    $virtual_server::config{'dns'} = $nano_stack ? 0 : 1;
+    $virtual_server::config{'mail'} = ($micro_stack || $nano_stack) ? 0 : 1;
     if (!defined($virtual_server::config{'plugins'})) {
       # Enable extra default modules
       $virtual_server::config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
@@ -85,7 +97,8 @@ sub actions {
       push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
       $virtual_server::config{'plugins'} = join(' ', unique(@plugins));
     }
-    if (-e "/etc/debian_version" || -e "/etc/lsb-release") {
+    if ((!$mini_stack && !$micro_stack && !$nano_stack) &&
+        (-e "/etc/debian_version" || -e "/etc/lsb-release")) {
       $virtual_server::config{'proftpd_config'}
         = 'ServerName ${DOM}	<Anonymous ${HOME}/ftp>	User ftp	Group nogroup	UserAlias anonymous ftp	<Limit WRITE>	DenyAll	</Limit>	RequireValidShell off	</Anonymous>';
     }
@@ -122,7 +135,7 @@ sub actions {
     }
 
     # Enable DKIM at install time
-    if (-r "/etc/opendkim.conf") {
+    if (!$micro_stack && !$nano_stack && -r "/etc/opendkim.conf") {
       my $dkim = virtual_server::get_dkim_config();
       if (ref($dkim) && !$dkim->{'enabled'}) {
         $dkim->{'selector'} = virtual_server::get_default_dkim_selector();
@@ -162,116 +175,118 @@ sub actions {
 
     # Configure the Read User Mail module to look for sub-folders
     # under ~/Maildir
-    my %mconfig = foreign_config("mailboxes");
-    $mconfig{'mail_usermin'}    = "Maildir";
-    $mconfig{'from_virtualmin'} = 1;
-    $mconfig{'spam_buttons'} = 'list,mail';
-    save_module_config(\%mconfig, "mailboxes");
+    if (!$micro_stack && !$nano_stack) {
+      my %mconfig = foreign_config("mailboxes");
+      $mconfig{'mail_usermin'}    = "Maildir";
+      $mconfig{'from_virtualmin'} = 1;
+      $mconfig{'spam_buttons'} = 'list,mail';
+      save_module_config(\%mconfig, "mailboxes");
 
-    # Setup the Usermin read mail module
-    foreign_require("usermin", "usermin-lib.pl");
-    my $cfile = "$usermin::config{'usermin_dir'}/mailbox/config";
-    my %mailconfig;
-    read_file($cfile, \%mailconfig);
-    foreign_require("postfix", "postfix-lib.pl");
-    my ($map)
-      = postfix::get_maps_files(
-      postfix::get_real_value($postfix::virtual_maps));
-    $map ||= "/etc/postfix/virtual";
-    $mailconfig{'from_map'}         = $map;
-    $mailconfig{'from_format'}      = 1;
-    $mailconfig{'mail_system'}      = 4;
-    $mailconfig{'pop3_server'}      = 'localhost';
-    $mailconfig{'mail_qmail'}       = undef;
-    $mailconfig{'mail_dir_qmail'}   = 'Maildir';
-    $mailconfig{'server_attach'}    = 0;
-    $mailconfig{'send_mode'}        = 'localhost';
-    $mailconfig{'nologout'}         = 1;
-    $mailconfig{'noindex_hostname'} = 1;
-    $mailconfig{'edit_from'}        = 0;
-    write_file($cfile, \%mailconfig);
+      # Setup the Usermin read mail module
+      foreign_require("usermin", "usermin-lib.pl");
+      my $cfile = "$usermin::config{'usermin_dir'}/mailbox/config";
+      my %mailconfig;
+      read_file($cfile, \%mailconfig);
+      foreign_require("postfix", "postfix-lib.pl");
+      my ($map)
+        = postfix::get_maps_files(
+        postfix::get_real_value($postfix::virtual_maps));
+      $map ||= "/etc/postfix/virtual";
+      $mailconfig{'from_map'}         = $map;
+      $mailconfig{'from_format'}      = 1;
+      $mailconfig{'mail_system'}      = 4;
+      $mailconfig{'pop3_server'}      = 'localhost';
+      $mailconfig{'mail_qmail'}       = undef;
+      $mailconfig{'mail_dir_qmail'}   = 'Maildir';
+      $mailconfig{'server_attach'}    = 0;
+      $mailconfig{'send_mode'}        = 'localhost';
+      $mailconfig{'nologout'}         = 1;
+      $mailconfig{'noindex_hostname'} = 1;
+      $mailconfig{'edit_from'}        = 0;
+      write_file($cfile, \%mailconfig);
 
-    # Set the mail folders subdir to Maildir
-    my $ucfile = "$usermin::config{'usermin_dir'}/mailbox/uconfig";
-    my %umailconfig;
-    read_file($ucfile, \%umailconfig);
-    $umailconfig{'mailbox_dir'} = 'Maildir';
-    $umailconfig{'view_html'}   = 2;
-    $umailconfig{'view_images'} = 1;
+      # Set the mail folders subdir to Maildir
+      my $ucfile = "$usermin::config{'usermin_dir'}/mailbox/uconfig";
+      my %umailconfig;
+      read_file($ucfile, \%umailconfig);
+      $umailconfig{'mailbox_dir'} = 'Maildir';
+      $umailconfig{'view_html'}   = 2;
+      $umailconfig{'view_images'} = 1;
 
-    # Configure the Usermin Mailbox module to display buttons on the top too
-    $umailconfig{'top_buttons'} = 2;
+      # Configure the Usermin Mailbox module to display buttons on the top too
+      $umailconfig{'top_buttons'} = 2;
 
-    # Configure the Usermin Mailbox module not to display send buttons twice
-    $umailconfig{'send_buttons'} = 0;
+      # Configure the Usermin Mailbox module not to display send buttons twice
+      $umailconfig{'send_buttons'} = 0;
 
-    # Configure the Usermin Mailbox module to always start with one attachment for type
-    $umailconfig{'def_attach'} = 1;
+      # Configure the Usermin Mailbox module to always start with one attachment for type
+      $umailconfig{'def_attach'} = 1;
 
-    # Default mailbox name for Sent mail
-    $umailconfig{'sent_name'} = 'Sent';
-    write_file($ucfile, \%umailconfig);
+      # Default mailbox name for Sent mail
+      $umailconfig{'sent_name'} = 'Sent';
+      write_file($ucfile, \%umailconfig);
 
-    # Set the default Usermin ACL to only allow access to email modules
-    usermin::save_usermin_acl(
-      "user",
-      [
-        "mailbox",  "changepass", "spam",    "filter",
-        "language", "forward",    "cron",    "fetchmail",
-        "updown",   "schedule",   "filemin", "gnupg"
-      ]
-    );
+      # Set the default Usermin ACL to only allow access to email modules
+      usermin::save_usermin_acl(
+        "user",
+        [
+          "mailbox",  "changepass", "spam",    "filter",
+          "language", "forward",    "cron",    "fetchmail",
+          "updown",   "schedule",   "filemin", "gnupg"
+        ]
+      );
 
-    # Update user.acl
-    my $afile = "$usermin::config{'usermin_dir'}/user.acl";
-    my %uacl;
-    read_file($afile, \%uacl);
-    $uacl{'root'} = '';
-    write_file($afile, \%uacl);
+      # Update user.acl
+      my $afile = "$usermin::config{'usermin_dir'}/user.acl";
+      my %uacl;
+      read_file($afile, \%uacl);
+      $uacl{'root'} = '';
+      write_file($afile, \%uacl);
 
-    # Configure the Usermin Change Password module to use Virtualmin's
-    # change-password.pl script
-    $cfile = "$usermin::config{'usermin_dir'}/changepass/config";
-    my %cpconfig;
-    read_file($cfile, \%cpconfig);
-    $cpconfig{'passwd_cmd'}
-      = $config_directory eq "/etc/webmin"
-      ? "$root/virtual-server/change-password.pl"
-      : "virtualmin change-password";
-    $cpconfig{'cmd_mode'} = 1;
-    write_file($cfile, \%cpconfig);
+      # Configure the Usermin Change Password module to use Virtualmin's
+      # change-password.pl script
+      $cfile = "$usermin::config{'usermin_dir'}/changepass/config";
+      my %cpconfig;
+      read_file($cfile, \%cpconfig);
+      $cpconfig{'passwd_cmd'}
+        = $config_directory eq "/etc/webmin"
+        ? "$root/virtual-server/change-password.pl"
+        : "virtualmin change-password";
+      $cpconfig{'cmd_mode'} = 1;
+      write_file($cfile, \%cpconfig);
 
-    # Also do the same thing for expired password changes
-    $cfile = "$usermin::config{'usermin_dir'}/config";
-    my %umconfig;
-    read_file($cfile, \%umconfig);
-    $umconfig{'passwd_cmd'} = "$root/virtual-server/change-password.pl";
-    write_file($cfile, \%umconfig);
+      # Also do the same thing for expired password changes
+      $cfile = "$usermin::config{'usermin_dir'}/config";
+      my %umconfig;
+      read_file($cfile, \%umconfig);
+      $umconfig{'passwd_cmd'} = "$root/virtual-server/change-password.pl";
+      write_file($cfile, \%umconfig);
 
-    # Configure the Usermin Filter module to use the right path for
-    # Webmin config files. The defaults are incorrect on FreeBSD, where
-    # we install under /usr/local/etc/webmin
-    $cfile = "$usermin::config{'usermin_dir'}/filter/config";
-    my %ficonfig;
-    read_file($cfile, \%ficonfig);
-    $ficonfig{'virtualmin_config'} = "$config_directory/virtual-server";
-    $ficonfig{'virtualmin_spam'}
-      = "$config_directory/virtual-server/lookup-domain.pl";
-    write_file($cfile, \%ficonfig);
+      # Configure the Usermin Filter module to use the right path for
+      # Webmin config files. The defaults are incorrect on FreeBSD, where
+      # we install under /usr/local/etc/webmin
+      $cfile = "$usermin::config{'usermin_dir'}/filter/config";
+      my %ficonfig;
+      read_file($cfile, \%ficonfig);
+      $ficonfig{'virtualmin_config'} = "$config_directory/virtual-server";
+      $ficonfig{'virtualmin_spam'}
+        = "$config_directory/virtual-server/lookup-domain.pl";
+      write_file($cfile, \%ficonfig);
 
-    # Same for Usermin custom commands
-    $cfile = "$usermin::config{'usermin_dir'}/commands/config";
-    my %ccconfig;
-    read_file($cfile, \%ccconfig);
-    $ccconfig{'webmin_config'} = "$config_directory/custom";
-    write_file($cfile, \%ccconfig);
+      # Same for Usermin custom commands
+      $cfile = "$usermin::config{'usermin_dir'}/commands/config";
+      my %ccconfig;
+      read_file($cfile, \%ccconfig);
+      $ccconfig{'webmin_config'} = "$config_directory/custom";
+      write_file($cfile, \%ccconfig);
 
-    # Same for Usermin .htaccess files
-    $cfile = "$usermin::config{'usermin_dir'}/htaccess/config";
-    my %htconfig;
-    read_file($cfile, \%htconfig);
-    $htconfig{'webmin_apache'} = "$config_directory/apache";
-    write_file($cfile, \%htconfig);
+      # Same for Usermin .htaccess files
+      $cfile = "$usermin::config{'usermin_dir'}/htaccess/config";
+      my %htconfig;
+      read_file($cfile, \%htconfig);
+      $htconfig{'webmin_apache'} = "$config_directory/apache";
+      write_file($cfile, \%htconfig);
+    }
 
     # Setup the Apache, BIND and DB modules to use tables for lists
     foreach my $t (
