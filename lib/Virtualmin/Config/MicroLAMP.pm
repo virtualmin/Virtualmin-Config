@@ -1,9 +1,9 @@
-package Virtualmin::Config::MiniLAMP;
+package Virtualmin::Config::MicroLAMP;
 use strict;
 use warnings;
 use 5.010_001;
 
-# A list of plugins for configuring a mini LAMP stack
+# A list of plugins for configuring a micro LAMP stack
 
 sub new {
   my ($class, %args) = @_;
@@ -14,7 +14,7 @@ sub new {
 
 sub plugins {
   my ($self, $stack) = @_;
-  return $stack->list('lamp', 'mini');
+  return $stack->list('lamp', 'micro');
 }
 
 1;

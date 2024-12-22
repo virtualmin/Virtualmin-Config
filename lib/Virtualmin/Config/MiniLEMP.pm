@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010_001;
 
-# A list of plugins for configuring a LAMP stack
+# A list of plugins for configuring a mini LEMP stack
 
 sub new {
   my ($class, %args) = @_;
