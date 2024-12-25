@@ -1,3 +1,11 @@
+virtualmin-config (7.0.40) stable; urgency=medium
+
+  * Add the ability to configure "Micro" and "Nano" installation types
+  * Fix to display the "Report Spam" button when listing mail
+  * Fix to retain the default `mydestination` option in Postfix
+
+ -- Ilia Ross <ilia@virtualmin.com>  Wed, 25 Dec 2024 19:15:00 +0200
+
 virtualmin-config (7.0.30) stable; urgency=medium
 
   * Fix to prevent breaking spinners on user input
