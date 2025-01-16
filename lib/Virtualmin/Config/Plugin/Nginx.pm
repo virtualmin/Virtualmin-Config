@@ -62,7 +62,7 @@ sub actions {
         "Description=Start Nginx after boot\n" .
         "PartOf=nginx.service\n\n" .
         "[Timer]\n" .
-        "OnActiveSec=10\n" .
+        "OnActiveSec=15\n" .
         "Unit=nginx.service\n\n" .
         "[Install]\n" .
         "WantedBy=multi-user.target\n");
