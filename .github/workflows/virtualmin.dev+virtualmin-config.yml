@@ -10,7 +10,6 @@ on:
       - edited
 
 env:
-  PKG_VERSION: ${{ github.event.release.tag_name }}
   PKG_RELEASE: "1"
   PKG_NAME: "virtualmin-config"
   PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
@@ -46,10 +45,8 @@ jobs:
           CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
         run: |-
-          echo "Full Event Payload:"
-          echo '${{ toJson(github.event) }}'
           # Set package version
-          pkg_version="${{ env.PKG_VERSION }}"
+          pkg_version="$(git describe --tags --abbrev=0)"
           if [[ "$pkg_version" =~ ^v ]]; then
             pkg_version="${pkg_version:1}"
           fi
