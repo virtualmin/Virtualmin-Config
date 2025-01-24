@@ -46,6 +46,8 @@ jobs:
           CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
         run: |-
+          echo "Full Event Payload:"
+          echo '${{ toJson(github.event) }}'
           # Set package version
           pkg_version="${{ env.PKG_VERSION }}"
           if [[ "$pkg_version" =~ ^v ]]; then
