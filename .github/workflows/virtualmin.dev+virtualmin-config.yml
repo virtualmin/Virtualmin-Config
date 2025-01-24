@@ -10,7 +10,7 @@ on:
       - edited
 
 env:
-  PKG_VERSION: ${{ github.ref_name }}
+  PKG_VERSION: ${{ github.event.release.tag_name }}
   PKG_RELEASE: "1"
   PKG_NAME: "virtualmin-config"
   PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
