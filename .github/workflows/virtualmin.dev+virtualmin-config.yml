@@ -3,7 +3,7 @@ name: "virtualmin.dev: virtualmin/virtualmin-config"
 on:
   push:
     branches:
-      - main
+      - master
   release:
     types:
       - published
