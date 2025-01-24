@@ -64,7 +64,7 @@ jobs:
           
           # Build base directory
           pkg_name="${{ env.PKG_NAME }}"
-          destdirbase="/root/$pkg_name"
+          destdirbase="$HOME/$pkg_name"
 
           # Make for Debian
           perl Makefile.PL \
