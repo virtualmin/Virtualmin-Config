@@ -10,6 +10,8 @@ on:
       - edited
 
 env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  GH_REPO: ${{ github.repository }}
   PKG_RELEASE: "1"
   PKG_NAME: "virtualmin-config"
   PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
@@ -34,7 +36,8 @@ jobs:
       
       - name: Fetch dependencies
         run: curl -O ${{ env.BUILD_BOOTSTRAP }}
-          
+      - name: Print environment variables
+        run: env
       - name: Build packages
         env:
           CLOUD__GPG_PH: ${{ secrets.DEV_GPG_PH }}
@@ -46,9 +49,8 @@ jobs:
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
         run: |-
           # Set package version
-          pkg_version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
-          echo "PKG VERSION : $pkg_version"
+          pkg_version=$(curl -s -H "Authorization: token $GH_TOKEN" \
+            https://api.github.com/repos/$GH_REPO/releases/latest | jq -r .tag_name)
           if [[ "$pkg_version" =~ ^v ]]; then
             pkg_version="${pkg_version:1}"
           fi
