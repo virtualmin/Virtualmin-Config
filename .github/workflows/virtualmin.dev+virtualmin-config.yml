@@ -26,6 +26,8 @@ jobs:
   build-amd64:
     runs-on: ubuntu-latest
     if: ${{ !contains(github.event.head_commit.message, '[no-build]') }}
+    env:
+      TZ: Europe/Nicosia
     steps:
       - uses: actions/checkout@v4
       
@@ -34,12 +36,12 @@ jobs:
           packages: ${{ env.BUILD_DEPS }}
           version: 1.0
 
-      - uses: szenius/set-timezone@v2.0
-        with:
-          timezoneLinux: "Europe/Nicosia"
-
       - name: Fetch dependencies
         run: curl -O ${{ env.BUILD_BOOTSTRAP }}
+
+      - name: Set timezone
+        run: sudo timedatectl set-timezone ${{ env.TZ }}
+
       - name: Build packages
         env:
           CLOUD__GPG_PH: ${{ secrets.DEV_GPG_PH }}
