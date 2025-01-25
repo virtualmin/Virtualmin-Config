@@ -46,7 +46,8 @@ jobs:
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
         run: |-
           # Set package version
-          pkg_version="$(git describe --tags --abbrev=0)"
+          pkg_version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+            https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
           if [[ "$pkg_version" =~ ^v ]]; then
             pkg_version="${pkg_version:1}"
           fi
