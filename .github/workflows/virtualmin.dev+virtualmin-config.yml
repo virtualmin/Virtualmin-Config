@@ -33,7 +33,11 @@ jobs:
         with: 
           packages: ${{ env.BUILD_DEPS }}
           version: 1.0
-      
+
+      - uses: szenius/set-timezone@v2.0
+        with:
+          timezoneLinux: "Europe/Nicosia"
+
       - name: Fetch dependencies
         run: curl -O ${{ env.BUILD_BOOTSTRAP }}
       - name: Build packages
