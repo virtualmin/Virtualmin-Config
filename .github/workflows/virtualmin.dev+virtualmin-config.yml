@@ -48,6 +48,7 @@ jobs:
           # Set package version
           pkg_version=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest | jq -r .tag_name)
+          echo "PKG VERSION : $pkg_version"
           if [[ "$pkg_version" =~ ^v ]]; then
             pkg_version="${pkg_version:1}"
           fi
