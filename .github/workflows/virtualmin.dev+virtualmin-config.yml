@@ -63,7 +63,7 @@ jobs:
             fi
           fi
           
-          # Build base directory
+          # Set build base directory
           pkg_name="${{ env.PKG_NAME }}"
           destdirbase="$HOME/$pkg_name"
 
@@ -81,8 +81,6 @@ jobs:
               PREFIX=/usr
           make 
           make DESTDIR=$destdirbase-deb install
-          mkdir -p $destdirbase-deb/usr/share/webmin/virtual-server
-          ln -s ../../../bin/$pkg_name-system $destdirbase-deb/usr/share/webmin/virtual-server/config-system.pl
           
           # Make for RPM
           make clean
@@ -99,6 +97,17 @@ jobs:
               PREFIX=/usr
           make 
           make DESTDIR=$destdirbase-rpm install
+
+          # Create symlinks
+          declare -A paths=(
+            ["deb"]="usr/share/webmin/virtual-server"
+            ["rpm"]="usr/libexec/webmin/virtual-server"
+          )
+          for suffix in "${!paths[@]}"; do
+            target_path="${paths[$suffix]}"
+            mkdir -p "$destdirbase-$suffix/$target_path"
+            ln -s "../../../bin/$pkg_name-system" "$destdirbase-$suffix/$target_path/config-system.pl"
+          done
 
           # Bootstrap build
           source bootstrap.bash${testing_flag:-}
