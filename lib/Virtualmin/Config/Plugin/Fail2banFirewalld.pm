@@ -155,16 +155,16 @@ sub create_fail2ban_firewalld {
   if (has_command('firewall-cmd')
     && !-e '/etc/fail2ban/jail.d/00-firewalld.conf')
   {
-    # Apply firewalld actions by default
-    open(my $FIREWALLD_CONF, '>', '/etc/fail2ban/jail.d/00-firewalld.conf');
+    open(my $FIREWALLD_CONF, '>', '/etc/fail2ban/jail.d/virtualmin-firewalld.conf');
     print $FIREWALLD_CONF <<EOF;
-# This file created by Virtualmin to enable firewalld-cmd actions by
-# default. It can be removed, if you use a different firewall.
+# This file was created by the Virtualmin installer to enable the use of
+# Firewalld rich rules with Fail2ban
 [DEFAULT]
-banaction = firewallcmd-ipset
+banaction = firewallcmd-rich-rules
+banaction_allports = firewallcmd-rich-rules
 EOF
     close $FIREWALLD_CONF;
-  }    # XXX iptables-multiport is default on CentOS, double check others.
+  }
 }
 
 1;
