@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.40
+Version:        7.0.41
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Jan 27 2025 Ilia Ross <ilia@virtualmin.com> 7.0.41
+- Fix to enable the use of Firewalld rich rules with Fail2ban
 * Wed Dec 25 2024 Ilia Ross <ilia@virtualmin.com> 7.0.40
 - Fix to support new installation types
 * Sun Sep 29 2024 Ilia Ross <ilia@virtualmin.com> 7.0.30
