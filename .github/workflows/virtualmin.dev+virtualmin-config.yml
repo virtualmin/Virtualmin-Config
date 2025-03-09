@@ -10,8 +10,8 @@ on:
       - edited
 
 env:
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GH_REPO: ${{ github.repository }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   PKG_RELEASE: "1"
   PKG_NAME: "virtualmin-config"
   PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
@@ -52,22 +52,15 @@ jobs:
           CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
         run: |-
-          # Set package version
-          pkg_version=$(curl -s -H "Authorization: token $GH_TOKEN" \
-            https://api.github.com/repos/$GH_REPO/releases/latest | jq -r .tag_name)
-          if [[ "$pkg_version" =~ ^v ]]; then
-            pkg_version="${pkg_version:1}"
-          fi
           
-          # Set testing flag
-          if [ "${{ env.IS_RELEASE }}" = "false" ]; then
-            testing_flag="--testing"
-            testing_build_number=".$(date +%Y%m%d%H%M)"
-            if [[ "$pkg_version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-              pkg_version="${pkg_version%.*}"
-              pkg_version="$pkg_version$testing_build_number"
-            fi
-          fi
+          # Fail on error
+          set -euo pipefail
+          
+          # Bootstrap build
+          source bootstrap.bash $([[ "$IS_RELEASE" == "true" ]] || echo "--testing")
+
+          # Get package version and testing flag
+          pkg_version=$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")
           
           # Set build base directory
           pkg_name="${{ env.PKG_NAME }}"
@@ -115,9 +108,6 @@ jobs:
             ln -s "../../../bin/$pkg_name-system" "$destdirbase-$suffix/$target_path/config-system.pl"
           done
 
-          # Bootstrap build
-          source bootstrap.bash ${testing_flag:-}
-          
           # Build Debian package
           build_native_package \
             --architectures noarch \
