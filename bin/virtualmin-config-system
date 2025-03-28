@@ -32,6 +32,7 @@ sub main {
       if ($cur == $numcols) { $cur = 0; printf "\n  " . RESET; }
     }
     say '';
+    printf "%s\n", RESET;
     exit 0;
   }
   if ($opt{'list-plugins'}) {
@@ -47,6 +48,7 @@ sub main {
       if ($cur == $numcols) { $cur = 0; printf "\n  " . RESET; }
     }
     say '';
+    printf "%s\n", RESET;
     exit 0;
   }
 
