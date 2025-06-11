@@ -162,25 +162,17 @@ sub _order_plugins {
 # Topological sort on dependencies
 sub _topo_sort {
   my (%deps) = @_;
-
-  my %ba;
-  while (my ($before, $afters_aref) = each %deps) {
-    unless (@{$afters_aref}) {
-      $ba{$before} = {};
+  my (@order, %seen, $proc);
+  $proc = sub {
+    my ($node) = @_;
+    return if ($seen{$node}++);
+    foreach my $dep (@{$deps{$node} || []}) {
+      $proc->($dep);
     }
-    for my $after (@{$afters_aref}) {
-      $ba{$before}{$after} = 1 if $before ne $after;
-      $ba{$after} ||= {};
-    }
-  }
-  my @rv;
-  while (my @afters = sort grep { !%{$ba{$_}} } keys %ba) {
-    push @rv, @afters;
-    delete @ba{@afters};
-    delete @{$_}{@afters} for values %ba;
-  }
-
-  return _uniq(@rv);
+    push(@order, $node);
+  };
+  $proc->($_) for (sort keys(%deps)), (map(@$_, values %deps));
+  return _uniq(@order);
 }
 
 # uniq so we don't have to import List::MoreUtils
