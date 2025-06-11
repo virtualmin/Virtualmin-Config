@@ -15,7 +15,7 @@ sub new {
 
   # inherit from Plugin
   my $self
-    = $class->SUPER::new(name => 'Virtualmin', depends => ['Usermin'], %args);
+    = $class->SUPER::new(name => 'Virtualmin', %args);
 
   return $self;
 }
