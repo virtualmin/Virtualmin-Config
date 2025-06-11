@@ -40,43 +40,35 @@ sub actions {
     my $mini_stack =
       (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
         ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
-    my $micro_stack =
-      (defined $self->bundle() && $self->bundle() =~ /micro/i) ?
-        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
-    my $nano_stack =
-      (defined $self->bundle() && $self->bundle() =~ /nano/i) ? 
-        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
     foreign_require("virtual-server");
-    $virtual_server::config{'mail_system'}          =
-      ($micro_stack || $nano_stack) ? 99 : 0;
+    $virtual_server::config{'mail_system'}          = 0;
     $virtual_server::config{'nopostfix_extra_user'} = 1;
     $virtual_server::config{'aliascopy'}            = 1;
     $virtual_server::config{'home_base'}            = "/home";
     $virtual_server::config{'webalizer'}            = 0;
+    $virtual_server::config{'postgresql'}           = 0;
+    $virtual_server::config{'ftp'}                  = 0;
+    $virtual_server::config{'logrotate'}            = 3;
+    $virtual_server::config{'bind_spfall'}          = 0;
+    $virtual_server::config{'bind_spf'}             = "yes";
+    $virtual_server::config{'bccs'}                 = 1;
+    $virtual_server::config{'reseller_theme'}       = "authentic-theme";
+    $virtual_server::config{'append_style'}         = 6;
 
-    # Unless full stack
-    if ($mini_stack || $micro_stack || $nano_stack)
-    {
-      $virtual_server::config{'spam'}       = 0;
-      $virtual_server::config{'virus'}      = 0;
-      $virtual_server::config{'postgresql'} = 0;
+    # For mini stack
+    if ($mini_stack) {
+      $virtual_server::config{'mail_system'} = 99;
+      $virtual_server::config{'spam'}        = 0;
+      $virtual_server::config{'virus'}       = 0;
+      $virtual_server::config{'dns'}         = 0;
+      $virtual_server::config{'mail'}        = 0;
     }
     elsif (defined $self->bundle()) {
       $virtual_server::config{'spam'}       = 1;
       $virtual_server::config{'virus'}      = 1;
-      $virtual_server::config{'postgresql'} = 1;
-    }
-    $virtual_server::config{'ftp'}              = 0;
-    $virtual_server::config{'logrotate'}        = 3;
-    if (!$micro_stack && !$nano_stack) {
       $virtual_server::config{'default_procmail'} = 1,
       $virtual_server::config{'spam_delivery'}    = "\$HOME/Maildir/.spam/"
     }
-    $virtual_server::config{'bind_spfall'}      = 0;
-    $virtual_server::config{'bind_spf'}         = "yes";
-    $virtual_server::config{'bccs'}             = 1;
-    $virtual_server::config{'reseller_theme'}   = "authentic-theme";
-    $virtual_server::config{'append_style'}     = 6;
 
     if (defined $self->bundle() && $self->bundle() =~ /LEMP/i) {
       $virtual_server::config{'ssl'}                = 0;
@@ -86,18 +78,16 @@ sub actions {
     elsif (defined $self->bundle()) {
       $virtual_server::config{'ssl'} = 3;
     }
-    $virtual_server::config{'dns'} = $nano_stack ? 0 : 1;
-    $virtual_server::config{'mail'} = ($micro_stack || $nano_stack) ? 0 : 1;
-    if (!defined($virtual_server::config{'plugins'})) {
-      # Enable extra default modules
-      $virtual_server::config{'plugins'} = 'virtualmin-awstats virtualmin-htpasswd';
-    } else {
-      # When defined make sure plugins we consider default are enabled
-      my @plugins = split(/\s/, $virtual_server::config{'plugins'});
-      push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
-      $virtual_server::config{'plugins'} = join(' ', unique(@plugins));
+
+    # Enable extra default modules
+    my @plugins = split /\s+/, ($virtual_server::config{'plugins'} || '');
+    push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
+    if ($virtual_server::virtualmin_pro) {
+      push(@plugins, 'virtualmin-wp-workbench');
     }
-    if ((!$mini_stack && !$micro_stack && !$nano_stack) &&
+    $virtual_server::config{'plugins'} = join(' ', unique(@plugins));
+    
+    if ((!$mini_stack) &&
         (-e "/etc/debian_version" || -e "/etc/lsb-release")) {
       $virtual_server::config{'proftpd_config'}
         = 'ServerName ${DOM}	<Anonymous ${HOME}/ftp>	User ftp	Group nogroup	UserAlias anonymous ftp	<Limit WRITE>	DenyAll	</Limit>	RequireValidShell off	</Anonymous>';
@@ -135,7 +125,7 @@ sub actions {
     }
 
     # Enable DKIM at install time
-    if (!$micro_stack && !$nano_stack && -r "/etc/opendkim.conf") {
+    if (!$mini_stack && -r "/etc/opendkim.conf") {
       my $dkim = virtual_server::get_dkim_config();
       if (ref($dkim) && !$dkim->{'enabled'}) {
         $dkim->{'selector'} = virtual_server::get_default_dkim_selector();
@@ -175,7 +165,7 @@ sub actions {
 
     # Configure the Read User Mail module to look for sub-folders
     # under ~/Maildir
-    if (!$micro_stack && !$nano_stack) {
+    if (!$mini_stack) {
       my %mconfig = foreign_config("mailboxes");
       $mconfig{'mail_usermin'}    = "Maildir";
       $mconfig{'from_virtualmin'} = 1;

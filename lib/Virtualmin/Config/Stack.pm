@@ -14,10 +14,10 @@ sub new {
 # Common modules for all stacks (excluding DNS, mail and extra)
 sub common_modules {
     return (
-        "Webmin",      "MySQL",     "Firewall",
-        "Quotas",      "Shells",    "Status",
-        "Upgrade",     "Usermin",   "Virtualmin",
-        "Etckeeper",   "Apache"
+        "Webmin",      "MySQL",        "Firewall",
+        "Quotas",      "Shells",       "Status",
+        "Upgrade",     "Virtualmin",   "Etckeeper",
+        "Apache",      "AWStats",      "Fail2ban"
     );
 }
 
@@ -31,15 +31,15 @@ sub dns_modules {
 # Modules related to mail
 sub mail_modules {
     return (
-        "Postfix", "Dovecot", "SASL", "Procmail"
+        "Postfix",  "Dovecot",      "SASL",
+        "Procmail", "SpamAssassin", "ClamAV",
     );
 }
 
 # Extra (resourceful) modules
 sub full_modules {
     return (
-        "ProFTPd",      "AWStats", "ClamAV",
-        "SpamAssassin", "Fail2ban"
+        "ProFTPd", "Usermin",
     );
 }
 
@@ -64,9 +64,11 @@ sub list {
 
     # Get common and optional full modules
     my @modules = common_modules();
-    push(@modules, dns_modules())  if ($subtype ne 'nano');
-    push(@modules, mail_modules()) if ($subtype !~ /\b(?:micro|nano)\b/);
-    push(@modules, full_modules()) if ($subtype eq 'full');
+    if ($subtype eq 'full') {
+        push(@modules, dns_modules());
+        push(@modules, mail_modules());
+        push(@modules, full_modules());
+    }
 
     # Apply replacements
     my %replacements = %{ replacements($type) };
