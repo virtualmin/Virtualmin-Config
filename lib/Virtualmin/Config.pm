@@ -79,7 +79,7 @@ sub list_bundles {
   opendir(my $DIR, $bundlepath);
   my @bundles = grep(/\.pm$/, readdir($DIR));
   closedir($DIR);
-  @bundles = grep { $_ ne 'Dummy.pm' && $_ ne 'Plugin.pm' } @bundles;
+  @bundles = grep { $_ !~ /^(Dummy|Plugin|Stack)\.pm$/ } @bundles;
   for (@bundles) {s/\.pm$//}
   @bundles = sort(@bundles);
   return @bundles;
