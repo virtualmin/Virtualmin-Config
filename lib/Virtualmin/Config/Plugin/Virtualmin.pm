@@ -41,6 +41,7 @@ sub actions {
       (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
         ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
     foreign_require("virtual-server");
+    lock_file($module_config_file);
     $virtual_server::config{'mail_system'}          = 0;
     $virtual_server::config{'nopostfix_extra_user'} = 1;
     $virtual_server::config{'aliascopy'}            = 1;
@@ -159,7 +160,6 @@ sub actions {
     }
 
     # Save Virtualmin configuration after all changes are made
-    lock_file($module_config_file);
     save_module_config(\%virtual_server::config);
     unlock_file($module_config_file);
 
