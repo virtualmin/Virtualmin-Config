@@ -85,6 +85,7 @@ sub actions {
         $self->logsystem("a2enmod ssl");
         `echo Listen 80 > /etc/apache2/ports.conf`;
         `echo Listen 443 >> /etc/apache2/ports.conf`;
+        # XXXX
       }
 
       # New Ubuntu doesn't use this.
@@ -292,6 +293,8 @@ sub actions {
     # Force re-check of installed Apache modules
     unlink($apache::site_file)
       or $log->error("Failed to unlink $apache::site_file");
+    # Flush the cache
+    undef(@apache::get_config_cache);
     $self->done(1);    # OK!
   };
   if ($@) {
