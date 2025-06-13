@@ -54,13 +54,6 @@ sub actions {
       $self->logsystem("a2dissite default-ssl.conf");
     }
 
-    # Handle missing fcgid dir  (XXXXX no need for this?)
-    # if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-    #   if (!-e "/var/lib/apache2/fcgid") {
-    #     mkdir "/var/lib/apache2/fcgid";
-    #   }
-    # }
-
     # Fix suEXEC path and document root
     my $fn            = "/etc/apache2/suexec/www-data";
     if (-r $fn) {
