@@ -163,8 +163,7 @@ sub actions {
     # Force re-check of installed Apache modules
     unlink($apache::site_file)
       or $log->error("Failed to unlink $apache::site_file");
-    # Flush the cache
-    undef(@apache::get_config_cache);
+
     # Restart Apache
     my $rserr = apache::restart_apache();
     if ($rserr) {
