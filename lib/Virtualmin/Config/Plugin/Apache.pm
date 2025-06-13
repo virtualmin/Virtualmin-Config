@@ -85,9 +85,11 @@ sub actions {
       if ($gconfig{'os_type'} =~ /^(debian|ubuntu|suse)-linux$/) {
         # Enable required modules using proper command
         foreach my $mod (@apache_mods) {
-            system("a2enmod", "--quiet", $mod)
-              unless (system("a2query", "-m", $mod, ">/dev/null", "2>&1") == 0);
+          unless ($self->logsystem("a2query -m $mod") == 0) {
+              $self->logsystem("a2enmod --quiet $mod");
+          }
         }
+        apache::restart_apache();
       }
 
     # Configure RH systems
