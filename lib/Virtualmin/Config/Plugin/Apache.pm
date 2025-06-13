@@ -40,8 +40,8 @@ sub actions {
     foreign_require("apache");
 
     # Start Apache on boot if disabled
-    my @apache_mods = ('apache2', 'httpd', 'httpd24');
-    foreach my $service (@apache_mods) {
+    my @apache_cmds = ('apache2', 'httpd', 'httpd24');
+    foreach my $service (@apache_cmds) {
       if (init::action_status($service) == 1) {
         init::enable_at_boot($service);
         last;
