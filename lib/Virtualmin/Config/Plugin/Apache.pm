@@ -141,7 +141,7 @@ sub actions {
     apache::save_directive("SSLProtocol", ["-all +TLSv1.2 +TLSv1.3"],
       $conf, $conf);
     apache::save_directive(
-      "SSLOpenSSLConfCmd", [ "Curves X25519:prime256v1:secp384r1" ]
+      "SSLOpenSSLConfCmd", [ "Curves X25519:prime256v1:secp384r1" ],
       $conf, $conf
     );
     my $SSLCipherSuite = "ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-".
