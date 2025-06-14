@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sat Jun 14 2025 Ilia Ross <ilia@virtualmin.com> 8.0.0
+- Fix to adjust installation types and add support for Virtualmin 8
 * Mon Jan 27 2025 Ilia Ross <ilia@virtualmin.com> 7.0.41
 - Fix to enable the use of Firewalld rich rules with Fail2ban
 * Wed Dec 25 2024 Ilia Ross <ilia@virtualmin.com> 7.0.40
