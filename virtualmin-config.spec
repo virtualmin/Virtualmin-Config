@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sun Jun 15 2025 Ilia Ross <ilia@virtualmin.com> 8.0.1
+- Fix Apache configuration and configuring Fail2Ban on mini stacks
 * Sat Jun 14 2025 Ilia Ross <ilia@virtualmin.com> 8.0.0
 - Fix to adjust installation types and add support for Virtualmin 8
 * Mon Jan 27 2025 Ilia Ross <ilia@virtualmin.com> 7.0.41

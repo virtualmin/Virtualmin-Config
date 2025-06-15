@@ -1,9 +1,16 @@
+virtualmin-config (8.0.1) stable; urgency=medium
+
+  * Fix Apache configuration
+  * Fix configuring Fail2Ban on mini stacks
+
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 15 Jun 2025 17:00:00 +0300
+
 virtualmin-config (8.0.0) stable; urgency=medium
 
   * Add support for Virtualmin 8
   * Fix to adjust installation types leaving only "full" and "mini"
 
- -- Ilia Ross <ilia@virtualmin.com>  Sat, 14 Jun 2025 15:00:00 +0200
+ -- Ilia Ross <ilia@virtualmin.com>  Sat, 14 Jun 2025 15:00:00 +0300
 
 virtualmin-config (7.0.41) stable; urgency=medium
 
