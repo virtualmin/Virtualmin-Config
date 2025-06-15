@@ -380,6 +380,10 @@ sub actions {
       # Disable libapache2-mod-php* in Ubuntu/Debian
       my $fpref = $gconfig{'real_os_type'} =~ /ubuntu/i ? 'ubuntu' : 'debian';
       my $apt_pref_dir = "/etc/apt/preferences.d";
+      if (!-d $apt_pref_dir) {
+        # Create the directory if it doesn't exist
+        make_dir($apt_pref_dir, oct(755));
+      }
       # Create a file to restrict libapache2-mod-php* packages
       $self->logsystem(
         "echo \"Package: libapache2-mod-php*\nPin: release *\nPin-Priority: -1\" > ".
