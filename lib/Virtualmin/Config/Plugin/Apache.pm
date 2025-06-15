@@ -7,7 +7,9 @@ use parent 'Virtualmin::Config::Plugin';
 our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
-my $log   = Log::Log4perl->get_logger("virtualmin-config-system");
+
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 my $delay = 2;
 
 sub new {

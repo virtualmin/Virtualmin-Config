@@ -8,6 +8,8 @@ our $config_directory;
 our (%gconfig, %uconfig, %uminiserv);
 our $trust_unknown_referers = 1;
 
+my $log = Log::Log4perl->get_logger("virtualmin-config-system");
+
 sub new {
   my ($class, %args) = @_;
 
