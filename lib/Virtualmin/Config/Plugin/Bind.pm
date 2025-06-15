@@ -88,7 +88,7 @@ sub actions {
       print $BOOT "    };\n";
       print $BOOT "\n";
       close($BOOT);
-      system("cp $root/bind8/db.cache "
+      $self->logsystem("cp $root/bind8/db.cache "
           . bind8::make_chroot("$conf_directory/db.cache"));
       bind8::set_ownership(bind8::make_chroot("$conf_directory/db.cache"));
       bind8::set_ownership($conffile);

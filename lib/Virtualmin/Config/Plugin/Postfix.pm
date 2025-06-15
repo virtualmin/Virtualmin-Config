@@ -54,14 +54,14 @@ sub actions {
     # Debian doesn't get a default main.cf unless apt-get is run
     # interactively.
     if (!-e "/etc/postfix/main.cf" && -e "/usr/share/postfix/main.cf.debian") {
-      system("cp /usr/share/postfix/main.cf.debian /etc/postfix/main.cf");
+      $self->logsystem("cp /usr/share/postfix/main.cf.debian /etc/postfix/main.cf");
     }
 
     # FreeBSD doesn't get a default main.cf, or anything else
     if (!-e "/usr/local/etc/postfix/main.cf"
       && -e "/usr/local/etc/postfix/dist/main.cf")
     {
-      system("cp /usr/local/etc/postfix/dist/* /usr/local/etc/postfix/");
+      $self->logsystem("cp /usr/local/etc/postfix/dist/* /usr/local/etc/postfix/");
     }
 
     my $postetc = $postfix::config{'postfix_config_file'};
@@ -193,7 +193,7 @@ sub actions {
     foreign_require("init", "init-lib.pl");
     if (-e "/usr/sbin/alternatives" &&
         -e "/usr/sbin/sendmail.postfix") {
-      system("/usr/sbin/alternatives --set mta /usr/sbin/sendmail.postfix");
+      $self->logsystem("/usr/sbin/alternatives --set mta /usr/sbin/sendmail.postfix");
     }
     if ($gconfig{'os_type'} eq 'freebsd') {
 
@@ -247,8 +247,8 @@ sub actions {
         sendmail::stop_sendmail();
       }
     }
-    system("killall -9 sendmail >/dev/null 2>&1");
-    system("newaliases");
+    $self->logsystem("killall -9 sendmail >/dev/null 2>&1");
+    $self->logsystem("newaliases");
     if (!postfix::is_postfix_running()) {
       my $err = postfix::start_postfix();
       print STDERR "Failed to start Postfix!\n" if ($err);
