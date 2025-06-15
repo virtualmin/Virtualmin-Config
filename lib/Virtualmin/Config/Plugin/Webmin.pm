@@ -34,12 +34,18 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require("webmin", "webmin-lib.pl");
+    # Disable Webmin upgrades from UI
+    save_module_acl( { disallow => 'upgrade' }, 'root', 'webmin' );
+    # Update Webmin configuration
+    foreign_require("webmin");
     $gconfig{'nowebminup'}   = 1;
     $gconfig{'theme'}        = "authentic-theme";
     $gconfig{'mobile_theme'} = "authentic-theme";
     $gconfig{'logfiles'}     = 1;
+    lock_file("$config_directory/config");
     write_file("$config_directory/config", \%gconfig);
+    unlock_file("$config_directory/config");
+    # Configure miniserv
     get_miniserv_config(\%miniserv);
     $miniserv{'preroot'}            = "authentic-theme";
     $miniserv{'ssl'}                = 1;
@@ -47,7 +53,7 @@ sub actions {
     $miniserv{'twofactor_provider'} = 'totp';
     put_miniserv_config(\%miniserv);
     webmin::build_installed_modules(1);
-    system("/etc/webmin/restart-by-force-kill > /dev/null 2>&1");
+    $self->logsystem("/etc/webmin/restart-by-force-kill > /dev/null 2>&1");
     $self->done(1);    # OK!
   };
   if ($@) {

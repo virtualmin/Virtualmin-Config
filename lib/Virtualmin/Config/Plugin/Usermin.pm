@@ -34,8 +34,11 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require("init",    "init-lib.pl");
-    foreign_require("usermin", "usermin-lib.pl");
+    # Disable Usermin upgrades from UI
+    save_module_acl( { upgrade => 0 }, 'root', 'usermin' );
+    # Update Usermin configuration
+    foreign_require("init");
+    foreign_require("usermin");
     usermin::get_usermin_config(\%uconfig);
     $uconfig{'theme'}      = "authentic-theme";
     $uconfig{'gotomodule'} = 'mailbox';
