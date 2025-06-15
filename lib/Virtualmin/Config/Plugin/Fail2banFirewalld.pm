@@ -80,6 +80,7 @@ sub actions {
     }
   };
   if ($@) {
+    $log->error("Error configuring Fail2ban: $@");
     $self->done(0);      # NOK!
   }
 }

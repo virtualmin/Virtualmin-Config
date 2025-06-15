@@ -53,6 +53,7 @@ sub actions {
       $self->done(0);
     };
     if ($@) {
+      $log->error("Error configuring Mailman: $@");
       $self->done(1);
     }
   }

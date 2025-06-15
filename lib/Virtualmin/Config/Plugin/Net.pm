@@ -107,6 +107,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Failed to configure Net plugin: $@");
     $self->done(0);
   }
 }

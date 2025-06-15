@@ -418,6 +418,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Error configuring Virtualmin: $@");
     $self->done(0);
   }
 }

@@ -87,6 +87,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Failed to configure Dovecot: $@");
     $self->done(0);
   }
 }

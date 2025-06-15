@@ -206,6 +206,7 @@ EOF
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Failed to configure ProFTPd: $@");
     $self->done(0);    # NOK!
   }
 }

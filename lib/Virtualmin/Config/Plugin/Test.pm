@@ -47,6 +47,7 @@ sub actions {
     $self->done(1);
   };
   if ($@) {
+    $log->error("Error configuring Test plugin: $@");
     $self->done(0);
   }
 }
@@ -61,6 +62,7 @@ sub tests {
     $self->done(1);
   };
   if ($@) {
+    $log->error("Error running tests for Test plugin: $@");
     $self->done(0);
   }
 }

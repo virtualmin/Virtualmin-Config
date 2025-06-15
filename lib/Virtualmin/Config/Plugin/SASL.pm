@@ -165,6 +165,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Error configuring SASL: $@");
     $self->done(0);
   }
 }

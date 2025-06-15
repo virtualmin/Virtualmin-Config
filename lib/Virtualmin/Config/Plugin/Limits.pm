@@ -65,6 +65,7 @@ sub actions {
     }
   };
   if ($@) {
+    $log->error("Failed to write limits configuration: $@");
     $self->done(0);
   }
 }

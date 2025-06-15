@@ -51,6 +51,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Error configuring Webmin: $@");
     $self->done(0);    # NOK!
   }
 }

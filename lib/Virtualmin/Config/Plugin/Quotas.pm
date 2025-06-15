@@ -194,6 +194,7 @@ sub actions {
     $self->done($res);    # Maybe OK!
   };
   if ($@) {
+    $log->error("Error configuring quotas: $@");
     $ENV{'QUOTA_FAILED'} = '1';
     $self->done(2);       # 2 is a non-fatal error
   }

@@ -50,9 +50,10 @@ sub actions {
       create_fail2ban_jail($self);
       create_fail2ban_firewalld();
 
-# Switch backend to use systemd to avoid failure on
-# fail2ban starting when actual log file is missing
-# e.g.: Failed during configuration: Have not found any log file for [name] jail
+      # Switch backend to use systemd to avoid failure on
+      # fail2ban starting when actual log file is missing
+      # e.g.: Failed during configuration: Have not found
+      # any log file for [name] jail
       &foreign_require('fail2ban');
       my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
       my @jconf = &fail2ban::parse_config_file($jfile);
@@ -74,6 +75,7 @@ sub actions {
     }
   };
   if ($@) {
+    $log->error("Error configuring Fail2ban: $@");
     $self->done(0);      # NOK!
   }
 }

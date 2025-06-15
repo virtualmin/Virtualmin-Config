@@ -50,6 +50,7 @@ sub actions {
       $self->done(0);
     };
     if ($@) {
+      $log->error("Error configuring PostgreSQL: $@");
       $self->done(1);
     }
   }

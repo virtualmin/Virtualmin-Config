@@ -45,10 +45,12 @@ sub actions {
       $self->done(1);    # OK!
     };
     if ($@) {
+      $log->error("Error configuring Webalizer: $@");
       $self->done(0);
     }
   }
   else {
+    $log->error("Webalizer is not installed on this system, skipping configuration.");
     $self->done(2);
   }
 }

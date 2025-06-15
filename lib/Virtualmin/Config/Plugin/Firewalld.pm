@@ -65,6 +65,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Error configuring Firewalld: $@");
     $self->done(0);
   }
 }

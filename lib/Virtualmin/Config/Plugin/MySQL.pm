@@ -58,6 +58,7 @@ sub actions {
     $self->done(1);
   };
   if ($@) {
+    $log->error("Error configuring MySQL/MariaDB: $@");
     $self->done(0);
   }
 }

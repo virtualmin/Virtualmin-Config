@@ -90,6 +90,7 @@ sub actions {
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Failed to configure ClamAV: $@");
     $self->done(0);
   }
 }
@@ -145,6 +146,7 @@ sub tests {
     $self->done(0);
   };
   if ($@) {
+    $log->error("Failed to test ClamAV: $@");
     $self->done(0);
   }
 }
