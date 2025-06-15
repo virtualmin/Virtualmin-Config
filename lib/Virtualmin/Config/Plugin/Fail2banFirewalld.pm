@@ -53,7 +53,7 @@ sub actions {
       init::enable_at_boot('fail2ban');
 
       # Create a jail.local with some basic config
-      create_fail2ban_jail();
+      create_fail2ban_jail($self);
       create_fail2ban_firewalld();
 
 # Switch backend to use systemd to avoid failure on
@@ -85,7 +85,7 @@ sub actions {
 }
 
 sub create_fail2ban_jail {
-
+  my $self = shift;
   # Postfix addendum
   my $postfix_jail_extra = "";
 
@@ -125,6 +125,13 @@ sub create_fail2ban_jail {
     $proftpd_jail_extra
       .= '            \(\S+\[<HOST>\]\)[: -]+ Maximum login attempts \(\d+\) exceeded\s+$';
   }
+my $mini_stack =
+      (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
+        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
+my $proftpd_block = $mini_stack ? '' :
+    "[proftpd]\n" .
+    "enabled = true$proftpd_jail_extra\n\n";
+
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
 [dovecot]
@@ -136,10 +143,7 @@ enabled = true
 [postfix-sasl]
 enabled = true$postfix_jail_extra
 
-[proftpd]
-enabled = true$proftpd_jail_extra
-
-[sshd]
+${proftpd_block}[sshd]
 enabled = true
 
 [webmin-auth]
