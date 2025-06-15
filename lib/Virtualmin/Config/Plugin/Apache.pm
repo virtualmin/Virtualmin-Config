@@ -8,7 +8,7 @@ our $config_directory;
 our (%gconfig, %miniserv);
 our $trust_unknown_referers = 1;
 my $log   = Log::Log4perl->get_logger("virtualmin-config-system");
-my $delay = 3;
+my $delay = 2;
 
 sub new {
   my ($class, %args) = @_;
@@ -36,10 +36,9 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require("init");
-    foreign_require("apache");
 
     # Start Apache on boot if disabled
+    foreign_require("init");
     my @apache_cmds = ('apache2', 'httpd', 'httpd24');
     foreach my $service (@apache_cmds) {
       if (init::action_status($service) == 1) {
@@ -48,45 +47,31 @@ sub actions {
       }
     }
 
-    # Disable default Apache sites
-    if ($gconfig{'os_type'} eq "debian-linux") {
-      $self->logsystem("a2dissite 000-default");
-      $self->logsystem("a2dissite default-ssl.conf");
-    }
-
-    # Fix suEXEC path and document root
-    my $fn            = "/etc/apache2/suexec/www-data";
-    if (-r $fn) {
-      my $apache2suexec = read_file_lines($fn);
-      $apache2suexec->[0] = "/home";
-      $apache2suexec->[1] = "public_html";
-      flush_file_lines($fn);
-    }
-    
     # On Debian and Ubuntu, enable some modules which are disabled by default
-    my @apache_mods = (
-        "actions",       "suexec",
-        "auth_digest",   "ssl",
-        "fcgid",         "rewrite",
-        "proxy",         "proxy_balancer",
-        "proxy_connect", "proxy_http",
-        "slotmem_shm",   "cgi",
-        "proxy_fcgi",    "lbmethod_byrequests",
-        "http2",         "include"
-        );
-    
-      if ($gconfig{'os_type'} =~ /^(debian|ubuntu|suse)-linux$/) {
-        # Enable required modules using proper command
-        foreach my $mod (@apache_mods) {
-          unless ($self->logsystem("a2query -m $mod") == 0) {
-              $self->logsystem("a2enmod --quiet $mod");
-          }
-        }
-        apache::restart_apache();
+    my @apache_mods = qw(
+      suexec ssl slotmem_shm rewrite proxy_http proxy_fcgi
+      proxy_connect proxy_balancer proxy lbmethod_byrequests
+      include http2 fcgid auth_digest actions
+    );
+    # Configure Debian/Ubuntu and SUSE systems
+    if ($gconfig{'os_type'} =~ /^(debian|ubuntu|suse)-linux$/) {
+      # Enable required modules using proper command
+      $self->logsystem("a2enmod --quiet @apache_mods ; sleep $delay");
+      # Disable default Apache sites
+      $self->logsystem("a2dissite --quiet 000-default default-ssl ; sleep $delay");
+      # Fix suEXEC path and document root
+      my $fn            = "/etc/apache2/suexec/www-data";
+      if (-r $fn) {
+        my $apache2suexec = read_file_lines($fn);
+        $apache2suexec->[0] = "/home";
+        $apache2suexec->[1] = "public_html";
+        flush_file_lines($fn);
       }
-
+      # Restart Apache to apply changes
+      $self->logsystem("apache2ctl restart ; sleep $delay");
+    }
     # Configure RH systems
-    if ($gconfig{'os_type'} eq 'redhat-linux') {
+    elsif ($gconfig{'os_type'} eq 'redhat-linux') {
       # Comment out config files that conflict
       foreach my $file (
         "/etc/httpd/conf.d/welcome.conf",
@@ -125,6 +110,7 @@ sub actions {
     }
 
     # Disable global UserDir option
+    foreign_require("apache");
     my $conf = apache::get_config();
     my ($userdir) = apache::find_directive_struct("UserDir", $conf);
     if ($userdir) {
@@ -153,27 +139,11 @@ sub actions {
     apache::save_directive("ServerSignature", ["Off"],  $conf, $conf);
     apache::save_directive("TraceEnable",     ["Off"],  $conf, $conf);
     flush_file_lines();
-    
-    # Start Apache if not running
-    if (!apache::is_apache_running()) {
-      my $err = apache::start_apache();
-      $log->error("Failed to start Apache : $err") if ($err);
-    }
 
-    # Force re-check of installed Apache modules
-    unlink($apache::site_file)
-      or $log->error("Failed to unlink $apache::site_file");
-
-    # Restart Apache
-    my $rserr = apache::restart_apache();
-    if ($rserr) {
-      $log->error("Failed to restart Apache : $rserr");
-      $self->done(0);  # NOK!
-      return;
-    }
     $self->done(1);    # OK!
   };
   if ($@) {
+    $log->error("Failed to configure Apache : $@");
     $self->done(0);    # NOK!
   }
 }
