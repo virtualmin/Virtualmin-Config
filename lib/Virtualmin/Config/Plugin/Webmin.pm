@@ -36,6 +36,15 @@ sub actions {
 
   $self->spin();
   eval {
+    # Configure status module
+    foreign_require("status");
+    $status::config{'sched_mode'} = 1;
+    $status::config{'sched_int'}    ||= 5;
+    $status::config{'sched_offset'} ||= 0;
+    lock_file("$config_directory/status/config");
+    save_module_config(\%status::config, 'status');
+    unlock_file("$config_directory/status/config");
+    status::setup_cron_job();
     # Disable Webmin upgrades from UI
     save_module_acl( { disallow => 'upgrade' }, 'root', 'webmin' );
     # Update Webmin configuration

@@ -15,9 +15,9 @@ sub new {
 sub common_modules {
     return (
         "Webmin",      "MySQL",        "Firewall",
-        "Quotas",      "Shells",       "Status",
-        "Virtualmin",   "Etckeeper",   "Apache",
-        "AWStats",      "Fail2ban"
+        "Quotas",      "Shells",       "Virtualmin",
+        "Etckeeper",   "Apache",       "AWStats",
+        "Fail2ban"
     );
 }
 
