@@ -36,7 +36,7 @@ sub actions {
 
   $self->spin();
   eval {
-    foreign_require("init", "init-lib.pl");
+    foreign_require("init");
     if (init::action_status("mariadb")) {
       init::enable_at_boot("mariadb");
     }
@@ -46,17 +46,10 @@ sub actions {
     else {
       init::enable_at_boot("mysqld");
     }
-    foreign_require("mysql", "mysql-lib.pl");
-    if (mysql::is_mysql_running()) {
-      mysql::stop_mysql();
+    foreign_require("mysql");
+    if (!mysql::is_mysql_running()) {
+      mysql::start_mysql();
     }
-    my $conf = mysql::get_mysql_config();
-    my ($sect) = grep { $_->{'name'} eq 'mysqld' } @$conf;
-    if ($sect) {
-      mysql::save_directive($conf, $sect, "innodb_file_per_table", [1]);
-      flush_file_lines($sect->{'file'});
-    }
-    my $err = mysql::start_mysql();
     $self->done(1);
   };
   if ($@) {
