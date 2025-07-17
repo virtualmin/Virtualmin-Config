@@ -70,7 +70,7 @@ sub actions {
 
       # Skip if quotas are not enabled--requires a kernel rebuild
       my $quotav = `quota -v`;
-      if (!$quotav =~ /none$/) {
+      if ($quotav !~ /none$/) {
         $mount::options{'rw'}         = '';
         $mount::options{'userquota'}  = '';
         $mount::options{'groupquota'} = '';
@@ -130,19 +130,20 @@ sub actions {
                 $grub_conf_file = "/boot/grub/grub.cfg";
                 $grub_conf_cmd = "grub-mkconfig";
               }
-              # On EFI it's different config file
-              if (-d "/sys/firmware/efi") {
-                my %osrelease;
-                &read_env_file('/etc/os-release', \%osrelease);
-                my $osid               = $osrelease{'ID'};
-                my $grub_conf_file_efi = "/boot/efi/EFI/$osid/grub.cfg";
-                if (-r $grub_conf_file_efi) {
-                  $grub_conf_file = $grub_conf_file_efi;
-                }
+              # Always regenerate the real GRUB config in /boot,
+              # never the EFI stub.
+              my $have_bls = -d "/boot/loader/entries";
+              my $have_bls_flag = 0;
+              if ($grub_conf_cmd eq 'grub2-mkconfig' && $have_bls) {
+                # Detect BLS support
+                my $help = `$grub_conf_cmd --help 2>&1`;
+                $have_bls_flag = ($help =~ /--update-bls-cmdline/);
               }
               if (-r $grub_conf_file) {
                 &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
-                $self->logsystem("$grub_conf_cmd -o $grub_conf_file");
+                my $cmd = "$grub_conf_cmd -o $grub_conf_file";
+                $cmd .= " --update-bls-cmdline" if ($have_bls_flag);
+                $self->logsystem($cmd);
               }
           };
           
@@ -159,7 +160,7 @@ sub actions {
             my %grub;
             &read_env_file($grub_def_file, \%grub) || ($res = 0);
             my $v = $grub{'GRUB_CMDLINE_LINUX'};
-            if (defined($v) && $v !~ /rootflags=.*?([u|g]quota)/) {
+            if (defined($v) && $v !~ /rootflags=.*?(?:uquota|gquota)/) {
               if ($v =~ /rootflags=(\S+)/) {
                 $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
               }
