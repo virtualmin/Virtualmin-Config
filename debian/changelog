@@ -1,3 +1,9 @@
+virtualmin-config (7.0.23) stable; urgency=medium
+
+  * Fix quotas on EL 10 systems
+
+ -- Ilia Ross <ilia@virtualmin.com>  Thu, 18 Jul 2025 01:42:00 +0300
+
 virtualmin-config (7.0.22) stable; urgency=medium
 
   * Fix to directly create `systemd` override files
