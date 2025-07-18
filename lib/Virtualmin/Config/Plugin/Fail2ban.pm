@@ -128,7 +128,7 @@ my $mini_stack =
         ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
 my $proftpd_block = $mini_stack ? '' :
     "[proftpd]\n" .
-    "enabled = true$proftpd_jail_extra\n\n";
+    "enabled = true\nport = ftp,ftp-data,ftps,ftps-data,2222$proftpd_jail_extra\n\n";
 
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
