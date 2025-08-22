@@ -59,7 +59,15 @@ sub actions {
 
     my $conf = dovecot::get_config();
     dovecot::save_directive($conf, "protocols", "imap pop3");
-    if (dovecot::find("mail_location", $conf, 2)) {
+    # 2.4
+    if (dovecot::find("mail_path", $conf, 2)) {
+      dovecot::save_directive($conf, "mail_path", '~/Maildir');
+      dovecot::save_directive($conf, "mail_driver", 'maildir');
+      dovecot::save_directive($conf, "mail_home", undef);
+      dovecot::save_directive($conf, "mail_inbox_path", undef);
+    }
+    # 2.3
+    elsif (dovecot::find("mail_location", $conf, 2)) {
       dovecot::save_directive($conf, "mail_location",
         "maildir:~/Maildir" . $indexes);
     }
