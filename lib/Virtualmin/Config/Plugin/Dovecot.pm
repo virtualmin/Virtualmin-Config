@@ -67,11 +67,8 @@ sub actions {
       dovecot::save_directive($conf, "default_mail_env",
         "maildir:~/Maildir" . $indexes);
     }
-    if (dovecot::find("pop3_uidl_format", $conf, 2)) {
-      dovecot::save_directive($conf, "pop3_uidl_format", "%08Xu%08Xv");
-    }
-    elsif (dovecot::find("pop3_uidl_format", $conf, 2, "pop3")) {
-      dovecot::save_directive($conf, "pop3_uidl_format", "%08Xu%08Xv", "pop3");
+    if (my $uidl_format = dovecot::find("pop3_uidl_format", $conf, 2)) {
+      dovecot::save_directive($conf, "pop3_uidl_format", $uidl_format->{value});
     }
     dovecot::save_directive($conf, "disable_plaintext_auth", "no");
     my $am = dovecot::find_value("auth_mechanisms", $conf, 2);
