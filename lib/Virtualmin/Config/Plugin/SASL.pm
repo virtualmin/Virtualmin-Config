@@ -91,7 +91,8 @@ sub actions {
       # to fix PIDFile location because chroot Postfix expects
       # it to be in /var/spool/postfix/var/run/saslauthd
       my $os_ver = $gconfig{'real_os_version'};
-      if ($os_ver && $os_ver =~ /^(24)/) {
+      if (($gconfig{'real_os_type'} =~ /ubuntu/i && $os_ver && $os_ver =~ /^(2[468])/) ||
+          ($gconfig{'real_os_type'} =~ /debian/i && $os_ver && $os_ver >= 13)) {
         my $systemd_saslauthd_override_path = "/etc/systemd/system/saslauthd.service.d";
         $self->logsystem("mkdir -p -m 755 $systemd_saslauthd_override_path")
           if (!-d $systemd_saslauthd_override_path);
