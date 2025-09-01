@@ -377,23 +377,6 @@ sub actions {
       $self->logsystem("mv /etc/php8/fpm/php-fpm.conf.default /etc/php8/fpm/php-fpm.conf >/dev/null 2>&1");
     }
 
-    # Fix default PHP-FPM destroying runtime directory
-    unless ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-      my $wwwconf = '/etc/php-fpm.d/www.conf';
-      my $php_fpm_service_dir = '/etc/systemd/system/php-fpm.service.d';
-      my $php_fpm_service_override = "$php_fpm_service_dir/override.conf";
-      if (-r $wwwconf && !-r $php_fpm_service_override) {
-        my $unit_exists = (system("systemctl cat php-fpm >/dev/null 2>&1") == 0);
-        if ($unit_exists) {
-          make_dir($php_fpm_service_dir, oct(755)) unless -d $php_fpm_service_dir;
-          write_file_contents($php_fpm_service_override,
-            "[Service]\nRuntimeDirectoryPreserve=yes\n");
-          $self->logsystem("systemctl daemon-reload");
-          $self->logsystem("systemctl restart php-fpm");
-        }
-      }
-    }
-
     # Disable mod_php in package managers
     if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
       # Disable libapache2-mod-php* in Ubuntu/Debian
