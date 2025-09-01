@@ -78,7 +78,10 @@ sub actions {
     if (my $uidl_format = dovecot::find("pop3_uidl_format", $conf, 2)) {
       dovecot::save_directive($conf, "pop3_uidl_format", $uidl_format->{value});
     }
-    dovecot::save_directive($conf, "disable_plaintext_auth", "no");
+    dovecot::save_directive($conf,
+      dovecot::version_atleast("2.4")
+        ? ("auth_allow_cleartext", "yes")
+        : ("disable_plaintext_auth", "no"));
     my $am = dovecot::find_value("auth_mechanisms", $conf, 2);
     if ($am && $am !~ /login/) {
       $am .= " login";
