@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Tue Sep 16 2025 Ilia Ross <ilia@virtualmin.com> 8.0.2
+- Add Debian 13 and EL 10 support
 * Sun Jun 15 2025 Ilia Ross <ilia@virtualmin.com> 8.0.1
 - Fix Apache configuration and configuring Fail2Ban on mini stacks
 * Sat Jun 14 2025 Ilia Ross <ilia@virtualmin.com> 8.0.0
