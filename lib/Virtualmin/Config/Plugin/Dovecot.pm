@@ -71,7 +71,7 @@ sub actions {
       dovecot::save_directive($conf, "mail_location",
         "maildir:~/Maildir" . $indexes);
     }
-    else {
+    elsif (dovecot::find("default_mail_env", $conf, 2)) {
       dovecot::save_directive($conf, "default_mail_env",
         "maildir:~/Maildir" . $indexes);
     }
