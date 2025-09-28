@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Sep 29 2025 Ilia Ross <ilia@virtualmin.com> 8.0.3
+- Fix Apache-related issues
 * Tue Sep 16 2025 Ilia Ross <ilia@virtualmin.com> 8.0.2
 - Add Debian 13 and EL 10 support
 * Sun Jun 15 2025 Ilia Ross <ilia@virtualmin.com> 8.0.1

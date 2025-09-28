@@ -18,7 +18,7 @@ my %WriteMakefileArgs = (
   "PREREQ_PM"          => {"Log::Log4perl" => 0, "Term::ANSIColor" => 0},
   "TEST_REQUIRES" =>
     {"ExtUtils::MakeMaker" => 0, "File::Spec" => 0, "Test::More" => 0},
-  "VERSION" => "8.0.2",
+  "VERSION" => "8.0.3",
   "test"    => {"TESTS" => "t/*.t"}
 );
 
