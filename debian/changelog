@@ -1,3 +1,10 @@
+virtualmin-config (7.0.24) stable; urgency=medium
+
+  * Fix to clear Apache module cache to make sure it gets updated
+  * Fix to still enable `cgid` module for CGI scripts to work under `suexec`
+
+ -- Ilia Ross <ilia@virtualmin.com>  Mon, 29 Sep 2025 01:00:00 +0300
+
 virtualmin-config (7.0.23) stable; urgency=medium
 
   * Fix quotas on EL 10 systems

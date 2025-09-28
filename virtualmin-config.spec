@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.23
+Version:        7.0.24
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Sep 29 2025 Ilia Ross <ilia@virtualmin.com> 7.0.24
+- Fix Apache related issues
 * Thu Jul 18 2025 Ilia Ross <ilia@virtualmin.com> 7.0.23
 - Fix quotas on EL 10 systems
 * Sun May 19 2024 Ilia Ross <ilia@virtualmin.com> 7.0.22
