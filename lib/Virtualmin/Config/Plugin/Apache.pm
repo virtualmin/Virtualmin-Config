@@ -140,6 +140,9 @@ sub actions {
     apache::save_directive("TraceEnable",     ["Off"],  $conf, $conf);
     flush_file_lines();
 
+    # Clear module cache to ensure changes take effect
+    apache::clear_apache_modules_cache();
+
     $self->done(1);    # OK!
   };
   if ($@) {
