@@ -7,7 +7,16 @@ on:
   release:
     types:
       - published
-
+  workflow_dispatch:
+    inputs:
+      force-release:
+        type: boolean
+        default: true
+        description: "Force a release build"
+      version:
+        type: string
+        required: true
+        description: "Version to build, e.g. 7.0.24"
 env:
   GH_REPO: ${{ github.repository }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -16,7 +25,7 @@ env:
   PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
   PKG_HOMEPAGE: "https://github.com/virtualmin/Virtualmin-Config"
   PKG_SUMMARY: "Configure a system for use by Virtualmin"
-  IS_RELEASE: ${{ github.event_name == 'release' }}
+  IS_RELEASE: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.force-release) }}
 
   BUILD_DEPS: "git tar curl gzip gcc make dpkg-dev fakeroot rpm build-essential libc6-dev coreutils"
   BUILD_BOOTSTRAP: "https://raw.githubusercontent.com/webmin/webmin-ci-cd/main/build/bootstrap.bash"
@@ -24,7 +33,7 @@ env:
 jobs:
   build-amd64:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'release' || (github.event_name == 'push' && !contains(github.event.head_commit.message, '[no-build]')) }}
+    if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(github.event.head_commit.message, '[no-build]')) }}
     env:
       TZ: Europe/Nicosia
     steps:
@@ -51,6 +60,7 @@ jobs:
           CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
+          MANUAL_VERSION: ${{ inputs.version }}
         run: |-
           
           # Fail on error
@@ -61,7 +71,11 @@ jobs:
 
           # Get version for the build, either from tag or latest commit
           if [ "$IS_RELEASE" = "true" ]; then
-            pkg_version="${RELEASE_TAG#v}"
+            if [ -n "${MANUAL_VERSION:-}" ]; then
+              pkg_version="${MANUAL_VERSION#v}"
+            else
+              pkg_version="${RELEASE_TAG#v}"
+            fi
           else
             pkg_version="$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")"
           fi
