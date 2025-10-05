@@ -50,6 +50,7 @@ jobs:
           CLOUD__UPLOAD_SSH_DIR: ${{ env.IS_RELEASE == 'true' && secrets.PRERELEASE_UPLOAD_SSH_DIR || secrets.DEV_UPLOAD_SSH_DIR }}
           CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
           CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |-
           
           # Fail on error
@@ -58,8 +59,12 @@ jobs:
           # Bootstrap build
           source bootstrap.bash $([[ "$IS_RELEASE" == "true" ]] || echo "--testing")
 
-          # Get package version
-          pkg_version=$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")
+          # Get version for the build, either from tag or latest commit
+          if [ "$IS_RELEASE" = "true" ]; then
+            pkg_version="${RELEASE_TAG#v}"
+          else
+            pkg_version="$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")"
+          fi
           
           # Set build base directory
           pkg_name="${{ env.PKG_NAME }}"
