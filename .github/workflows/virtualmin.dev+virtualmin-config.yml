@@ -1,0 +1,174 @@
+name: "virtualmin.dev: virtualmin/virtualmin-config"
+
+on:
+  push:
+    branches:
+      - master
+  release:
+    types:
+      - published
+  workflow_dispatch:
+    inputs:
+      force-release:
+        type: boolean
+        default: true
+        description: "Force a release build"
+      version:
+        type: string
+        required: true
+        description: "Version to build, e.g. 7.0.24"
+env:
+  GH_REPO: ${{ github.repository }}
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PKG_RELEASE: ${{ github.run_attempt }}
+  PKG_NAME: "virtualmin-config"
+  PKG_DESC: "This mini-framework simplifies configuring elements of a Virtualmin system. It leverages Webmin as a library to handle common configuration tasks, offers a user-friendly status indicator, and makes it easy to customize your setup if that’s the route you prefer. The Virtualmin install script automatically selects either the LAMP (Apache) or LEMP (with Nginx) stack and configures the entire system for you."
+  PKG_HOMEPAGE: "https://github.com/virtualmin/Virtualmin-Config"
+  PKG_SUMMARY: "Configure a system for use by Virtualmin"
+  IS_RELEASE: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.force-release) }}
+
+  BUILD_DEPS: "git tar curl gzip gcc make dpkg-dev fakeroot rpm build-essential libc6-dev coreutils"
+  BUILD_BOOTSTRAP: "https://raw.githubusercontent.com/webmin/webmin-ci-cd/main/build/bootstrap.bash"
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'release' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(github.event.head_commit.message, '[no-build]')) }}
+    env:
+      TZ: Europe/Nicosia
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: awalsh128/cache-apt-pkgs-action@latest
+        with: 
+          packages: ${{ env.BUILD_DEPS }}
+          version: 1.0
+
+      - name: Fetch dependencies
+        run: curl -O ${{ env.BUILD_BOOTSTRAP }}
+
+      - name: Set timezone
+        run: sudo timedatectl set-timezone ${{ env.TZ }}
+
+      - name: Build packages
+        env:
+          CLOUD__GPG_PH: ${{ secrets.DEV_GPG_PH }}
+          CLOUD__IP_ADDR: ${{ secrets.DEV_IP_ADDR }}
+          CLOUD__IP_KNOWN_HOSTS: ${{ secrets.DEV_IP_KNOWN_HOSTS }}
+          CLOUD__UPLOAD_SSH_USER: ${{ secrets.DEV_UPLOAD_SSH_USER }}
+          CLOUD__UPLOAD_SSH_DIR: ${{ env.IS_RELEASE == 'true' && secrets.PRERELEASE_UPLOAD_SSH_DIR || secrets.DEV_UPLOAD_SSH_DIR }}
+          CLOUD__SSH_PRV_KEY: ${{ secrets.DEV_SSH_PRV_KEY }}
+          CLOUD__SIGN_BUILD_REPOS_CMD: ${{ secrets.DEV_SIGN_BUILD_REPOS_CMD }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          MANUAL_VERSION: ${{ inputs.version }}
+        run: |-
+          
+          # Fail on error
+          set -euo pipefail
+          
+          # Bootstrap build
+          source bootstrap.bash $([[ "$IS_RELEASE" == "true" ]] || echo "--testing")
+
+          # Get version for the build, either from tag or latest commit
+          if [ "$IS_RELEASE" = "true" ]; then
+            if [ -n "${MANUAL_VERSION:-}" ]; then
+              pkg_version="${MANUAL_VERSION#v}"
+            else
+              pkg_version="${RELEASE_TAG#v}"
+            fi
+          else
+            pkg_version="$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")"
+          fi
+          
+          # Set build base directory
+          pkg_name="${{ env.PKG_NAME }}"
+          destdirbase="$HOME/$pkg_name"
+
+          # Make for Debian
+          perl Makefile.PL \
+              PERL_MM_OPT="$pkg_version" \
+              NO_PACKLIST=1 \
+              NO_PERLLOCAL=1 \
+              SITELIBEXP=/usr/share/perl5 \
+              INSTALLSITELIB=/usr/share/perl5 \
+              INSTALLSITEMAN1DIR=/usr/share/man/man1 \
+              INSTALLSITEMAN3DIR=/usr/share/man/man3 \
+              INSTALLBIN=/usr/bin \
+              SITEPREFIX=/usr \
+              PREFIX=/usr
+          make 
+          make DESTDIR=$destdirbase-deb install
+          
+          # Make for RPM
+          make clean
+          perl Makefile.PL \
+              PERL_MM_OPT="$pkg_version" \
+              NO_PACKLIST=1 \
+              NO_PERLLOCAL=1 \
+              SITELIBEXP=/usr/share/perl5/vendor_perl \
+              INSTALLSITELIB=/usr/share/perl5/vendor_perl \
+              INSTALLSITEMAN1DIR=/usr/share/man/man1 \
+              INSTALLSITEMAN3DIR=/usr/share/man/man3 \
+              INSTALLBIN=/usr/bin \
+              SITEPREFIX=/usr \
+              PREFIX=/usr
+          make 
+          make DESTDIR=$destdirbase-rpm install
+
+          # Create symlinks
+          declare -A paths=(
+            ["deb"]="usr/share/webmin/virtual-server"
+            ["rpm"]="usr/libexec/webmin/virtual-server"
+          )
+          for suffix in "${!paths[@]}"; do
+            target_path="${paths[$suffix]}"
+            mkdir -p "$destdirbase-$suffix/$target_path"
+            ln -s "../../../bin/$pkg_name-system" "$destdirbase-$suffix/$target_path/config-system.pl"
+          done
+
+          # Build Debian package
+          build_native_package \
+            --architectures noarch \
+            --files $destdirbase-deb \
+            --target-dir "$ROOT_REPOS" \
+            --base-name "$pkg_name" \
+            --version "$pkg_version" \
+            --release "${{ env.PKG_RELEASE }}" \
+            --depends perl \
+            --depends perl-modules \
+            --depends liblog-log4perl-perl \
+            --depends webmin-virtual-server \
+            --section devel \
+            --skip rpm \
+            --description "${{ env.PKG_DESC }}" \
+            --summary "${{ env.PKG_SUMMARY }}" \
+            --homepage "${{ env.PKG_HOMEPAGE }}"
+          
+          # Build RPM package
+          build_native_package \
+            --architectures noarch \
+            --files $destdirbase-rpm\
+            --target-dir "$ROOT_REPOS" \
+            --base-name "$pkg_name" \
+            --version "$pkg_version" \
+            --release "${{ env.PKG_RELEASE }}" \
+            --depends perl \
+            --depends "perl(File::Basename)" \
+            --depends "perl(File::Path)" \
+            --depends "perl(Getopt::Long)" \
+            --depends "perl(Log::Log4perl)" \
+            --depends "perl(POSIX)" \
+            --depends "perl(Time::HiRes)" \
+            --depends "perl(Term::ANSIColor)" \
+            --depends wbm-virtual-server \
+            --group "Development/Libraries" \
+            --spec-files-depth 3 \
+            --skip deb \
+            --description "${{ env.PKG_DESC }}" \
+            --summary "${{ env.PKG_SUMMARY }}" \
+            --homepage "${{ env.PKG_HOMEPAGE }}"
+          
+          # Upload and sign
+          upload_list=("$ROOT_REPOS/"*)
+          cloud_upload upload_list
+          cloud_sign_and_build_repos virtualmin.dev
