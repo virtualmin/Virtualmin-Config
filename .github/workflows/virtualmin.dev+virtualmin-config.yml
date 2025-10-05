@@ -79,6 +79,9 @@ jobs:
           else
             pkg_version="$(get_remote_git_tag_version "$GH_REPO" "$GH_TOKEN" "$IS_RELEASE")"
           fi
+
+          # Set package section
+          pkg_section=$([ "$IS_RELEASE" = "true" ] && echo admin || echo devel)
           
           # Set build base directory
           pkg_name="${{ env.PKG_NAME }}"
@@ -138,7 +141,7 @@ jobs:
             --depends perl-modules \
             --depends liblog-log4perl-perl \
             --depends webmin-virtual-server \
-            --section devel \
+            --section "$pkg_section" \
             --skip rpm \
             --description "${{ env.PKG_DESC }}" \
             --summary "${{ env.PKG_SUMMARY }}" \
