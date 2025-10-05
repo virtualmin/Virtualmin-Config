@@ -114,7 +114,7 @@ jobs:
             --target-dir "$ROOT_REPOS" \
             --base-name "$pkg_name" \
             --version "$pkg_version" \
-            --release "1" \
+            --release "${{ env.PKG_RELEASE }}" \
             --depends perl \
             --depends perl-modules \
             --depends liblog-log4perl-perl \
@@ -132,7 +132,7 @@ jobs:
             --target-dir "$ROOT_REPOS" \
             --base-name "$pkg_name" \
             --version "$pkg_version" \
-            --release "1" \
+            --release "${{ env.PKG_RELEASE }}" \
             --depends perl \
             --depends "perl(File::Basename)" \
             --depends "perl(File::Path)" \
