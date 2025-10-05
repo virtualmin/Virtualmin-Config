@@ -24,7 +24,7 @@ env:
 jobs:
   build-amd64:
     runs-on: ubuntu-latest
-    if: ${{ !contains(github.event.head_commit.message, '[no-build]') }}
+    if: ${{ github.event_name == 'release' || (github.event_name == 'push' && !contains(github.event.head_commit.message, '[no-build]')) }}
     env:
       TZ: Europe/Nicosia
     steps:
