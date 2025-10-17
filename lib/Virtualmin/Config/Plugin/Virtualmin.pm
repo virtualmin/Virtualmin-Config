@@ -204,6 +204,7 @@ sub actions {
       $umailconfig{'mailbox_dir'} = 'Maildir';
       $umailconfig{'view_html'}   = 2;
       $umailconfig{'view_images'} = 1;
+      $umailconfig{'delete_mode'} = 1;
 
       # Configure the Usermin Mailbox module to display buttons on the top too
       $umailconfig{'top_buttons'} = 2;
