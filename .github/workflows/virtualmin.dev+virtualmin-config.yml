@@ -6,7 +6,8 @@ on:
       - master
   release:
     types:
-      - published
+      - prereleased
+      - released
   workflow_dispatch:
     inputs:
       force-release:
@@ -17,6 +18,7 @@ on:
         type: string
         required: true
         description: "Version to build, e.g. 7.0.24"
+
 env:
   GH_REPO: ${{ github.repository }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -26,6 +28,7 @@ env:
   PKG_HOMEPAGE: "https://github.com/virtualmin/Virtualmin-Config"
   PKG_SUMMARY: "Configure a system for use by Virtualmin"
   IS_RELEASE: ${{ github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.force-release) }}
+  IS_PRERELEASE: ${{ github.event.release.prerelease || false }}
 
   BUILD_DEPS: "git tar curl gzip gcc make dpkg-dev fakeroot rpm build-essential libc6-dev coreutils"
   BUILD_BOOTSTRAP: "https://raw.githubusercontent.com/webmin/webmin-ci-cd/main/build/bootstrap.bash"
@@ -66,7 +69,9 @@ jobs:
           set -euo pipefail
           
           # Bootstrap build
-          source bootstrap.bash $([[ "$IS_RELEASE" == "true" ]] || echo "--testing")
+          source bootstrap.bash \
+            $([[ "$IS_RELEASE" != "true" ]] && echo "--testing") \
+            $([[ "$IS_PRERELEASE" == "true" ]] && echo "--prerelease")
 
           # Get version for the build, either from tag or latest commit
           if [ "$IS_RELEASE" = "true" ]; then
