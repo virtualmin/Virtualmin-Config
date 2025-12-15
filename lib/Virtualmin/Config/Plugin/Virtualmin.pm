@@ -165,122 +165,6 @@ sub actions {
     save_module_config(\%virtual_server::config);
     unlock_file($module_config_file);
 
-    # Configure the Read User Mail module to look for sub-folders
-    # under ~/Maildir
-    if (!$mini_stack) {
-      my %mconfig = foreign_config("mailboxes");
-      $mconfig{'mail_usermin'}    = "Maildir";
-      $mconfig{'from_virtualmin'} = 1;
-      $mconfig{'spam_buttons'} = 'list,mail';
-      save_module_config(\%mconfig, "mailboxes");
-
-      # Setup the Usermin read mail module
-      foreign_require("usermin", "usermin-lib.pl");
-      my $cfile = "$usermin::config{'usermin_dir'}/mailbox/config";
-      my %mailconfig;
-      read_file($cfile, \%mailconfig);
-      foreign_require("postfix", "postfix-lib.pl");
-      my ($map)
-        = postfix::get_maps_files(
-        postfix::get_real_value($postfix::virtual_maps));
-      $map ||= "/etc/postfix/virtual";
-      $mailconfig{'from_map'}         = $map;
-      $mailconfig{'from_format'}      = 1;
-      $mailconfig{'mail_system'}      = 4;
-      $mailconfig{'pop3_server'}      = 'localhost';
-      $mailconfig{'mail_qmail'}       = undef;
-      $mailconfig{'mail_dir_qmail'}   = 'Maildir';
-      $mailconfig{'server_attach'}    = 0;
-      $mailconfig{'send_mode'}        = 'localhost';
-      $mailconfig{'nologout'}         = 1;
-      $mailconfig{'noindex_hostname'} = 1;
-      $mailconfig{'edit_from'}        = 0;
-      write_file($cfile, \%mailconfig);
-
-      # Set the mail folders subdir to Maildir
-      my $ucfile = "$usermin::config{'usermin_dir'}/mailbox/uconfig";
-      my %umailconfig;
-      read_file($ucfile, \%umailconfig);
-      $umailconfig{'mailbox_dir'} = 'Maildir';
-      $umailconfig{'view_html'}   = 2;
-      $umailconfig{'view_images'} = 1;
-      $umailconfig{'delete_mode'} = 1;
-
-      # Configure the Usermin Mailbox module to display buttons on the top too
-      $umailconfig{'top_buttons'} = 2;
-
-      # Configure the Usermin Mailbox module not to display send buttons twice
-      $umailconfig{'send_buttons'} = 0;
-
-      # Configure the Usermin Mailbox module to always start with one attachment for type
-      $umailconfig{'def_attach'} = 1;
-
-      # Default mailbox name for Sent mail
-      $umailconfig{'sent_name'} = 'Sent';
-      write_file($ucfile, \%umailconfig);
-
-      # Set the default Usermin ACL to only allow access to email modules
-      usermin::save_usermin_acl(
-        "user",
-        [
-          "mailbox",  "changepass", "spam",    "filter",
-          "language", "forward",    "cron",    "fetchmail",
-          "updown",   "schedule",   "filemin", "gnupg"
-        ]
-      );
-
-      # Update user.acl
-      my $afile = "$usermin::config{'usermin_dir'}/user.acl";
-      my %uacl;
-      read_file($afile, \%uacl);
-      $uacl{'root'} = '';
-      write_file($afile, \%uacl);
-
-      # Configure the Usermin Change Password module to use Virtualmin's
-      # change-password.pl script
-      $cfile = "$usermin::config{'usermin_dir'}/changepass/config";
-      my %cpconfig;
-      read_file($cfile, \%cpconfig);
-      $cpconfig{'passwd_cmd'}
-        = $config_directory eq "/etc/webmin"
-        ? "$root/virtual-server/change-password.pl"
-        : "virtualmin change-password";
-      $cpconfig{'cmd_mode'} = 1;
-      write_file($cfile, \%cpconfig);
-
-      # Also do the same thing for expired password changes
-      $cfile = "$usermin::config{'usermin_dir'}/config";
-      my %umconfig;
-      read_file($cfile, \%umconfig);
-      $umconfig{'passwd_cmd'} = "$root/virtual-server/change-password.pl";
-      write_file($cfile, \%umconfig);
-
-      # Configure the Usermin Filter module to use the right path for
-      # Webmin config files. The defaults are incorrect on FreeBSD, where
-      # we install under /usr/local/etc/webmin
-      $cfile = "$usermin::config{'usermin_dir'}/filter/config";
-      my %ficonfig;
-      read_file($cfile, \%ficonfig);
-      $ficonfig{'virtualmin_config'} = "$config_directory/virtual-server";
-      $ficonfig{'virtualmin_spam'}
-        = "$config_directory/virtual-server/lookup-domain.pl";
-      write_file($cfile, \%ficonfig);
-
-      # Same for Usermin custom commands
-      $cfile = "$usermin::config{'usermin_dir'}/commands/config";
-      my %ccconfig;
-      read_file($cfile, \%ccconfig);
-      $ccconfig{'webmin_config'} = "$config_directory/custom";
-      write_file($cfile, \%ccconfig);
-
-      # Same for Usermin .htaccess files
-      $cfile = "$usermin::config{'usermin_dir'}/htaccess/config";
-      my %htconfig;
-      read_file($cfile, \%htconfig);
-      $htconfig{'webmin_apache'} = "$config_directory/apache";
-      write_file($cfile, \%htconfig);
-    }
-
     # Setup the Apache, BIND and DB modules to use tables for lists
     foreach my $t (
       ['apache',     'show_list'],
@@ -289,6 +173,7 @@ sub actions {
       ['postgresql', 'style']
       )
     {
+      next if (!foreign_installed($t->[0]));
       next if (!foreign_check($t->[0]));
       my %mconfig = foreign_config($t->[0]);
       $mconfig{$t->[1]} = 1;

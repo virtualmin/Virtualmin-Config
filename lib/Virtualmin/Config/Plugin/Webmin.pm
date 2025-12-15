@@ -65,6 +65,19 @@ sub actions {
     put_miniserv_config(\%miniserv);
     webmin::build_installed_modules(1);
     $self->logsystem("/etc/webmin/restart-by-force-kill > /dev/null 2>&1");
+    # Mailboxes configuration
+    my $mini_stack =
+      (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
+        ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
+    # Configure the Read User Mail module to look for sub-folders
+    # under ~/Maildir
+    if (!$mini_stack) {
+      my %mconfig = foreign_config("mailboxes");
+      $mconfig{'mail_usermin'}    = "Maildir";
+      $mconfig{'from_virtualmin'} = 1;
+      $mconfig{'spam_buttons'} = 'list,mail';
+      save_module_config(\%mconfig, "mailboxes");
+    }
     $self->done(1);    # OK!
   };
   if ($@) {
