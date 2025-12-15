@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Dec 15 2025 Ilia Ross <ilia@virtualmin.com> 8.0.4
+- Fix to set up mail in each module respectively
 * Mon Sep 29 2025 Ilia Ross <ilia@virtualmin.com> 8.0.3
 - Fix Apache-related issues
 * Tue Sep 16 2025 Ilia Ross <ilia@virtualmin.com> 8.0.2
