@@ -69,7 +69,7 @@ jobs:
           
           # Bootstrap build
           source bootstrap.bash \
-            $([[ "$IS_RELEASE" != "true" ]] && echo "--testing") \
+            $([[ "$IS_RELEASE" == "true" ]] && echo "--release" || echo "--testing") \
             $([[ "$IS_PRERELEASE" == "true" ]] && echo "--prerelease")
 
           # Get version for the build, either from tag or latest commit
