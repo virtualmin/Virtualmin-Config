@@ -177,4 +177,4 @@ jobs:
           # Upload and sign
           upload_list=("$ROOT_REPOS/"*)
           cloud_upload upload_list
-          cloud_sign_and_build_repos virtualmin.dev
+          cloud_sign_and_build_repos_auto virtualmin.dev
