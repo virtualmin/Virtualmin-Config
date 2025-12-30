@@ -175,7 +175,6 @@ sub actions {
       ['postgresql', 'style']
       )
     {
-      next if (!foreign_installed($t->[0]));
       next if (!foreign_check($t->[0]));
       my %mconfig = foreign_config($t->[0]);
       $mconfig{$t->[1]} = 1;
