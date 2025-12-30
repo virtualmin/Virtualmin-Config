@@ -51,16 +51,19 @@ sub actions {
 
     my $firewall_cmd = has_command('firewall-cmd');
     if ($firewall_cmd) {
-      $self->logsystem("$firewall_cmd --set-default-zone public");
+      my $default_zone = `$firewall_cmd --get-default-zone`;
+      chomp($default_zone);
+      $default_zone = 'public' if ($default_zone !~ /^[A-Za-z0-9_-]+$/);
+      $self->logsystem("$firewall_cmd --set-default-zone $default_zone");
       foreach my $s (@services) {
-        $self->logsystem("$firewall_cmd --zone=public --add-service=${s}");
+        $self->logsystem("$firewall_cmd --zone=$default_zone --add-service=${s}");
         $self->logsystem(
-          "$firewall_cmd --zone=public --permanent --add-service=${s}");
+          "$firewall_cmd --zone=$default_zone --permanent --add-service=${s}");
       }
       foreach my $s (@ports) {
-        $self->logsystem("$firewall_cmd --zone=public --add-port=${s}");
+        $self->logsystem("$firewall_cmd --zone=$default_zone --add-port=${s}");
         $self->logsystem(
-          "$firewall_cmd --zone=public --permanent --add-port=${s}");
+          "$firewall_cmd --zone=$default_zone --permanent --add-port=${s}");
       }
       $self->logsystem("$firewall_cmd --complete-reload");
     }
