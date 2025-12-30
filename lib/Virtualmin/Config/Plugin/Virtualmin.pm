@@ -43,6 +43,8 @@ sub actions {
       (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
         ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
     foreign_require("virtual-server");
+    virtual_server::push_all_print();
+	  virtual_server::set_all_null_print();
     lock_file($module_config_file);
     $virtual_server::config{'mail_system'}          = 0;
     $virtual_server::config{'nopostfix_extra_user'} = 1;
