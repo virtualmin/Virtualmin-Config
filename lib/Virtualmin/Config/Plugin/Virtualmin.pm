@@ -147,22 +147,6 @@ sub actions {
       }
     }
 
-    # Try to request SSL certificate for the hostname
-    if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}) &&
-        !$virtual_server::config{'default_domain_ssl'} &&
-        !$virtual_server::config{'wizard_run'})
-    {
-      my ($ok, $error) = virtual_server::setup_virtualmin_default_hostname_ssl();
-      write_file_contents("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_status",
-                          "SSL certificate request for the hostname : $ok : @{[html_strip($error)]}");
-      if ($ok) {
-        mkdir("$ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}/virtualmin_ssl_host_success");
-      }
-      else {
-        virtual_server::delete_virtualmin_default_hostname_ssl();
-      }
-    }
-
     # Save Virtualmin configuration after all changes are made
     save_module_config(\%virtual_server::config);
     unlock_file($module_config_file);

@@ -134,6 +134,11 @@ sub format_plugin_name {
   if ($name eq 'MySQL') {
     $name = $db;
   }
+
+  # SSL for hostname
+  if ($name eq 'SSL') {
+    $name = "SSL for the hostname";
+  }
   return $name;
 }
 

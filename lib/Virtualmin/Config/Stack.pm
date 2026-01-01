@@ -17,7 +17,7 @@ sub common_modules {
         "Webmin",      "MySQL",        "Firewall",
         "Quotas",      "Shells",       "Virtualmin",
         "Etckeeper",   "Apache",       "AWStats",
-        "Fail2ban"
+        "Fail2ban",    "SSL",
     );
 }
 
