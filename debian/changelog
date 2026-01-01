@@ -1,3 +1,10 @@
+virtualmin-config (8.0.5) stable; urgency=medium
+
+  * Add a separate plugin for configuring SSL for the hostname
+  * Fix to respect default zone Firewalld
+
+ -- Ilia Ross <ilia@virtualmin.com>  Fri, 02 Jan 2026 00:00:00 +0200
+
 virtualmin-config (8.0.4) stable; urgency=medium
 
   * Fix to set up mail in each module respectively

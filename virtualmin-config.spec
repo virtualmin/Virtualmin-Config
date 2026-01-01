@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Fri Jan 02 2026 Ilia Ross <ilia@virtualmin.com> 8.0.5
+- Add a separate plugin for configuring SSL for the hostname
 * Mon Dec 15 2025 Ilia Ross <ilia@virtualmin.com> 8.0.4
 - Fix to set up mail in each module respectively
 * Mon Sep 29 2025 Ilia Ross <ilia@virtualmin.com> 8.0.3
