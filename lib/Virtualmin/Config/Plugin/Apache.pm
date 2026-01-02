@@ -137,7 +137,8 @@ sub actions {
     apache::clear_apache_modules_cache();
 
     # Restart Apache because it might not be running
-    $self->logsystem("systemctl restart ; sleep $delay");
+    apache::stop_apache();
+    apache::start_apache();
 
     $self->done(1);    # OK!
   };
