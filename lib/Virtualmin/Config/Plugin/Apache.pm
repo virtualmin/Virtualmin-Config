@@ -49,6 +49,9 @@ sub actions {
       }
     }
 
+    # Load Apache module
+    foreign_require("apache");
+
     # On Debian and Ubuntu, enable some modules which are disabled by default
     my @apache_mods = qw(
       suexec ssl slotmem_shm rewrite proxy_http proxy_fcgi
@@ -70,7 +73,7 @@ sub actions {
         flush_file_lines($fn);
       }
       # Restart Apache to apply changes
-      $self->logsystem("apache2ctl restart ; sleep $delay");
+      apache::restart_apache();
     }
     # Configure RH systems
     elsif ($gconfig{'os_type'} eq 'redhat-linux') {
@@ -112,7 +115,6 @@ sub actions {
     }
 
     # Disable global UserDir option
-    foreign_require("apache");
     my $conf = apache::get_config();
     my ($userdir) = apache::find_directive_struct("UserDir", $conf);
     if ($userdir) {
@@ -144,6 +146,9 @@ sub actions {
 
     # Clear module cache to ensure changes take effect
     apache::clear_apache_modules_cache();
+
+    # Restart Apache because it might not be running
+    apache::restart_apache();
 
     $self->done(1);    # OK!
   };
