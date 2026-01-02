@@ -27,8 +27,11 @@ sub actions {
 
   $self->use_webmin();
 
-  # End of Webmin boilerplate.
-
+  unless (&foreign_check("firewall")) {
+    $log->info("Cannot configure Fail2ban module as Firewall module is not installed");
+    $self->done(2);
+  }
+print "XXXXXX\n\n";
   $self->spin();
   eval {
     if (has_command('fail2ban-server')) {
