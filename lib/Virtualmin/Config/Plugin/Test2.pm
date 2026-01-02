@@ -13,8 +13,6 @@ sub new {
   return $self;
 }
 
-# actions method performs whatever configuration is needed for this
-# plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
 

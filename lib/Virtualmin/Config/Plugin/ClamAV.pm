@@ -7,7 +7,6 @@ use Time::HiRes qw( sleep );
 
 our $config_directory;
 our (%gconfig, %miniserv);
-our $trust_unknown_referers = 1;
 
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
@@ -20,20 +19,10 @@ sub new {
   return $self;
 }
 
-# actions method performs whatever configuration is needed for this
-# plugin. XXX Needs to make a backup so changes can be reverted.
 sub actions {
   my $self = shift;
 
-  use Cwd;
-  my $cwd  = getcwd();
-  my $root = $self->root();
-  chdir($root);
-  $0 = "$root/virtual-server/config-system.pl";
-  push(@INC, $root);
-  push(@INC, "$root/vendor_perl");
-  eval 'use WebminCore';    ## no critic
-  init_config();
+  $self->use_webmin();
 
   $self->spin();
   sleep 0.2;                # XXX Pause to allow spin to start.
@@ -100,15 +89,7 @@ sub actions {
 sub tests {
   my $self = shift;
 
-  use Cwd;
-  my $cwd  = getcwd();
-  my $root = $self->root();
-  chdir($root);
-  $0 = "$root/virtual-server/config-system.pl";
-  push(@INC, $root);
-  push(@INC, "$root/vendor_perl");
-  eval 'use WebminCore';    ## no critic
-  init_config();
+  $self->use_webmin();
 
   # RHEL/CentOS/Fedora
   # Start clamd@scan and run clamdscan just to prime the damned thing.

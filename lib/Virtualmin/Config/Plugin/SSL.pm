@@ -9,7 +9,6 @@ use parent 'Virtualmin::Config::Plugin';
 our $config_directory;
 our (%gconfig, %miniserv);
 our (%config, $module_config_file);
-our $trust_unknown_referers = 1;
 
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
@@ -22,15 +21,7 @@ sub new {
 sub actions {
   my $self = shift;
 
-  use Cwd;
-  my $cwd  = getcwd();
-  my $root = $self->root();
-  chdir($root);
-  $0 = "$root/virtual-server/config-system.pl";
-  push(@INC, $root);
-  push(@INC, "$root/vendor_perl");
-  eval 'use WebminCore';    ## no critic
-  init_config();
+  $self->use_webmin();
 
   $self->spin();
   eval {
