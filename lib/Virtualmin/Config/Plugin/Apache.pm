@@ -62,7 +62,7 @@ sub actions {
         flush_file_lines($fn);
       }
       # Restart Apache to apply changes
-      apache::restart_apache();
+      $self->logsystem("apache2ctl restart ; sleep $delay");
     }
     # Configure RH systems
     elsif ($gconfig{'os_type'} eq 'redhat-linux') {
@@ -137,7 +137,7 @@ sub actions {
     apache::clear_apache_modules_cache();
 
     # Restart Apache because it might not be running
-    apache::restart_apache();
+    $self->logsystem("apache2ctl restart ; sleep $delay");
 
     $self->done(1);    # OK!
   };
