@@ -175,6 +175,11 @@ sub format_plugin_name {
   if ($name eq 'SSL') {
     $name = "SSL for the hostname";
   }
+
+  # Fail2banFirewalld
+  if ($name eq 'Fail2banFirewalld') {
+    $name = "Fail2ban";
+  }
   return $name;
 }
 
