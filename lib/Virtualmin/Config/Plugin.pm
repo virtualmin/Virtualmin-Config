@@ -148,6 +148,10 @@ package $pkg;
 our \$trust_unknown_referers = 1;
 require WebminCore;
 WebminCore->import();
+{
+  no warnings 'redefine';
+  *WebminCore::error_stderr = sub { return; };
+}
 init_config();
 1;
 EOF
