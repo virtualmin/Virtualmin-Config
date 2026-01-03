@@ -58,7 +58,8 @@ sub run {
   for (@plugins) {
     my $pkg = "Virtualmin::Config::Plugin::$_";
     load $pkg || die "Loading Plugin failed: $_";
-    my $plugin = $pkg->new(total => $total, bundle => $self->{bundle});
+    my $plugin = $pkg->new(total => $total, bundle => $self->{bundle},
+                           log => $self->{log});
     $plugin->actions();
     if ($self->{test} && $plugin->can('tests')) {
       $plugin->tests();

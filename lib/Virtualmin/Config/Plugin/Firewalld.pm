@@ -26,6 +26,15 @@ sub actions {
   $self->use_webmin();
 
   $self->spin();
+
+  # Is it actually installed?
+  my $firewalld = grep { -x "$_/firewall-cmd" }
+                  split(/:/, "/usr/bin:/bin:".($ENV{'PATH'} // ''));
+  unless ($firewalld) {
+    $self->done(2);
+    return;
+  }
+
   my @services
     = qw(ssh smtp smtps smtp-submission ftp pop3 pop3s imap imaps http https dns mdns dns-over-tls);
   my @ports = qw(20/tcp 2222/tcp 10000-10100/tcp 20000/tcp 49152-65535/tcp);

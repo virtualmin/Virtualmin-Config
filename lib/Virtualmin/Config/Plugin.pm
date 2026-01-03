@@ -22,7 +22,8 @@ sub new {
     name    => $args{name},
     depends => $args{depends},
     total   => $args{total},
-    bundle  => $args{bundle}
+    bundle  => $args{bundle},
+    log     => $args{log},
   };
   bless $self, $class;
 
@@ -270,6 +271,30 @@ sub spinner {
   &$meh()           if ($cmd eq 'meh');
   &$nok()           if ($cmd eq 'nok');
   return $slastsize if ($cmd eq 'lastsize');
+}
+
+sub add_postinstall_message {
+	my ($self, $msg, $logger) = @_;
+
+  $self->use_webmin();
+
+	$msg    = '' if !defined $msg;
+	$logger = '' if !defined $logger;
+
+	$logger ||= 'log_warning';
+
+	my $log = $self->{log};
+	require File::Basename;
+	my $dir  = File::Basename::dirname($log);
+	my $file = "$dir/virtualmin-config-postinstall-messages.log";
+
+	my $line = "$msg|$logger\n";
+
+	# Append to file
+	my $old = read_file_contents($file) || '';
+	my $new = $old . $line;
+  write_file_contents($file, $new);
+	return 1;
 }
 
 1;

@@ -73,8 +73,8 @@ sub replacements {
         $r{"Fail2ban"} = "Fail2ban";
     }
     else {
-        $r{"Firewall"} = undef;   # otherwise remove both
-        $r{"Fail2ban"} = undef;   # otherwise remove both
+        $r{"Firewall"} = undef;               # need clealy show failure
+        $r{"Fail2ban"} = 'Fail2banFirewalld'; # need to disable it
         $log->info("Neither the firewalld package nor the Webmin firewall ".
                    "module is installed, skipping Fail2ban");
     }

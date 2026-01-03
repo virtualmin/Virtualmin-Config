@@ -32,9 +32,26 @@ sub actions {
 
   $self->use_webmin();
 
-  # End of Webmin boilerplate.
-
   $self->spin();
+
+  # Is firewalld actually installed?
+  my $firewalld = grep { -x "$_/firewall-cmd" }
+                  split(/:/, "/usr/bin:/bin:".($ENV{'PATH'} // ''));
+  unless ($firewalld) {
+    foreign_require('init');
+    init::stop_action('fail2ban');
+    init::disable_at_boot('fail2ban');
+    $log->info("Firewalld not installed, stopping and disabling Fail2ban");
+    $self->add_postinstall_message(
+      "Firewalld could not be installed because it conflicts with the ".
+      "installed 'cloud-init' package on this OS. Fail2ban requires a working ".
+      "firewall and has been disabled.",
+      "log_info"
+    ) if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}));
+    $self->done(2);
+    return;
+  }
+
   eval {
     if (has_command('fail2ban-server')) {
 
