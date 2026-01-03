@@ -1,3 +1,13 @@
+virtualmin-config (8.0.6) stable; urgency=medium
+
+  * Add support for passing post-configuration messages to the installer
+  * Add ability not to fail if the firewalld package cannot be installed
+  * Fix correctly restart Apache
+  * Fix quota configuration for XFS systems
+  * Fix to stop any errors sent to stderr by the modules from being printed out
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Sun, 04 Jan 2026 02:00:00 +0200
+  
 virtualmin-config (8.0.5) stable; urgency=medium
 
   * Add a separate plugin for configuring SSL for the hostname
