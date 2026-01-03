@@ -109,58 +109,60 @@ sub actions {
         $res = 2;
         my $prt_std_err = 1;
         if ($xfs) {
-
-          my $grubby_cmd = &has_command('grubby');
+          # Update configuration
           my $grub_def_file = "/etc/default/grub";
-          my $grub_generate_config = sub {
-              my $grub_conf_file = "/boot/grub2/grub.cfg";
-              my $grub_conf_cmd = "grub2-mkconfig";
-              if (!-r $grub_conf_file) {
-                $grub_conf_file = "/boot/grub/grub.cfg";
-                $grub_conf_cmd = "grub-mkconfig";
-              }
-              # Always regenerate the real GRUB config in /boot,
-              # never the EFI stub.
-              my $have_bls = -d "/boot/loader/entries";
-              my $have_bls_flag = 0;
-              if ($grub_conf_cmd eq 'grub2-mkconfig' && $have_bls) {
-                # Detect BLS support
-                my $help = `$grub_conf_cmd --help 2>&1`;
-                $have_bls_flag = ($help =~ /--update-bls-cmdline/);
-              }
-              if (-r $grub_conf_file) {
-                &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
-                my $cmd = "$grub_conf_cmd -o $grub_conf_file";
-                $cmd .= " --update-bls-cmdline" if ($have_bls_flag);
-                $self->logsystem($cmd);
-              }
-          };
-          
-          # Use grubby command to enable user and group quotas
-          if (-x $grubby_cmd) {
-            $self->logsystem(
-              "$grubby_cmd --update-kernel=ALL --args=rootflags=uquota,gquota"
-            );
-            # Generate a new actual config file
-            &$grub_generate_config();
-          }
-          # Update configuration manually
-          elsif (-r $grub_def_file) {
+          if (-r $grub_def_file) {
             my %grub;
             &read_env_file($grub_def_file, \%grub) || ($res = 0);
-            my $v = $grub{'GRUB_CMDLINE_LINUX'};
-            if (defined($v) && $v !~ /rootflags=.*?(?:uquota|gquota)/) {
+            my $k;
+            if (exists($grub{'GRUB_CMDLINE_LINUX_DEFAULT'})) {
+              $k = 'GRUB_CMDLINE_LINUX_DEFAULT';
+            }
+            elsif (exists($grub{'GRUB_CMDLINE_LINUX'})) {
+              $k = 'GRUB_CMDLINE_LINUX';
+            }
+            my $v = defined($k) ? $grub{$k} : undef;
+            if (defined($v) && $v !~ /rootflags=.*?(?:u(?:sr)?|g(?:rp)?)quota/) {
               if ($v =~ /rootflags=(\S+)/) {
                 $v =~ s/rootflags=(\S+)/rootflags=$1,uquota,gquota/;
               }
               else {
                 $v .= " rootflags=uquota,gquota";
               }
-              $grub{'GRUB_CMDLINE_LINUX'} = $v;
+              $grub{$k} = $v;
               &write_env_file($grub_def_file, \%grub);
 
-              # Generate a new actual config file
-              &$grub_generate_config();
+              # Use grubby command to enable user and group quotas
+              my $grubby_cmd = &has_command('grubby');
+              if ($grubby_cmd && -x $grubby_cmd) {
+                # Update all kernel entries
+                $self->logsystem(
+                  "$grubby_cmd --update-kernel=ALL --args=rootflags=uquota,gquota"
+                );
+              } else {
+                # Generate a new actual config file
+                my $grub_conf_file = "/boot/grub2/grub.cfg";
+                my $grub_conf_cmd = "grub2-mkconfig";
+                if (!-r $grub_conf_file) {
+                  $grub_conf_file = "/boot/grub/grub.cfg";
+                  $grub_conf_cmd = "grub-mkconfig";
+                }
+                # Always regenerate the real GRUB config in /boot,
+                # never the EFI stub.
+                my $have_bls = -d "/boot/loader/entries";
+                my $have_bls_flag = 0;
+                if ($grub_conf_cmd eq 'grub2-mkconfig' && $have_bls) {
+                  # Detect BLS support
+                  my $help = `$grub_conf_cmd --help 2>&1`;
+                  $have_bls_flag = ($help =~ /--update-bls-cmdline/);
+                }
+                if (-r $grub_conf_file) {
+                  &copy_source_dest($grub_conf_file, "$grub_conf_file.orig");
+                  my $cmd = "$grub_conf_cmd -o $grub_conf_file";
+                  $cmd .= " --update-bls-cmdline" if $have_bls_flag;
+                  $self->logsystem($cmd);
+                }
+              }
             }
             else {
               $res         = 1;
