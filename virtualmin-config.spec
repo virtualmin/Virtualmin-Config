@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Sat Jan 10 2026 Ilia Ross <ilia@virtualmin.com> 8.0.8
+- Fix config file locking
 * Fri Jan 09 2026 Ilia Ross <ilia@virtualmin.com> 8.0.7
 - Fix an issue with misaligned installation progress indicators
 * Sun Jan 04 2026 Ilia Ross <ilia@virtualmin.com> 8.0.6
