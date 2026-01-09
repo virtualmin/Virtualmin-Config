@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Fri Jan 09 2026 Ilia Ross <ilia@virtualmin.com> 8.0.7
+- Fix an issue with misaligned installation progress indicators
 * Sun Jan 04 2026 Ilia Ross <ilia@virtualmin.com> 8.0.6
 - Fix quota configuration for XFS systems and other improvements
 * Fri Jan 02 2026 Ilia Ross <ilia@virtualmin.com> 8.0.5

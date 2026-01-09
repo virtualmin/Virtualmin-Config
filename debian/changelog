@@ -1,4 +1,12 @@
-virtualmin-config (8.0.6) stable; urgency=medium
+virtualmin-config (8.0.7) stable; urgency=medium
+
+  * Fix an issue with misaligned installation progress indicators
+  * Fix to use the Apache API to apply enabled modules
+  * Fix to delete previously created config post-install message file
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Fri, 09 Jan 2026 23:00:00 +0200
+
+  virtualmin-config (8.0.6) stable; urgency=medium
 
   * Add support for passing post-configuration messages to the installer
   * Add ability not to fail if the firewalld package cannot be installed
