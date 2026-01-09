@@ -126,24 +126,24 @@ sub root {
 }
 
 sub use_webmin {
-	my $self = shift;
-	state %pkg_ready;
-	my $pkg = caller;
-	
-	die "Bad caller package: $pkg" if $pkg !~ /^[A-Za-z_]\w*(?:::\w+)*$/;
-	
-	return 1 if $pkg_ready{$pkg}++;
-	
-	my $root = $self->root();
-	my $cwd  = Cwd::getcwd();
-	
-	chdir($root) || die "chdir($root) failed: $!";
-	$0 = "$root/virtual-server/config-system.pl";
-	push(@INC, $root) unless grep { $_ eq $root } @INC;
-	my $vroot = "$root/vendor_perl";
-	push(@INC, $vroot) unless grep { $_ eq $vroot } @INC;
-	
-	my $code = <<"EOF";
+  my $self = shift;
+  state %pkg_ready;
+  my $pkg = caller;
+  
+  die "Bad caller package: $pkg" if $pkg !~ /^[A-Za-z_]\w*(?:::\w+)*$/;
+  
+  return 1 if $pkg_ready{$pkg}++;
+  
+  my $root = $self->root();
+  my $cwd  = Cwd::getcwd();
+  
+  chdir($root) || die "chdir($root) failed: $!";
+  $0 = "$root/virtual-server/config-system.pl";
+  push(@INC, $root) unless grep { $_ eq $root } @INC;
+  my $vroot = "$root/vendor_perl";
+  push(@INC, $vroot) unless grep { $_ eq $vroot } @INC;
+  
+  my $code = <<"EOF";
 package $pkg;
 our \$trust_unknown_referers = 1;
 require WebminCore;
@@ -155,13 +155,13 @@ WebminCore->import();
 init_config();
 1;
 EOF
-	
-	my $ok  = eval $code;
-	my $err = $@;
-	chdir($cwd) || die "chdir($cwd) failed: $!";
-	die "Failed to initialize Webmin core: $err" if !$ok;
-	
-	return 1;
+  
+  my $ok  = eval $code;
+  my $err = $@;
+  chdir($cwd) || die "chdir($cwd) failed: $!";
+  die "Failed to initialize Webmin core: $err" if !$ok;
+  
+  return 1;
 }
 
 # format_plugin_name(plugin-name)
@@ -283,27 +283,27 @@ sub spinner {
 }
 
 sub add_postinstall_message {
-	my ($self, $msg, $logger) = @_;
+  my ($self, $msg, $logger) = @_;
 
   $self->use_webmin();
 
-	$msg    = '' if !defined $msg;
-	$logger = '' if !defined $logger;
+  $msg    = '' if !defined $msg;
+  $logger = '' if !defined $logger;
 
-	$logger ||= 'log_warning';
+  $logger ||= 'log_warning';
 
-	my $log = $self->{log};
-	require File::Basename;
-	my $dir  = File::Basename::dirname($log);
-	my $file = "$dir/virtualmin-config-postinstall-messages.log";
+  my $log = $self->{log};
+  require File::Basename;
+  my $dir  = File::Basename::dirname($log);
+  my $file = "$dir/virtualmin-config-postinstall-messages.log";
 
-	my $line = "$msg|$logger\n";
+  my $line = "$msg|$logger\n";
 
-	# Append to file
-	my $old = read_file_contents($file) || '';
-	my $new = $old . $line;
+  # Append to file
+  my $old = read_file_contents($file) || '';
+  my $new = $old . $line;
   write_file_contents($file, $new);
-	return 1;
+  return 1;
 }
 
 1;
