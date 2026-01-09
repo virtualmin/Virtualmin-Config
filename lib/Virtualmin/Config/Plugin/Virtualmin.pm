@@ -7,7 +7,7 @@ use parent 'Virtualmin::Config::Plugin';
 
 our $config_directory;
 our (%gconfig, %miniserv);
-our (%config, $module_config_file);
+our (%config, $module_name, $module_config_file);
 
 my $log = Log::Log4perl->get_logger("virtualmin-config-system");
 
@@ -32,9 +32,9 @@ sub actions {
       (defined $self->bundle() && $self->bundle() =~ /mini/i) ?
         ($self->bundle() =~ /LEMP/i ? 'LEMP' : 'LAMP') : 0;
     foreign_require("virtual-server");
-    virtual_server::push_all_print();
-	  virtual_server::set_all_null_print();
+
     lock_file($module_config_file);
+
     $virtual_server::config{'mail_system'}          = 0;
     $virtual_server::config{'nopostfix_extra_user'} = 1;
     $virtual_server::config{'aliascopy'}            = 1;
@@ -137,7 +137,7 @@ sub actions {
     }
 
     # Save Virtualmin configuration after all changes are made
-    save_module_config(\%virtual_server::config);
+    save_module_config(\%virtual_server::config, $module_name);
     unlock_file($module_config_file);
 
     # Setup the Apache, BIND and DB modules to use tables for lists

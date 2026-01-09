@@ -26,9 +26,6 @@ sub actions {
   $self->spin();
   eval {
     foreign_require("virtual-server");
-    virtual_server::push_all_print();
-    virtual_server::set_all_null_print();
-    lock_file($module_config_file);
 
     my $rs = 2;
 
@@ -57,10 +54,6 @@ sub actions {
         virtual_server::delete_virtualmin_default_hostname_ssl();
     }
 
-    # Save Virtualmin configuration after all changes are made
-    save_module_config(\%virtual_server::config);
-    unlock_file($module_config_file);
-    
     $self->done($rs);    # Maybe OK!
   };
   if ($@) {
