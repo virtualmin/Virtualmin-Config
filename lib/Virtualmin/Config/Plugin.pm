@@ -74,11 +74,12 @@ sub spin {
     . $self->total()
     . RESET . "] "
     . $message;
-  my $color_correction = length(YELLOW . RESET . GREEN . RESET);
   $count++;
-  $message = $message
-    . " " x (79 - length($message) - spinner("lastsize") + $color_correction);
+  
   print $message;
+  print "\e[K";      # Clear to end of line (removes any garbage)
+  print "\e[77G";    # Move cursor to column 77
+  
   spinner("auto_start");
 }
 
@@ -214,20 +215,25 @@ sub spinner {
   }
 
   # Is new spinner
-  $slastsize = 3, $pos = 1, $schild = undef, return if ($cmd eq 'new');
+  if ($cmd eq 'new') {
+    kill 'KILL', $schild if $schild;
+    $schild = undef;
+    $slastsize = 3;
+    $pos = 1;
+    return;
+  }
 
-  my $sseq = [
-    qw(▒▒▒ █▒▒ ██▒ ███ ▒██ ▒▒█ ▒▒▒)];
+  my $sseq = [qw(▒▒▒ █▒▒ ██▒ ███ ▒██ ▒▒█ ▒▒▒)];
   my $sbksp = chr(0x08);
   my $start = sub {
     print "\x1b[?25l";
     $slastsize = 3;
     print colored("$sseq->[0]", 'cyan');
   };
-  my $done = sub { print $sbksp x $slastsize; print "\x1b[?25h"; };
-  my $ok   = sub { say colored(" ✔ ", "$whitecolor on_green"); };
-  my $meh  = sub { say colored(" ⚠ ", "$whitecolor on_yellow"); };
-  my $nok  = sub { say colored(" ✘ ", "$whitecolor on_red"); };
+  my $done = sub { print "\x1b[?25h"; };
+  my $ok   = sub { print "\e[77G\e[K"; say colored(" ✔ ", "$whitecolor on_green"); };
+  my $meh  = sub { print "\e[77G\e[K"; say colored(" ⚠ ", "$whitecolor on_yellow"); };
+  my $nok  = sub { print "\e[77G\e[K"; say colored(" ✘ ", "$whitecolor on_red"); };
 
   my $next = sub {
     print $sbksp x $slastsize;
@@ -267,19 +273,18 @@ sub spinner {
   };
 
   my $auto_done = sub {
-    kill 'KILL', $schild;
+    kill 'KILL', $schild if $schild;
     system('stty echo 1>/dev/null 2>&1');
-    my $pid = wait();
+    POSIX::waitpid($schild, 0) if $schild;
+    $schild = undef;
     &$done();
   };
 
-  # Returns
-  &$auto_start()    if ($cmd eq 'auto_start');
-  &$auto_done()     if ($cmd eq 'auto_done');
-  &$ok()            if ($cmd eq 'ok');
-  &$meh()           if ($cmd eq 'meh');
-  &$nok()           if ($cmd eq 'nok');
-  return $slastsize if ($cmd eq 'lastsize');
+  &$auto_start() if ($cmd eq 'auto_start');
+  &$auto_done()  if ($cmd eq 'auto_done');
+  &$ok()         if ($cmd eq 'ok');
+  &$meh()        if ($cmd eq 'meh');
+  &$nok()        if ($cmd eq 'nok');
 }
 
 sub add_postinstall_message {
