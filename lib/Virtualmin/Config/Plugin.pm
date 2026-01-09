@@ -302,6 +302,12 @@ sub add_postinstall_message {
   my $dir  = File::Basename::dirname($log);
   my $file = "$dir/virtualmin-config-postinstall-messages.log";
 
+  # Delete message file before starting
+  state $log_file_initialized;
+  if (!$log_file_initialized++) {
+    unlink($file) if -e $file;
+  }
+
   my $line = "$msg|$logger\n";
 
   # Append to file
