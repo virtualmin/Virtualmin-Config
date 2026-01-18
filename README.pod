@@ -54,18 +54,24 @@ git clone:
     make test
     make install
 
-Or, use your system native package manager. The followin assumes you have all
+Or, use your system native package manager. The following assumes you have all
 of the packages needed to build native packages installed.
 
 To build a dpkg for Debian/Ubuntu:
 
     dpkg-buildpackage -b -rfakeroot -us -uc
 
+Or use the helper script:
+
+    packaging/build-deb.sh
+
 And, for CentOS/Fedora/RHEL/etc. RPM distributions:
 
-    dzil build # Creates a tarball
-    cp Virtualmin-Config-*.tar.gz ~/rpmbuild/SOURCES
-    rpmbuild -bb virtualmin-config.spec
+    packaging/build-rpm.sh
+
+To create a source tarball for distribution:
+
+    packaging/build-tarball.sh
 
 =head1 ATTRIBUTES
 
