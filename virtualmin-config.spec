@@ -56,7 +56,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root,-)
-%doc dist.ini LICENSE META.json README
+%doc LICENSE META.json README
 %{perl_vendorlib}/*
 %{_mandir}/man1/*
 %{_mandir}/man3/*
