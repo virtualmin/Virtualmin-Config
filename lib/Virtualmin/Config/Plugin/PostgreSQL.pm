@@ -25,8 +25,9 @@ sub actions {
 
   $self->use_webmin();
 
+  $self->spin();
+
   if (foreign_check("postgresql")) {
-    $self->spin();
     eval {
       my $err;              # We should handle errors better here.
       foreign_require("postgresql", "postgresql-lib.pl");
@@ -46,6 +47,10 @@ sub actions {
       $log->error("Error configuring PostgreSQL: $@");
       $self->done(1);
     }
+  } else {
+    $log->info("PostgreSQL Webmin module has not been installed yet, ".
+               "skipping configuration.");
+    $self->done(2);
   }
 }
 
