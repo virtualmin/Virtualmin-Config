@@ -140,6 +140,16 @@ sub _gather_plugins {
     @plugins
       = grep { my $noplugin = $_; !grep(/^$noplugin$/, @noplugins) } @plugins;
   }
+
+  # Check for included plugins
+  my @iplugins = _flat($self->{'include'});
+  if (@iplugins) {
+    @plugins = _flat(@plugins);
+    no warnings "uninitialized";
+    foreach my $iplugin (@iplugins) {
+      push(@plugins, $iplugin) unless grep(/^$iplugin$/, @plugins);
+    }
+  }
   return @plugins;
 }
 
