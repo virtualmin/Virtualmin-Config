@@ -30,7 +30,7 @@ sub actions {
   if (foreign_check("postgresql")) {
     eval {
       my $err;              # We should handle errors better here.
-      foreign_require("postgresql", "postgresql-lib.pl");
+      foreign_require("postgresql");
       if (!-r $postgresql::config{'hba_conf'}) {
 
         # Needs to be initialized
@@ -40,17 +40,16 @@ sub actions {
         $err = postgresql::start_postgresql();
       }
 
-      #if ($err) { # Log an error } # Something went wrong
-      $self->done(0);
+      $self->done(1); # success
     };
     if ($@) {
       $log->error("Error configuring PostgreSQL: $@");
-      $self->done(1);
+      $self->done(0); # failure
     }
   } else {
     $log->info("PostgreSQL Webmin module has not been installed yet, ".
                "skipping configuration.");
-    $self->done(2);
+    $self->done(2); # warning, skipped
   }
 }
 
