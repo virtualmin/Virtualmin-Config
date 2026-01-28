@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        7.0.41
+Version:        8.1.0
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Wed Jan 28 2026 Ilia Ross <ilia@virtualmin.com> 8.1.0
+- Fix PostgreSQL configuration phase
 * Sat Jan 10 2026 Ilia Ross <ilia@virtualmin.com> 8.0.8
 - Fix config file locking
 * Fri Jan 09 2026 Ilia Ross <ilia@virtualmin.com> 8.0.7

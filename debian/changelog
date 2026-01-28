@@ -1,3 +1,11 @@
+virtualmin-config (8.1.0) stable; urgency=medium
+
+  * Fix PostgreSQL configuration phase
+  * Fix to support `--include` flag alongside bundles
+  * Drop `Dist::Zilla`, add local packaging scripts
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Wed, 28 Jan 2026 02:00:00 +0200
+
 virtualmin-config (8.0.8) stable; urgency=medium
 
   * Fix config file locking
