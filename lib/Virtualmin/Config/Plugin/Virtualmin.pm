@@ -134,6 +134,32 @@ sub actions {
           $virtual_server::config{'dkim_enabled'} = 1;
         }
       }
+      # EL 10 systems need a permissions fix because of a bug in the opendkim
+      # package
+      if (-d '/etc/opendkim') {
+        # Directory permissions
+        my @dirs = (
+          { path => '/etc/opendkim', owner => 'root:opendkim', mode => '0755' },
+          { path => '/etc/opendkim/keys', owner => 'root:opendkim', mode => '0750' },
+        );
+        for my $d (@dirs) {
+          next unless -d $d->{path};
+          $self->logsystem("chown $d->{owner} $d->{path}");
+          $self->logsystem("chmod $d->{mode} $d->{path}");
+        }
+        
+        # Config file permissions
+        my @files = qw(
+          /etc/opendkim/KeyTable
+          /etc/opendkim/SigningTable
+          /etc/opendkim/TrustedHosts
+        );
+        for my $f (@files) {
+          next unless -f $f;
+          $self->logsystem("chown opendkim:opendkim $f");
+          $self->logsystem("chmod 0640 $f");
+        }
+      }
     }
 
     # Save Virtualmin configuration after all changes are made
