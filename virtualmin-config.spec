@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        8.1.1
+Version:        8.1.2
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Mon Feb 16 2026 Ilia Ross <ilia@virtualmin.com> 8.1.2
+- Add support for the Usermin jail in Fail2ban
 * Mon Feb 02 2026 Ilia Ross <ilia@virtualmin.com> 8.1.1
 - Fix Usermin mailbox authentication to work after login
 * Wed Jan 28 2026 Ilia Ross <ilia@virtualmin.com> 8.1.0
