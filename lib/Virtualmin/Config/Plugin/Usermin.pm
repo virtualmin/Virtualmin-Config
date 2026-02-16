@@ -46,6 +46,7 @@ sub actions {
     usermin::get_usermin_miniserv_config(\%uminiserv);
     $uminiserv{'preroot'}         = "authentic-theme";
     $uminiserv{'ssl'}             = "1";
+    $uminiserv{'syslog'}          = "1";
     $uminiserv{'ssl_cipher_list'} = $webmin::strong_ssl_ciphers;
     $uminiserv{'domainuser'}      = 1;
     $uminiserv{'domainstrip'}     = 1;

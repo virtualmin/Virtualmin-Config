@@ -31,7 +31,7 @@ sub actions {
     $log->info("Cannot configure Fail2ban module as Firewall module is not installed");
     $self->done(2);
   }
-print "XXXXXX\n\n";
+
   $self->spin();
   eval {
     if (has_command('fail2ban-server')) {
@@ -42,6 +42,11 @@ print "XXXXXX\n\n";
       # Create a jail.local with some basic config
       create_fail2ban_jail($self);
       create_fail2ban_firewalld();
+
+      # Setup custom Usermin jail
+      if (foreign_installed('usermin')) {
+        create_fail2ban_usermin_jail();
+      }
 
       # Switch backend to use systemd to avoid failure on
       # fail2ban starting when actual log file is missing
@@ -120,6 +125,10 @@ my $mini_stack =
 my $proftpd_block = $mini_stack ? '' :
     "[proftpd]\n" .
     "enabled = true\nport = ftp,ftp-data,ftps,ftps-data,2222$proftpd_jail_extra\n\n";
+my $usermin_block = foreign_installed('usermin') && -d '/etc/fail2ban/filter.d'
+  ? "\n\n[usermin-auth]\nenabled = true\njournalmatch = ".
+    "_SYSTEMD_UNIT=usermin.service"
+  : '';
 
   open(my $JAIL_LOCAL, '>', '/etc/fail2ban/jail.local');
   print $JAIL_LOCAL <<EOF;
@@ -137,7 +146,7 @@ enabled = true
 
 [webmin-auth]
 enabled = true
-journalmatch = _SYSTEMD_UNIT=webmin.service
+journalmatch = _SYSTEMD_UNIT=webmin.service${usermin_block}
 
 EOF
 
@@ -158,6 +167,31 @@ banaction = firewallcmd-ipset
 EOF
     close $FIREWALLD_CONF;
   }    # XXX iptables-multiport is default on CentOS, double check others.
+}
+
+# Custom jail for Usermin, to protect against brute-force attacks on the login
+# page
+sub create_fail2ban_usermin_jail {
+  return if (!-d '/etc/fail2ban/filter.d');
+  open(my $USERMIN_JAIL, '>', '/etc/fail2ban/filter.d/usermin-auth.conf');
+  print $USERMIN_JAIL <<'EOF';
+# Fail2Ban filter for usermin
+# created by Virtualmin installer
+
+[INCLUDES]
+
+before = common.conf
+
+[Definition]
+
+_daemon = usermin
+
+failregex = ^%(__prefix_line)sNon-existent login as .+ from <HOST>\s*$
+            ^%(__prefix_line)sInvalid login as .+ from <HOST>\s*$
+
+ignoreregex =
+EOF
+  close $USERMIN_JAIL;
 }
 
 1;
