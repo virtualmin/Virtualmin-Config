@@ -44,6 +44,20 @@ sub actions {
     $gconfig{'theme'}        = "authentic-theme";
     $gconfig{'mobile_theme'} = "authentic-theme";
     $gconfig{'logfiles'}     = 1;
+    # Update Webmin tempdir if the filesystem is tmpfs
+    if (!$gconfig{'tempdir'} && defined &default_webmin_temp_dir) {
+      foreign_require("mount");
+      my $tmp = &default_webmin_temp_dir();
+      my (undef, undef, $disks, undef) = &mount::local_disk_space();
+      foreach my $disk (@$disks) {
+        if (&is_under_directory($disk->{'dir'}, $tmp)) {
+          if ($disk->{'type'} eq 'tmpfs' && -d '/var/tmp') {
+            $gconfig{'tempdir'} = '/var/tmp/.webmin';
+            last;
+          }
+        }
+      }
+    }
     lock_file("$config_directory/config");
     write_file("$config_directory/config", \%gconfig);
     unlock_file("$config_directory/config");
