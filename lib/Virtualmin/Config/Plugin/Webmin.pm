@@ -85,20 +85,9 @@ sub actions {
     }
     # Disable auto updates and make Webmin install security updates
     foreign_require("init");
-    my @auto_update_services = (
-        "unattended-upgrades",            # Debian/Ubuntu
-
-        "dnf-automatic.timer",            # Fedora/RHEL/CentOS (default)
-        "dnf-automatic-install.timer",
-        "dnf-automatic-download.timer",
-        "dnf-automatic-notifyonly.timer",
-    );
-    foreach my $service (@auto_update_services) {
-        if (init::action_status($service)) {
-            init::stop_action($service);
-            init::disable_at_boot($service);
-            init::mask_action($service);
-        }
+    foreign_require("package-updates");
+    foreach (@package_updates::auto_update_services) {
+      &init::deactivate_action($_, 0) if defined &init::deactivate_action;
     }
     $self->done(1);    # OK!
   };
