@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        8.1.3
+Version:        8.1.4
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Tue Mar 17 2026 Ilia Ross <ilia@virtualmin.com> 8.1.4
+- Fix to disable automatic external updates
 * Sun Mar 01 2026 Ilia Ross <ilia@virtualmin.com> 8.1.3
 - Add logic to update Webmin temporary directory when using tmpfs filesystems
 * Mon Feb 16 2026 Ilia Ross <ilia@virtualmin.com> 8.1.2
