@@ -1,3 +1,9 @@
+virtualmin-config (8.1.4) stable; urgency=medium
+
+  * Fix to disable automatic external updates
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Tue, 17 Mar 2026 20:00:00 +0200
+ 
 virtualmin-config (8.1.3) stable; urgency=medium
 
   * Add logic to update Webmin temporary directory when using tmpfs filesystems
