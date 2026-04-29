@@ -58,8 +58,8 @@ sub actions {
 
     my ($keyfile, $certfile);
     if ($gconfig{'os_type'} =~ /debian-linux|ubuntu-linux/) {
-      $certfile = '/etc/ssl/certs/proftpd.crt';
-      $keyfile  = '/etc/ssl/private/proftpd.key';
+      $certfile = '/etc/proftpd/proftpd.crt';
+      $keyfile  = '/etc/proftpd/proftpd.key';
 
       # Add to end of file, if not already there Include /etc/proftpd/conf.d
       proftpd::save_directive('Include',
