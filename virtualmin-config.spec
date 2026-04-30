@@ -1,5 +1,5 @@
 Name:           virtualmin-config
-Version:        8.1.4
+Version:        8.1.5
 Release:        1
 Summary:        Collection of plugins to initialize the configuration of services that Virtualmin manages, and a command line tool called config-system to run them
 License:        GPL+
@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Thu Apr 30 2026 Ilia Ross <ilia@virtualmin.com> 8.1.5
+- Fix location of ProFTPd SSL certificates in Ubuntu 26.04
 * Tue Mar 17 2026 Ilia Ross <ilia@virtualmin.com> 8.1.4
 - Fix to disable automatic external updates
 * Sun Mar 01 2026 Ilia Ross <ilia@virtualmin.com> 8.1.3

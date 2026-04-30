@@ -1,3 +1,9 @@
+virtualmin-config (8.1.5) stable; urgency=medium
+
+  * Fix to use the ProFTPd config directory for SSL certificates, since AppArmor blocks other locations in Ubuntu 26.04
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Thu, 30 Apr 2026 22:00:00 +0200
+ 
 virtualmin-config (8.1.4) stable; urgency=medium
 
   * Fix to disable automatic external updates
