@@ -53,6 +53,7 @@ sub actions {
         if (&is_under_directory($disk->{'dir'}, $tmp)) {
           if ($disk->{'type'} eq 'tmpfs' && -d '/var/tmp') {
             $gconfig{'tempdir'} = '/var/tmp/.webmin';
+            $gconfig{'tempdirdelete'} = 1;
             last;
           }
         }
