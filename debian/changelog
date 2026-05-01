@@ -1,4 +1,10 @@
-virtualmin-config (8.1.5) stable; urgency=medium
+virtualmin-config (8.1.6) stable; urgency=medium
+
+  * Fix to clean files in custom temporary directory when using tmpfs filesystems
+ 
+ -- Ilia Ross <ilia@virtualmin.com>  Fri, 01 May 2026 22:00:00 +0200
+ 
+ virtualmin-config (8.1.5) stable; urgency=medium
 
   * Fix to use the ProFTPd config directory for SSL certificates, since AppArmor blocks other locations in Ubuntu 26.04
  
