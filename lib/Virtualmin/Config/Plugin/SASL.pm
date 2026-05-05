@@ -34,6 +34,21 @@ sub actions {
     if ( $gconfig{'os_type'} eq "debian-linux"
       or $gconfig{'os_type'} eq "ubuntu-linux")
     {
+      my $os_ver = $gconfig{'real_os_version'};
+      my $is_ubuntu = $gconfig{'real_os_type'} =~ /ubuntu/i;
+      my $is_debian = $gconfig{'real_os_type'} =~ /debian/i;
+      # Ubuntu 26.04+ ships Postfix without chroot by default,
+      # so saslauthd should use its standard socket path instead
+      # of the postfix chroot location
+      my $postfix_chrooted = !($is_ubuntu && $os_ver && $os_ver >= 26);
+      my $sasl_chroot_dir = "/var/spool/postfix/var/run/saslauthd";
+      my $sasl_opts = $postfix_chrooted
+        ? qq{OPTIONS="-c -m $sasl_chroot_dir -r"}
+        : qq{OPTIONS="-c -r"};
+      my $sasl_params = $postfix_chrooted
+        ? qq{PARAMS="-m $sasl_chroot_dir -r"}
+        : qq{PARAMS="-r"};
+
       # Update saslauthd default to start on boot
       my $fn          = "/etc/default/saslauthd";
       my $sasldefault = read_file_lines($fn) or die "Failed to open $fn!";
@@ -54,40 +69,39 @@ sub actions {
       my $added_params = 0;
       foreach my $l (@$sasldefault) {
         if ($l =~ /^OPTIONS/) {
-          $l = 'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"';
+          $l = $sasl_opts;
           $added_opts++;
         }
         if ($l =~ /^PARAMS/) {
-          $l = 'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"';
+          $l = $sasl_params;
           $added_params++;
         }
       }
 
       # Add them, if not
-      push(@$sasldefault,
-        'OPTIONS="-c -m /var/spool/postfix/var/run/saslauthd -r"')
+      push(@$sasldefault, $sasl_opts)
           if (!$added_opts && !grep {/^OPTIONS/} @$sasldefault);
-      push(@$sasldefault,
-        'PARAMS="-m /var/spool/postfix/var/run/saslauthd -r"')
+      push(@$sasldefault, $sasl_params)
           if (!$added_params && !grep {/^PARAMS/} @$sasldefault);
       flush_file_lines($fn);
 
       $cf = "/etc/postfix/sasl/smtpd.conf";
-      $self->logsystem("mkdir -p -m 755 /var/spool/postfix/var/run/saslauthd");
+      $self->logsystem("mkdir -p -m 755 $sasl_chroot_dir")
+        if ($postfix_chrooted);
       $self->logsystem("adduser postfix sasl");
       $saslinit = "/etc/init.d/saslauthd";
       # Ubuntu 24.04 uses native saslauthd.service, so we need
       # to fix PIDFile location because chroot Postfix expects
       # it to be in /var/spool/postfix/var/run/saslauthd
-      my $os_ver = $gconfig{'real_os_version'};
-      if (($gconfig{'real_os_type'} =~ /ubuntu/i && $os_ver && $os_ver =~ /^(2[468])/) ||
-          ($gconfig{'real_os_type'} =~ /debian/i && $os_ver && $os_ver >= 13)) {
+      if ($postfix_chrooted &&
+          (($is_ubuntu && $os_ver && $os_ver =~ /^(24)/) ||
+           ($is_debian && $os_ver && $os_ver =~ /^(13)/))) {
         my $systemd_saslauthd_override_path = "/etc/systemd/system/saslauthd.service.d";
         $self->logsystem("mkdir -p -m 755 $systemd_saslauthd_override_path")
           if (!-d $systemd_saslauthd_override_path);
         write_file_contents($systemd_saslauthd_override_path . "/override.conf",
           "[Service]\n".
-          "PIDFile=/var/spool/postfix/var/run/saslauthd/saslauthd.pid\n");
+          "PIDFile=$sasl_chroot_dir/saslauthd.pid\n");
         $self->logsystem("systemctl daemon-reload");
         $self->logsystem("systemctl restart saslauthd.service");
       }
