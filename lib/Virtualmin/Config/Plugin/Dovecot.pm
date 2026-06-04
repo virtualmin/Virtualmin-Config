@@ -28,6 +28,16 @@ sub actions {
     foreign_require("init",    "init-lib.pl");
     foreign_require("dovecot", "dovecot-lib.pl");
 
+    my $add_config = "/etc/dovecot/conf.d/99-virtualmin.conf";
+    if (-d "/etc/dovecot/conf.d") {
+      write_file_contents($add_config, "")
+        if (!-e $add_config && !-l $add_config);
+      $dovecot::config{'add_config'} = $add_config;
+      lock_file("$config_directory/dovecot/config");
+      save_module_config(\%dovecot::config, "dovecot");
+      unlock_file("$config_directory/dovecot/config");
+    }
+
     # Work out dirs for control and index files
     foreign_require("mount", "mount-lib.pl");
     my $indexes   = "";
