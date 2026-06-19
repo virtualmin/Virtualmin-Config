@@ -45,7 +45,7 @@ sub actions {
     my @apache_mods = qw(
       suexec ssl slotmem_shm rewrite proxy_http proxy_fcgi
       proxy_connect proxy_balancer proxy lbmethod_byrequests
-      include http2 cgid fcgid auth_digest actions
+      include http2 cgid fcgid auth_digest actions headers
     );
     # Configure Debian/Ubuntu and SUSE systems
     if ($gconfig{'os_type'} =~ /^(debian|ubuntu|suse)-linux$/) {
