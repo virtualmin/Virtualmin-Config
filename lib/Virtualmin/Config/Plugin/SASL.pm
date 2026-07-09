@@ -37,10 +37,15 @@ sub actions {
       my $os_ver = $gconfig{'real_os_version'};
       my $is_ubuntu = $gconfig{'real_os_type'} =~ /ubuntu/i;
       my $is_debian = $gconfig{'real_os_type'} =~ /debian/i;
+      my $os_major;
+      if (defined($os_ver) && $os_ver =~ /^(\d+)/) {
+        $os_major = $1;
+      }
       # Ubuntu 26.04+ ships Postfix without chroot by default,
       # so saslauthd should use its standard socket path instead
       # of the postfix chroot location
-      my $postfix_chrooted = !($is_ubuntu && $os_ver && $os_ver >= 26);
+      my $postfix_chrooted =
+        !($is_ubuntu && defined($os_major) && $os_major >= 26);
       my $sasl_chroot_dir = "/var/spool/postfix/var/run/saslauthd";
       my $sasl_opts = $postfix_chrooted
         ? qq{OPTIONS="-c -m $sasl_chroot_dir -r"}
@@ -94,8 +99,8 @@ sub actions {
       # to fix PIDFile location because chroot Postfix expects
       # it to be in /var/spool/postfix/var/run/saslauthd
       if ($postfix_chrooted &&
-          (($is_ubuntu && $os_ver && $os_ver =~ /^(24)/) ||
-           ($is_debian && $os_ver && $os_ver =~ /^(13)/))) {
+          (($is_ubuntu && defined($os_major) && $os_major == 24) ||
+           ($is_debian && defined($os_major) && $os_major == 13))) {
         my $systemd_saslauthd_override_path = "/etc/systemd/system/saslauthd.service.d";
         $self->logsystem("mkdir -p -m 755 $systemd_saslauthd_override_path")
           if (!-d $systemd_saslauthd_override_path);
