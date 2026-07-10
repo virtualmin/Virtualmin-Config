@@ -2,7 +2,6 @@ package Virtualmin::Config::Stack;
 use strict;
 use warnings;
 use 5.010_001;
-use parent 'Virtualmin::Config::Plugin';
 
 # A stack for configuring inside plugins
 
@@ -15,7 +14,7 @@ sub new {
 # Common modules for all stacks (excluding DNS, mail and extra)
 sub common_modules {
     return (
-        "Webmin",      "MySQL",        "Firewall",
+        "Webmin",      "MySQL",        "Nftables",
         "Quotas",      "Shells",       "Virtualmin",
         "Etckeeper",   "Apache",       "AWStats",
         "Fail2ban",    "SSL",
@@ -48,36 +47,9 @@ sub full_modules {
 sub replacements {
     my ($self, $type) = @_;
 
-    $self->use_webmin();
-
-    my $log = Log::Log4perl->get_logger("virtualmin-config-system");
-    
-    # Modern system with Firewalld?
-    my $firewalld =
-        grep { -x "$_/firewall-cmd" }
-        split(/:/, "/usr/bin:/bin:".($ENV{'PATH'} // ''));
-    $log->info("Checking for firewalld package: ".($firewalld ? "found" : "not found"));
-    
     my %r = (
             "Apache" => $type eq 'lemp' ? "Nginx" : "Apache",
     );
-
-    # If firewalld package could be installed, use it
-    if ($firewalld && foreign_check("firewalld")) {
-        $r{"Firewall"} = "Firewalld";
-        $r{"Fail2ban"} = "Fail2banFirewalld";
-    }
-    # If firewall Webmin module is manually installed, use it
-    elsif (foreign_check("firewall")) {
-        $r{"Firewall"} = "Firewall";
-        $r{"Fail2ban"} = "Fail2ban";
-    }
-    else {
-        $r{"Firewall"} = undef;               # need clealy show failure
-        $r{"Fail2ban"} = 'Fail2banFirewalld'; # need to disable it
-        $log->info("Neither the firewalld package nor the Webmin firewall ".
-                   "module is installed, skipping Fail2ban");
-    }
 
     return \%r;
 }

@@ -115,7 +115,7 @@ sub _gather_plugins {
     # Get bundle
     my $pkg = "Virtualmin::Config::$self->{bundle}";
     load $pkg;
-    my $bundle = $pkg->new();    
+    my $bundle = $pkg->new();
     # Get stack
     my $pkg2 = "Virtualmin::Config::Stack";
     load $pkg2;
@@ -123,32 +123,18 @@ sub _gather_plugins {
     # Ask the bundle for a list of plugins
     @plugins = $bundle->plugins($stack);
   }
-
-  # Check with the command arguments
-  if (ref($self->{include}) eq 'ARRAY' || ref($self->{include}) eq 'STRING') {
-    for my $include ($self->{'include'}) {
-      push(@plugins, $include)
-        unless (map { grep(/^$include$/, @{$_}) } @plugins);
-    }
-  }
+  @plugins = _flat(@plugins);
 
   # Check for excluded plugins
   my @noplugins = _flat($self->{'exclude'});
   if (@noplugins) {
-    @plugins = _flat(@plugins);
-    no warnings "uninitialized";
     @plugins
       = grep { my $noplugin = $_; !grep(/^$noplugin$/, @noplugins) } @plugins;
   }
 
   # Check for included plugins
-  my @iplugins = _flat($self->{'include'});
-  if (@iplugins) {
-    @plugins = _flat(@plugins);
-    no warnings "uninitialized";
-    foreach my $iplugin (@iplugins) {
-      push(@plugins, $iplugin) unless grep(/^$iplugin$/, @plugins);
-    }
+  foreach my $iplugin (_flat($self->{'include'})) {
+    push(@plugins, $iplugin) unless grep(/^$iplugin$/, @plugins);
   }
   return @plugins;
 }

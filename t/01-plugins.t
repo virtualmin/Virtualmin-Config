@@ -36,4 +36,10 @@ my @resolved = $depends->_order_plugins(@plugins3);
 ok(grep {/^Test2$/} @resolved);
 ok(grep {/^Test$/} @resolved);    # did the dependency get pulled in?
 
+my $f2b_depends = Virtualmin::Config->new(include => ['Fail2ban']);
+my @plugins4 = $f2b_depends->_gather_plugins();
+my @resolved4 = $f2b_depends->_order_plugins(@plugins4);
+ok(grep {/^Fail2ban$/} @resolved4);
+ok(grep {/^Nftables$/} @resolved4);    # did the dependency get pulled in?
+
 done_testing();

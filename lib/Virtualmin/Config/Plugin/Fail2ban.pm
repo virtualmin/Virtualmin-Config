@@ -1,6 +1,7 @@
 package Virtualmin::Config::Plugin::Fail2ban;
 
-# Enables fail2ban and sets up a reasonable set of rules.
+# Enables fail2ban and sets up a reasonable set of rules using nftables
+# actions.
 use strict;
 use warnings;
 no warnings qw(once numeric);
@@ -16,23 +17,32 @@ sub new {
 
   # inherit from Plugin
   my $self
-    = $class->SUPER::new(name => 'Fail2ban', depends => ['Firewall'], %args);
+    = $class->SUPER::new(name => 'Fail2ban', depends => ['Nftables'], %args);
 
   return $self;
 }
 
 sub actions {
   my $self = shift;
-  my $err;
 
   $self->use_webmin();
 
-  unless (&foreign_check("firewall")) {
-    $log->info("Cannot configure Fail2ban module as Firewall module is not installed");
+  $self->spin();
+
+  unless (has_command('nft')) {
+    foreign_require('init');
+    init::stop_action('fail2ban');
+    init::disable_at_boot('fail2ban');
+    $log->info("nftables not installed, stopping and disabling Fail2ban");
+    $self->add_postinstall_message(
+      "The nftables firewall is not available on this system. Fail2ban ".
+      "requires a working firewall and has been disabled.",
+      "log_info"
+    ) if (defined($ENV{'VIRTUALMIN_INSTALL_TEMPDIR'}));
     $self->done(2);
+    return;
   }
 
-  $self->spin();
   eval {
     if (has_command('fail2ban-server')) {
 
@@ -41,17 +51,16 @@ sub actions {
 
       # Create a jail.local with some basic config
       create_fail2ban_jail($self);
-      create_fail2ban_firewalld();
+      create_fail2ban_nftables();
 
       # Setup custom Usermin jail
       if (foreign_installed('usermin')) {
         create_fail2ban_usermin_jail();
       }
 
-      # Switch backend to use systemd to avoid failure on
-      # fail2ban starting when actual log file is missing
-      # e.g.: Failed during configuration: Have not found
-      # any log file for [name] jail
+      # Switch backend to use systemd to avoid failure on fail2ban starting when
+      # actual log file is missing e.g.: Failed during configuration: Have not
+      # found any log file for [name] jail
       &foreign_require('fail2ban');
       my $jfile = "$fail2ban::config{'config_dir'}/jail.conf";
       my @jconf = &fail2ban::parse_config_file($jfile);
@@ -153,20 +162,18 @@ EOF
   close $JAIL_LOCAL;
 }
 
-sub create_fail2ban_firewalld {
-  if (has_command('firewall-cmd')
-    && !-e '/etc/fail2ban/jail.d/00-firewalld.conf')
-  {
-    # Apply firewalld actions by default
-    open(my $FIREWALLD_CONF, '>', '/etc/fail2ban/jail.d/00-firewalld.conf');
-    print $FIREWALLD_CONF <<EOF;
-# This file created by Virtualmin to enable firewalld-cmd actions by
-# default. It can be removed, if you use a different firewall.
+sub create_fail2ban_nftables {
+  if (has_command('nft') && !-e '/etc/fail2ban/jail.d/00-nftables.conf') {
+    open(my $NFTABLES_CONF, '>', '/etc/fail2ban/jail.d/00-nftables.conf');
+    print $NFTABLES_CONF <<EOF;
+# This file was created by the Virtualmin installer to enable nftables actions
+# for Fail2ban by default.
 [DEFAULT]
-banaction = firewallcmd-ipset
+banaction = nftables[type=multiport]
+banaction_allports = nftables[type=allports]
 EOF
-    close $FIREWALLD_CONF;
-  }    # XXX iptables-multiport is default on CentOS, double check others.
+    close $NFTABLES_CONF;
+  }
 }
 
 # Custom jail for Usermin, to protect against brute-force attacks on the login
