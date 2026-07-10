@@ -180,7 +180,7 @@ sub _uniq {
 
 # Flatten into plain list
 sub _flat {
-  return map { ref eq 'ARRAY' ? @$_ : $_ } @_;
+  return map { ref eq 'ARRAY' ? grep { defined } @$_ : $_ } grep { defined } @_;
 }
 
 1;
