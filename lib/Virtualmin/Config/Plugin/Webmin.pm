@@ -69,7 +69,20 @@ sub actions {
     $miniserv{'ssl_cipher_list'}    = $webmin::strong_ssl_ciphers;
     $miniserv{'twofactor_provider'} = 'totp';
     put_miniserv_config(\%miniserv);
-    webmin::build_installed_modules(1);
+    {
+      # Module install checks can reload libraries imported by earlier plugins.
+      my $webmin_root = $self->root();
+      my $warning_handler = $SIG{__WARN__};
+      local $SIG{__WARN__} = sub {
+        my $warning = join('', @_);
+        return if $warning =~
+          m{\ASubroutine \S+ redefined at \Q$webmin_root\E/[^/]+/[^/]+-lib\.pl line \d+\.\n?\z};
+
+        local $SIG{__WARN__} = $warning_handler;
+        warn @_;
+      };
+      webmin::build_installed_modules(1);
+    }
     $self->logsystem("/etc/webmin/restart-by-force-kill > /dev/null 2>&1");
     # Mailboxes configuration
     my $mini_stack =
