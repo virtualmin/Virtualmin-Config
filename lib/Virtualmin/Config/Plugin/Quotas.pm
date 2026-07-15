@@ -179,10 +179,15 @@ sub actions {
       }
       else {
         # Activate quotas
-        $self->logsystem("modprobe quota_v2");
-        $self->logsystem("quotacheck -vgum $dir");
-        $self->logsystem("quotaon -av");
-        $res = 1;
+        if (load_quota_module($self)) {
+          $self->logsystem("quotacheck -vgum $dir");
+          $self->logsystem("quotaon -av");
+          $res = 1;
+        }
+        else {
+          $log->error("Unable to load the quota_v2 kernel module");
+          $res = 2;
+        }
       }
     }
     $self->done($res);    # Maybe OK!
@@ -192,6 +197,61 @@ sub actions {
     $ENV{'QUOTA_FAILED'} = '1';
     $self->done(2);       # 2 is a non-fatal error
   }
+}
+
+sub load_quota_module {
+  my $self = shift;
+
+  # The module is normally already available. Minimal Ubuntu images may omit
+  # the matching linux-modules-extra package, so install it on demand.
+  return 1 if (!$self->logsystem("modprobe quota_v2"));
+
+  # Preserve the existing behavior everywhere except Ubuntu. Some kernels
+  # provide quota support without exposing quota_v2 as a loadable module.
+  return 1 if (($gconfig{'real_os_type'} // '') !~ /ubuntu/i);
+
+  my $kernel = backquote_command("uname -r 2>/dev/null");
+  $kernel =~ s/\s+$//;
+  if ($kernel !~ /^[A-Za-z0-9][A-Za-z0-9.+~-]*$/) {
+    $log->error("Unable to determine the running Ubuntu kernel version");
+    return 0;
+  }
+
+  foreign_require("software");
+  if (!defined(&software::update_system_install)) {
+    $log->error("No system package installation API is available");
+    return 0;
+  }
+
+  my @packages = ("linux-modules-extra-$kernel");
+
+  # Keep the extra modules installed on future generic kernel upgrades too.
+  # Cloud and other kernel flavors have different tracking packages and are
+  # intentionally left to their platform package management.
+  push(@packages, "linux-image-extra-virtual") if ($kernel =~ /-generic$/);
+
+  my $packages = join(' ', @packages);
+  $log->info("Installing missing quota kernel module packages $packages");
+  my ($output) = capture_function_output_tempfile(
+    \&software::update_system_install, $packages
+  );
+  $output = package_output_to_text($output);
+  $log->info("Package installation output: $output") if ($output);
+
+  return !$self->logsystem("modprobe quota_v2");
+}
+
+sub package_output_to_text {
+  my $output = shift;
+  return '' if (!$output);
+
+  # Package installation APIs return output formatted for Webmin pages.
+  # Strip that markup before decoding entities so literal command output is
+  # preserved in the plain-text Virtualmin Config log.
+  $output = html_unescape(html_strip($output));
+  $output =~ s/^\s+//;
+  $output =~ s/\s+$//;
+  return $output;
 }
 
 1;
