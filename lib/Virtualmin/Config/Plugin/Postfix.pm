@@ -156,8 +156,14 @@ sub actions {
       postfix::create_master($submission);
     }
 
-    # Add smtps entry, if missing
-    my ($smtps) = grep { $_->{'name'} eq 'smtps' && $_->{'enabled'} } @$master;
+    # Add a port 465 submission entry, if missing
+    my $smtps_name = qr/(?:smtps|submissions|465)/;
+    my ($smtps) = grep {
+      $_->{'enabled'} && $_->{'type'} eq 'inet' &&
+        ($_->{'name'} =~ /^$smtps_name$/ ||
+         $_->{'name'} =~ /^[0-9\.]+:$smtps_name$/ ||
+         $_->{'name'} =~ /^\[[0-9a-fA-F:]+\]:$smtps_name$/)
+      } @$master;
     if (!$smtps) {
       $smtps = {%$smtp};
       $smtps->{'name'} = 'smtps';
