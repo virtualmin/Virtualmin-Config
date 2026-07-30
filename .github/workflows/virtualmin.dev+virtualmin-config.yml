@@ -38,7 +38,7 @@ jobs:
     if: ${{ github.repository == 'virtualmin/Virtualmin-Config' && (github.event_name == 'release' || github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && !contains(github.event.head_commit.message, '[no-build]'))) }}
     runs-on: ubuntu-latest
     env:
-      TZ: Europe/Nicosia
+      TZ: CET
     steps:
       - uses: actions/checkout@v4
 
