@@ -42,13 +42,9 @@ sub actions {
       return;
     }
     elsif ($type eq 'btrfs') {
-      # Check if Btrfs quotas are already enabled
-      my $quota_status = `btrfs qgroup show $dir 2>&1`;
-      if ($quota_status =~ /ERROR.*not enabled/) {
-          # Enable Btrfs quotas
-          $self->logsystem("btrfs quota enable $dir");
-      }
-      $res = 1;  # Indicate success
+      # Use Webmin's structured API instead of parsing localized CLI errors.
+      configure_btrfs_quotas($self, $dir);
+      $res = 1;
     }
     elsif ($gconfig{'os_type'} =~ /-linux$/) {
       $mount::options{'usrquota'} = '';
@@ -76,8 +72,8 @@ sub actions {
 #print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
     }
     if ($type eq 'btrfs') {
-        # No need to remount or activate quotas for Btrfs
-        $res = 1;  # Indicate success
+        # Btrfs was configured above and does not use mount quota options.
+        $res = 1;
     }
     else {
       $opts = mount::join_options($type);
@@ -197,6 +193,59 @@ sub actions {
     $ENV{'QUOTA_FAILED'} = '1';
     $self->done(2);       # 2 is a non-fatal error
   }
+}
+
+# Enable Btrfs qgroups, repair accounting, and verify the final state.
+sub configure_btrfs_quotas {
+  my ($self, $dir) = @_;
+
+  foreign_require("quota");
+  # Fail clearly when Virtualmin-Config is paired with an older Webmin.
+  foreach my $api (qw(btrfs_quota_status enable_btrfs_quotas
+                      rescan_btrfs_quotas)) {
+    no strict 'refs';
+    die "The installed Webmin version does not provide the Btrfs quota API ($api)"
+      if (!defined(&{"quota::$api"}));
+  }
+
+  # Read the initial state before deciding whether enablement or repair is due.
+  my $status = quota::btrfs_quota_status($dir);
+  die "Unable to detect Btrfs quota status for $dir"
+    if (!$status);
+  die "Unable to read Btrfs quota status for $dir: $status->{'error'}"
+    if ($status->{'error'});
+  die "Btrfs simple quotas are enabled for $dir, but Virtualmin requires full qgroup accounting"
+    if ($status->{'enabled'} && ($status->{'mode'} // '') eq 'squota');
+
+  my $needs_rescan = $status->{'inconsistent'} ? 1 : 0;
+  if (!$status->{'enabled'}) {
+    # Request full qgroups because first-owner simple accounting cannot charge
+    # restored or reflinked mailbox data to its destination home reliably.
+    my $err = quota::enable_btrfs_quotas($dir, 0);
+    die "Unable to enable Btrfs quotas for $dir: $err" if ($err);
+    $needs_rescan = 1;
+  }
+
+  # Wait for accounting so Virtualmin never starts with unenforceable limits.
+  if ($needs_rescan) {
+    my $err = quota::rescan_btrfs_quotas($dir, 1);
+    die "Unable to rescan Btrfs quotas for $dir: $err" if ($err);
+  }
+
+  # Re-read rather than assuming successful commands produced a usable state.
+  $status = quota::btrfs_quota_status($dir);
+  die "Unable to verify Btrfs quota status for $dir"
+    if (!$status);
+  die "Unable to verify Btrfs quota status for $dir: $status->{'error'}"
+    if ($status->{'error'});
+  die "Btrfs quotas are still disabled for $dir"
+    if (!$status->{'enabled'});
+  die "Btrfs quota accounting is still inconsistent for $dir"
+    if ($status->{'inconsistent'});
+  die "Btrfs simple quotas are enabled for $dir, but Virtualmin requires full qgroup accounting"
+    if (($status->{'mode'} // '') eq 'squota');
+
+  return 1;
 }
 
 sub load_quota_module {

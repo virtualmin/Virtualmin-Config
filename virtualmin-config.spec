@@ -14,7 +14,7 @@ BuildRequires:  perl(File::Spec)
 BuildRequires:  perl(Log::Log4perl)
 BuildRequires:  perl(Test::More)
 BuildRequires:	perl(Module::Load)
-Requires:	webmin
+Requires:	webmin >= 2.654
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
 Requires:	perl(Module::Load)

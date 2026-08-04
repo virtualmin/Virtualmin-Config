@@ -8,6 +8,7 @@ Homepage: http://search.cpan.org/dist/Virtualmin-Config/
 Package: virtualmin-config
 Architecture: all
 Depends: ${misc:Depends}, ${perl:Depends},
+ webmin (>= 2.654),
  liblog-log4perl-perl,
  libterm-spinner-color-perl,
  perl,
