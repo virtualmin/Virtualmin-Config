@@ -14,10 +14,10 @@ BuildRequires:  perl(File::Spec)
 BuildRequires:  perl(Log::Log4perl)
 BuildRequires:  perl(Test::More)
 BuildRequires:	perl(Module::Load)
-Requires:	webmin >= 2.654
+Requires:       webmin >= 2.654
 Requires:       perl(Log::Log4perl)
 Requires:       perl(Term::ANSIColor)
-Requires:	perl(Module::Load)
+Requires:	      perl(Module::Load)
 
 %description
 This is a mini-framework for configuring elements of a Virtualmin system.
