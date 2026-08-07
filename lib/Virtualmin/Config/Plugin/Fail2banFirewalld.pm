@@ -180,6 +180,7 @@ sub create_fail2ban_firewalld {
 # This file was created by the Virtualmin installer to enable the use of
 # Firewalld rich rules with Fail2ban
 [DEFAULT]
+port = 1-65535
 banaction = firewallcmd-rich-rules
 banaction_allports = firewallcmd-rich-rules
 EOF
