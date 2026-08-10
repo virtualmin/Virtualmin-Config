@@ -1,6 +1,7 @@
 package Virtualmin::Config::Plugin::Fail2banFirewalld;
 
-# Enables fail2ban and sets up a reasonable set of rules.
+# Enables fail2ban and sets up a reasonable set of rules using Firewalld
+# IP sets.
 # This is currently identical to Fail2ban, with a different depends.
 # We could make the dependency resolution in Config smarter to re-merge it
 # back to one file. This will do for now.
@@ -178,11 +179,10 @@ sub create_fail2ban_firewalld {
     open(my $FIREWALLD_CONF, '>', '/etc/fail2ban/jail.d/virtualmin-firewalld.conf');
     print $FIREWALLD_CONF <<EOF;
 # This file was created by the Virtualmin installer to enable the use of
-# Firewalld rich rules with Fail2ban
+# Firewalld IP sets with Fail2ban
 [DEFAULT]
-port = 1-65535
-banaction = firewallcmd-rich-rules
-banaction_allports = firewallcmd-rich-rules
+banaction = firewallcmd-ipset[actiontype=<multiport>]
+banaction_allports = firewallcmd-ipset[actiontype=<allports>]
 EOF
     close $FIREWALLD_CONF;
   }

@@ -163,11 +163,19 @@ EOF
 }
 
 sub create_fail2ban_nftables {
-  if (has_command('nft') && !-e '/etc/fail2ban/jail.d/00-nftables.conf') {
-    open(my $NFTABLES_CONF, '>', '/etc/fail2ban/jail.d/00-nftables.conf');
+  if (has_command('nft')) {
+    # Remove the configuration created by the old Firewalld plugin. It sorts
+    # after 00-nftables.conf and would otherwise override the nftables action
+    # when an existing installation is migrated.
+    my $old_conf = '/etc/fail2ban/jail.d/virtualmin-firewalld.conf';
+    unlink($old_conf) if (-e $old_conf);
+
+    open(my $NFTABLES_CONF, '>',
+      '/etc/fail2ban/jail.d/virtualmin-nftables.conf');
     print $NFTABLES_CONF <<EOF;
 # This file was created by the Virtualmin installer to enable nftables actions
-# for Fail2ban by default.
+# for Fail2ban by default. These actions keep banned addresses in nftables
+# sets rather than creating a separate firewall rule for every address.
 [DEFAULT]
 banaction = nftables[type=multiport]
 banaction_allports = nftables[type=allports]
