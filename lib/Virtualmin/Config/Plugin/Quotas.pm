@@ -176,9 +176,15 @@ sub actions {
       else {
         # Activate quotas
         if (load_quota_module($self)) {
-          $self->logsystem("quotacheck -vgum $dir");
-          $self->logsystem("quotaon -av");
-          $res = 1;
+          foreign_require("quota");
+          $err = quota::quotaon($dir, 3);
+          if ($err) {
+            $log->error("Unable to activate quotas on $dir: $err");
+            $res = 2;
+          }
+          else {
+            $res = 1;
+          }
         }
         else {
           $log->error("Unable to load the quota_v2 kernel module");
