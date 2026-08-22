@@ -66,6 +66,19 @@ sub actions {
       }
       return 1;
     };
+    # On a fresh EL install, RPM can create the database directory before
+    # the clamupdate system account exists and leave it owned by root, which
+    # stops freshclam from ever writing a database. Fix this regardless of
+    # whether any databases were shipped by a package, as they are left owned
+    # by root too
+    my @clamupdate = getpwnam('clamupdate');
+    my @dbdir = stat('/var/lib/clamav');
+    if (@clamupdate && @dbdir &&
+        ($dbdir[4] != $clamupdate[2] || $dbdir[5] != $clamupdate[3])) {
+      set_ownership_permissions($clamupdate[2], $clamupdate[3], undef,
+                                '/var/lib/clamav') ||
+        die "Unable to set ownership on the ClamAV database directory";
+    }
     if (!$has_databases->() && has_command('freshclam')) {
       # Stop a running updater daemon so the one-off run can take its lock
       my $freshclam_running =
