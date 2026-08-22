@@ -52,9 +52,39 @@ sub actions {
       flush_file_lines($scanconf);
     }
 
-    # Do not run freshclam if there is a daemon
+    # A newly installed freshclam daemon updates in the background. On EL 10,
+    # clamd can be started before that first download finishes and then fails
+    # because there are no usable databases. Always seed the database
+    # synchronously before relying on the updater daemon. Both main and daily
+    # (.cvd, .cld or a legacy .inc directory) are required, as the Debian
+    # clamav-daemon unit refuses to start without either of them
     foreign_require('init');
-    if (!init::action_status('clamav-freshclam')) {
+    my $has_databases = sub {
+      foreach my $db ('main', 'daily') {
+        my @found = grep { -e "/var/lib/clamav/$db.$_" } ('cvd', 'cld', 'inc');
+        return 0 if (!@found);
+      }
+      return 1;
+    };
+    if (!$has_databases->() && has_command('freshclam')) {
+      # Stop a running updater daemon so the one-off run can take its lock
+      my $freshclam_running =
+        init::status_action('clamav-freshclam') == 1;
+      if ($freshclam_running) {
+        my ($ok, $out) = init::stop_action('clamav-freshclam');
+        $ok || die "Unable to stop the ClamAV updater daemon: $out";
+      }
+      my $freshclam_status = $self->logsystem("freshclam");
+      # Restore the updater daemon regardless of the outcome
+      my ($started, $start_out) = (1, '');
+      ($started, $start_out) = init::start_action('clamav-freshclam')
+        if ($freshclam_running);
+      $freshclam_status == 0 ||
+        die "Unable to download the initial ClamAV database";
+      $has_databases->() || die "No ClamAV database was downloaded";
+      $started || die "Unable to start the ClamAV updater daemon: $start_out";
+    }
+    elsif (!init::action_status('clamav-freshclam')) {
       if (has_command('freshclam')) {
         $self->logsystem("freshclam");
       }
@@ -63,15 +93,13 @@ sub actions {
       # Restart daemon to refresh the database in background,
       # it will have higher chances of avoiding post-install
       # false positive errors on Debian systems
-      if (init::action_status('clamav-freshclam') == 2) {
-
-        # Restart it only if already running
+      if (init::status_action('clamav-freshclam') == 1) {
+        # Restart it only if currently running
         init::restart_action('clamav-freshclam');
       }
-      elsif (init::action_status('clamav-freshclam') == 1) {
-
-        # We have a daemon but it's not running, then run
-        # freshclam to avoid issues on RHEL system (dumb!)
+      else {
+        # When the updater is stopped, refresh synchronously without
+        # changing its runtime state
         if (has_command('freshclam')) {
           $self->logsystem("freshclam");
         }
@@ -94,7 +122,6 @@ sub tests {
   # RHEL/CentOS/Fedora
   # Start clamd@scan and run clamdscan just to prime the damned thing.
   foreign_require("init", "init-lib.pl");
-  $self->done(1);
   eval {
     if ($gconfig{'os_type'} eq 'redhat-linux') {
       if (init::action_status('clamd@scan')) {
@@ -110,23 +137,34 @@ sub tests {
       if (!-e '/etc/clamd.conf') {
         eval { symlink('/etc/clamd.d/scan.conf', '/etc/clamd.conf'); };
       }
-      my $res = `clamdscan --quiet - < /etc/webmin/miniserv.conf`;
-      if ($res) { die 1; }
+      # Stop the daemon before reporting the result, so that a failed
+      # test scan does not leave it running
+      my $scan_status =
+        $self->logsystem("clamdscan --quiet - < /etc/webmin/miniserv.conf");
       if (init::action_status('clamd@scan')) {
         init::stop_action('clamd@scan');
       }
       elsif (init::action_status('clamd')) {
         init::stop_action('clamd');
       }
+      $scan_status == 0 || die "ClamAV test scan failed";
     }
     elsif ($gconfig{'os_type'} eq 'debian-linux') {
       init::enable_at_boot('clamav-daemon');
       init::start_action('clamav-daemon');
       sleep 60;
-      $self->logsystem("clamdscan --quiet - < /etc/webmin/miniserv.conf");
+      my $scan_status =
+        $self->logsystem("clamdscan --quiet - < /etc/webmin/miniserv.conf");
       init::stop_action('clamav-daemon');
+      $scan_status == 0 || die "ClamAV test scan failed";
     }
-    $self->done(0);
+    else {
+      # No test scan is available for this OS, so do not claim success
+      $log->warn("ClamAV test is not supported on this operating system");
+      $self->done(2);
+      return;
+    }
+    $self->done(1);
   };
   if ($@) {
     $log->error("Failed to test ClamAV: $@");
