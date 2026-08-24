@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+no warnings 'once';
 use Test::More;
 
 require_ok('Virtualmin::Config::Plugin::Nginx');
