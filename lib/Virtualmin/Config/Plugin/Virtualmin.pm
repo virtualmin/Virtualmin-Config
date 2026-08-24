@@ -77,7 +77,7 @@ sub actions {
     my @plugins = split /\s+/, ($virtual_server::config{'plugins'} || '');
     push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
     if ($virtual_server::virtualmin_pro) {
-      push(@plugins, 'virtualmin-wp-workbench');
+      push(@plugins, 'virtualmin-wp-workbench', 'virtualmin-podman');
     }
     $virtual_server::config{'plugins'} = join(' ', unique(@plugins));
     
