@@ -27,8 +27,15 @@ sub actions {
   sleep 0.3;
   eval {
 
-    $self->logsystem("systemctl enable nginx.service");
-    $self->logsystem("systemctl restart nginx.service");
+    # Stop configuration when a service command fails to avoid false success
+    my $run_systemctl = sub {
+      my ($command, $description) = @_;
+      $self->logsystem("systemctl $command") == 0
+        || die "Failed to $description";
+    };
+
+    $run_systemctl->("enable nginx.service", "enable Nginx");
+    $run_systemctl->("restart nginx.service", "restart Nginx");
 
     my %vconfig = foreign_config("virtual-server");
     $vconfig{'web'}                  = 0;
@@ -57,9 +64,9 @@ sub actions {
         "Unit=nginx.service\n\n" .
         "[Install]\n" .
         "WantedBy=multi-user.target\n");
-      $self->logsystem("systemctl daemon-reload");
-      $self->logsystem("systemctl enable nginx.timer");
-      $self->logsystem("systemctl restart nginx.timer");
+      $run_systemctl->("daemon-reload", "reload systemd");
+      $run_systemctl->("enable nginx.timer", "enable the Nginx timer");
+      $run_systemctl->("restart nginx.timer", "restart the Nginx timer");
     }
 
     $self->done(1);    # OK!
