@@ -108,7 +108,7 @@ sub actions {
       # false positive errors on Debian systems
       if (init::status_action('clamav-freshclam') == 1) {
         # Restart it only if currently running
-        init::restart_action('clamav-freshclam');
+        $self->run_service_action('restart', 'clamav-freshclam');
       }
       else {
         # When the updater is stopped, refresh synchronously without

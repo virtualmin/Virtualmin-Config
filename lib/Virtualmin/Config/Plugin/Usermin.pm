@@ -69,10 +69,10 @@ sub actions {
     usermin::put_usermin_miniserv_config(\%uminiserv);
 
     if (init::status_action("usermin")) {
-      usermin::restart_usermin_miniserv();
+      $self->run_service_action('restart', 'usermin');
     }
     else {
-      usermin::start_usermin();
+      $self->run_service_action('start', 'usermin');
     }
 
     # Start Usermin at boot

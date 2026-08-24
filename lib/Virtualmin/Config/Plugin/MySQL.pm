@@ -39,7 +39,8 @@ sub actions {
     }
     foreign_require("mysql");
     if (!mysql::is_mysql_running()) {
-      mysql::start_mysql();
+      my $err = mysql::start_mysql();
+      die "Failed to start MySQL/MariaDB: $err" if ($err);
     }
     $self->done(1);
   };

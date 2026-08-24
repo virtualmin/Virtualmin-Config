@@ -200,6 +200,25 @@ sub logsystem {
   return $?;
 }
 
+# Run a Webmin init action and fail cleanly.
+sub run_service_action {
+  my ($self, $action, $service) = @_;
+
+  my %actions = (
+    start   => \&init::start_action,
+    stop    => \&init::stop_action,
+    restart => \&init::restart_action,
+  );
+  my $handler = $actions{$action}
+    || die "Unsupported service action '$action'";
+  my ($ok, $output) = $handler->($service);
+  return 1 if ($ok);
+
+  $output //= '';
+  $output =~ s/^\s+|\s+$//g;
+  die "Failed to $action $service" . ($output ? ": $output" : '');
+}
+
 sub spinner {
   my ($cmd) = @_;
   state $slastsize = 3;

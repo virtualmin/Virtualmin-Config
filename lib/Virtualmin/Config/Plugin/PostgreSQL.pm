@@ -29,15 +29,16 @@ sub actions {
 
   if (foreign_check("postgresql")) {
     eval {
-      my $err;              # We should handle errors better here.
       foreign_require("postgresql");
       if (!-r $postgresql::config{'hba_conf'}) {
 
         # Needs to be initialized
-        $err = postgresql::setup_postgresql();
+        my $err = postgresql::setup_postgresql();
+        die "Failed to initialize PostgreSQL: $err" if ($err);
       }
       if (postgresql::is_postgresql_running() == 0) {
-        $err = postgresql::start_postgresql();
+        my $err = postgresql::start_postgresql();
+        die "Failed to start PostgreSQL: $err" if ($err);
       }
 
       $self->done(1); # success

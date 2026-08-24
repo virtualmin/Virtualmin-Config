@@ -190,7 +190,7 @@ EOF
     }
 
     # Restart ProFTPd
-    init::restart_action("proftpd");
+    $self->run_service_action('restart', 'proftpd');
 
     $self->done(1);    # OK!
   };

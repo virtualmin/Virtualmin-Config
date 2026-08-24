@@ -91,7 +91,7 @@ sub actions {
     #print "Enabling Dovecot POP3 and IMAP servers\n";
     init::enable_at_boot("dovecot");
     if (init::status_action('dovecot') != 1) {
-      init::start_action('dovecot');
+      $self->run_service_action('start', 'dovecot');
     }
     $self->done(1);    # OK!
   };

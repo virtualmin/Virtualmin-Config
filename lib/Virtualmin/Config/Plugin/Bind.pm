@@ -119,12 +119,10 @@ sub actions {
       bind8::flush_file_lines();
     }
 
-    if (!bind8::is_bind_running()) {
-      bind8::start_bind();
-    }
-    else {
-      bind8::restart_bind();
-    }
+    my $err = !bind8::is_bind_running()
+      ? bind8::start_bind()
+      : bind8::restart_bind();
+    die "Failed to start or restart BIND: $err" if ($err);
 
     $self->done(1);    # OK!
   };

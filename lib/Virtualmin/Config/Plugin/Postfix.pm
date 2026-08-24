@@ -172,7 +172,8 @@ sub actions {
     }
 
     delete($main::file_cache{$postfix::config{'postfix_config_file'}});
-    postfix::reload_postfix();
+    my $reload_err = postfix::reload_postfix();
+    die "Failed to reload Postfix: $reload_err" if ($reload_err);
 
     # Make sure other code knows the Postfix version
     $postfix::postfix_version = backquote_command(
@@ -246,7 +247,7 @@ sub actions {
     $self->logsystem("newaliases");
     if (!postfix::is_postfix_running()) {
       my $err = postfix::start_postfix();
-      print STDERR "Failed to start Postfix!\n" if ($err);
+      die "Failed to start Postfix: $err" if ($err);
     }
 
     $self->done(1);    # OK!

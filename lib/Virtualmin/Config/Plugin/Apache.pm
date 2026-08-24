@@ -63,7 +63,8 @@ sub actions {
       }
       # Restart Apache to apply changes
       apache::stop_apache();
-      apache::start_apache();
+      my $err = apache::start_apache();
+      die "Failed to start Apache: $err" if ($err);
     }
     # Configure RH systems
     elsif ($gconfig{'os_type'} eq 'redhat-linux') {
@@ -139,7 +140,8 @@ sub actions {
 
     # Restart Apache because it might not be running
     apache::stop_apache();
-    apache::start_apache();
+    my $err = apache::start_apache();
+    die "Failed to start Apache: $err" if ($err);
 
     $self->done(1);    # OK!
   };

@@ -84,7 +84,7 @@ sub actions {
       &fail2ban::unlock_all_config_files();
 
       # Restart fail2ban
-      init::restart_action('fail2ban');
+      $self->run_service_action('restart', 'fail2ban');
       $self->done(1);
     }
     else {

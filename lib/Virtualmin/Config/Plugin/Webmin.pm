@@ -83,7 +83,8 @@ sub actions {
       };
       webmin::build_installed_modules(1);
     }
-    $self->logsystem("/etc/webmin/restart-by-force-kill > /dev/null 2>&1");
+    $self->logsystem("/etc/webmin/restart-by-force-kill > /dev/null 2>&1") == 0
+      || die "Failed to restart Webmin";
     # Mailboxes configuration
     my $mini_stack =
       (defined $self->bundle() && $self->bundle() =~ /mini/i) ?

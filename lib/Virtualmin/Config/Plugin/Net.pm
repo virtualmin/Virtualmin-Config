@@ -90,8 +90,10 @@ sub actions {
 
       # Restart Postfix so that it picks up the new resolv.conf
       foreign_require("virtual-server");
-      virtual_server::stop_service_mail();
-      virtual_server::start_service_mail();
+      my $err = virtual_server::stop_service_mail();
+      die "Failed to stop the mail server: $err" if ($err);
+      $err = virtual_server::start_service_mail();
+      die "Failed to start the mail server: $err" if ($err);
     }
     $self->done(1);    # OK!
   };
