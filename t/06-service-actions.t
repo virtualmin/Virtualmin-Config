@@ -9,6 +9,7 @@ my $plugin = Virtualmin::Config::Plugin->new(name => 'Test');
 
 {
   local *init::start_action = sub { return (1, 'started'); };
+  local *init::status_action = sub { return 1; };
   ok($plugin->run_service_action('start', 'example'),
     'successful service action returns true');
 }
@@ -18,6 +19,14 @@ my $plugin = Virtualmin::Config::Plugin->new(name => 'Test');
   eval { $plugin->run_service_action('restart', 'example'); };
   like($@, qr/^Failed to restart example: address in use/,
     'failed service action includes the command output');
+}
+
+{
+  local *init::start_action = sub { return (1, ''); };
+  local *init::status_action = sub { return 0; };
+  eval { $plugin->run_service_action('start', 'example'); };
+  like($@, qr/^Failed to start example: example is not running/,
+    'successful command with a stopped service reports failure');
 }
 
 eval { $plugin->run_service_action('invalid', 'example'); };

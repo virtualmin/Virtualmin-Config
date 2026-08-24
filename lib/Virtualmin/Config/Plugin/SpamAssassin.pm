@@ -33,7 +33,8 @@ sub actions {
     foreach my $service (qw(spamassassin spamd)) {
       init::disable_at_boot($service);
       $self->run_service_action('stop', $service)
-        if (init::status_action($service) == 1);
+        if (init::action_status($service) &&
+            init::status_action($service) != 0);
     }
     $self->done(1);    # OK!
   };

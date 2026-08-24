@@ -249,6 +249,8 @@ sub actions {
     if (!postfix::is_postfix_running()) {
       my $err = postfix::start_postfix();
       die "Failed to start Postfix: $err" if ($err);
+      postfix::is_postfix_running()
+        || die "Failed to start Postfix: it is not running";
     }
 
     $self->done(1);    # OK!

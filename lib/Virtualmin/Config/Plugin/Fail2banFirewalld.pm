@@ -40,7 +40,8 @@ sub actions {
                   split(/:/, "/usr/bin:/bin:".($ENV{'PATH'} // ''));
   unless ($firewalld) {
     foreign_require('init');
-    if (init::status_action('fail2ban') == 1) {
+    if (init::action_status('fail2ban') &&
+        init::status_action('fail2ban') != 0) {
       eval { $self->run_service_action('stop', 'fail2ban'); };
       if ($@) {
         $log->error("Failed to disable Fail2ban: $@");

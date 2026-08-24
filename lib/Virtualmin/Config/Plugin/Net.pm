@@ -92,8 +92,12 @@ sub actions {
       foreign_require("virtual-server");
       my $err = virtual_server::stop_service_mail();
       die "Failed to stop the mail server: $err" if ($err);
+      die "Failed to stop the mail server: it is still running"
+        if (virtual_server::is_mail_running());
       $err = virtual_server::start_service_mail();
       die "Failed to start the mail server: $err" if ($err);
+      die "Failed to start the mail server: it is not running"
+        if (!virtual_server::is_mail_running());
     }
     $self->done(1);    # OK!
   };

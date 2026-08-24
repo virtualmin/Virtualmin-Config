@@ -200,7 +200,7 @@ sub logsystem {
   return $?;
 }
 
-# Run a Webmin init action and fail cleanly.
+# Run a Webmin init action and verify that it reached the requested state.
 sub run_service_action {
   my ($self, $action, $service) = @_;
 
@@ -212,6 +212,20 @@ sub run_service_action {
   my $handler = $actions{$action}
     || die "Unsupported service action '$action'";
   my ($ok, $output) = $handler->($service);
+
+  # Some Webmin start helpers can lose the service command's exit status while
+  # collecting diagnostics, so verify the runtime state when it is available.
+  if ($ok) {
+    my $status = init::status_action($service);
+    if (defined($status) &&
+        (($action eq 'stop' && $status == 1) ||
+         ($action ne 'stop' && $status == 0))) {
+      $ok = 0;
+      $output = $action eq 'stop'
+        ? "$service is still running"
+        : "$service is not running";
+    }
+  }
   return 1 if ($ok);
 
   $output //= '';
