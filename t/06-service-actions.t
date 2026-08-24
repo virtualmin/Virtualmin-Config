@@ -29,6 +29,14 @@ my $plugin = Virtualmin::Config::Plugin->new(name => 'Test');
     'successful command with a stopped service reports failure');
 }
 
+{
+  local *init::stop_action = sub { return (1, ''); };
+  local *init::status_action = sub { return 1; };
+  eval { $plugin->run_service_action('stop', 'example'); };
+  like($@, qr/^Failed to stop example: example is still running/,
+    'successful command with a running service reports failure');
+}
+
 eval { $plugin->run_service_action('invalid', 'example'); };
 like($@, qr/^Unsupported service action 'invalid'/,
   'unsupported service action fails explicitly');
