@@ -49,7 +49,7 @@ sub actions {
     foreign_require('init', 'init-lib.pl');
     foreach my $service (qw(firewalld iptables netfilter-persistent ufw nftables)) {
       if (init::action_status($service)) {
-        init::stop_action($service);
+        $self->run_service_action('stop', $service);
         init::disable_at_boot($service);
       }
     }

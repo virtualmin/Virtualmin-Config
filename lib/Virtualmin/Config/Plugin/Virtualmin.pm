@@ -229,7 +229,8 @@ sub actions {
       foreach my $certbot_unit (@certbot_units) {
         if (init::is_systemd_service($certbot_unit)) {
           init::disable_at_boot($certbot_unit);
-          init::stop_action($certbot_unit);
+          $self->run_service_action('stop', $certbot_unit)
+            if (init::status_action($certbot_unit) == 1);
           if (defined(&init::mask_action)) {
             init::mask_action($certbot_unit);
           }

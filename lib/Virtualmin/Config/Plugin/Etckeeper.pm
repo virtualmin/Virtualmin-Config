@@ -26,13 +26,21 @@ sub actions {
 
   # Configure etckeeper on RHEL
   if (&has_command('etckeeper')) {
-    if ($gconfig{'os_type'} eq 'redhat-linux' ||
-        $gconfig{'os_type'} eq "suse-linux") {
-      $self->logsystem("etckeeper init");
-      $self->logsystem("systemctl enable etckeeper.timer");
-      $self->logsystem("systemctl start etckeeper.timer");
+    eval {
+      if ($gconfig{'os_type'} eq 'redhat-linux' ||
+          $gconfig{'os_type'} eq "suse-linux") {
+        $self->logsystem("etckeeper init");
+        $self->logsystem("systemctl enable etckeeper.timer") == 0
+          || die "Failed to enable the etckeeper timer";
+        $self->logsystem("systemctl start etckeeper.timer") == 0
+          || die "Failed to start the etckeeper timer";
+      }
+      $self->done(1);         # OK!
+    };
+    if ($@) {
+      $log->error("Error configuring Etckeeper: $@");
+      $self->done(0);
     }
-    $self->done(1);         # OK!
   }
   else {
     $self->done(2);         # Not installed but should have been
@@ -40,4 +48,3 @@ sub actions {
 }
 
 1;
-

@@ -42,10 +42,10 @@ sub actions {
     foreign_require('init', 'init-lib.pl');
     init::enable_at_boot('firewalld');
     if (init::action_status('iptables')) {
-      init::stop_action('iptables');
+      $self->run_service_action('stop', 'iptables');
       init::disable_at_boot('iptables');
     }
-    init::start_action('firewalld');
+    $self->run_service_action('start', 'firewalld');
 
     my $firewall_cmd = has_command('firewall-cmd');
     if ($firewall_cmd) {
@@ -63,7 +63,8 @@ sub actions {
         $self->logsystem(
           "$firewall_cmd --zone=$default_zone --permanent --add-port=${s}");
       }
-      $self->logsystem("$firewall_cmd --complete-reload");
+      $self->logsystem("$firewall_cmd --complete-reload") == 0
+        || die "Failed to reload Firewalld";
     }
     $self->done(1);    # OK!
   };

@@ -139,11 +139,11 @@ sub tests {
     if ($gconfig{'os_type'} eq 'redhat-linux') {
       if (init::action_status('clamd@scan')) {
         init::enable_at_boot('clamd@scan');
-        init::start_action('clamd@scan');
+        $self->run_service_action('start', 'clamd@scan');
       }
       elsif (init::action_status('clamd')) {
         init::enable_at_boot('clamd');
-        init::start_action('clamd');
+        $self->run_service_action('start', 'clamd');
       }
       sleep 60;    # XXX This is ridiculous. But, clam is ridiculous.
           # If RHEL/CentOS/Fedora, the clamav packages don't work, by default.
@@ -155,20 +155,20 @@ sub tests {
       my $scan_status =
         $self->logsystem("clamdscan --quiet - < /etc/webmin/miniserv.conf");
       if (init::action_status('clamd@scan')) {
-        init::stop_action('clamd@scan');
+        $self->run_service_action('stop', 'clamd@scan');
       }
       elsif (init::action_status('clamd')) {
-        init::stop_action('clamd');
+        $self->run_service_action('stop', 'clamd');
       }
       $scan_status == 0 || die "ClamAV test scan failed";
     }
     elsif ($gconfig{'os_type'} eq 'debian-linux') {
       init::enable_at_boot('clamav-daemon');
-      init::start_action('clamav-daemon');
+      $self->run_service_action('start', 'clamav-daemon');
       sleep 60;
       my $scan_status =
         $self->logsystem("clamdscan --quiet - < /etc/webmin/miniserv.conf");
-      init::stop_action('clamav-daemon');
+      $self->run_service_action('stop', 'clamav-daemon');
       $scan_status == 0 || die "ClamAV test scan failed";
     }
     else {

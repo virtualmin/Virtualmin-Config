@@ -107,8 +107,10 @@ sub actions {
         write_file_contents($systemd_saslauthd_override_path . "/override.conf",
           "[Service]\n".
           "PIDFile=$sasl_chroot_dir/saslauthd.pid\n");
-        $self->logsystem("systemctl daemon-reload");
-        $self->logsystem("systemctl restart saslauthd.service");
+        $self->logsystem("systemctl daemon-reload") == 0
+          || die "Failed to reload systemd";
+        $self->logsystem("systemctl restart saslauthd.service") == 0
+          || die "Failed to restart saslauthd";
       }
     }
     elsif ($gconfig{'os_type'} eq 'solaris') {
@@ -155,7 +157,7 @@ sub actions {
         if (!grep {/^mech_list/} @$smtpdconf);
       flush_file_lines($cf);
 
-      init::start_action('saslauthd');
+      $self->run_service_action('start', 'saslauthd');
     }
 
     # Update flags to use realm as part of username

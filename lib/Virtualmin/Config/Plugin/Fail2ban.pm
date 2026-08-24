@@ -31,7 +31,14 @@ sub actions {
 
   unless (has_command('nft')) {
     foreign_require('init');
-    init::stop_action('fail2ban');
+    if (init::status_action('fail2ban') == 1) {
+      eval { $self->run_service_action('stop', 'fail2ban'); };
+      if ($@) {
+        $log->error("Failed to disable Fail2ban: $@");
+        $self->done(0);
+        return;
+      }
+    }
     init::disable_at_boot('fail2ban');
     $log->info("nftables not installed, stopping and disabling Fail2ban");
     $self->add_postinstall_message(

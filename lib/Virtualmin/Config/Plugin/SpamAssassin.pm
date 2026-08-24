@@ -30,10 +30,11 @@ sub actions {
     foreign_require("init", "init-lib.pl");
 
     # Stop it, so a default install is small. Can be enabled during wizard.
-    init::disable_at_boot("spamassassin");
-    init::stop_action("spamassassin");
-    init::disable_at_boot("spamd");
-    init::stop_action("spamd");
+    foreach my $service (qw(spamassassin spamd)) {
+      init::disable_at_boot($service);
+      $self->run_service_action('stop', $service)
+        if (init::status_action($service) == 1);
+    }
     $self->done(1);    # OK!
   };
   if ($@) {

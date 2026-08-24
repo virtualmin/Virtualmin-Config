@@ -62,7 +62,10 @@ sub actions {
         flush_file_lines($fn);
       }
       # Restart Apache to apply changes
-      apache::stop_apache();
+      if (apache::is_apache_running()) {
+        my $err = apache::stop_apache();
+        die "Failed to stop Apache: $err" if ($err);
+      }
       my $err = apache::start_apache();
       die "Failed to start Apache: $err" if ($err);
     }
@@ -139,7 +142,10 @@ sub actions {
     apache::clear_apache_modules_cache();
 
     # Restart Apache because it might not be running
-    apache::stop_apache();
+    if (apache::is_apache_running()) {
+      my $err = apache::stop_apache();
+      die "Failed to stop Apache: $err" if ($err);
+    }
     my $err = apache::start_apache();
     die "Failed to start Apache: $err" if ($err);
 

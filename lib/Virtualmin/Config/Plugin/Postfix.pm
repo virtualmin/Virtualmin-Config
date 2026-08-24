@@ -240,7 +240,8 @@ sub actions {
     if (foreign_check("sendmail")) {
       foreign_require("sendmail", "sendmail-lib.pl");
       if (sendmail::is_sendmail_running()) {
-        sendmail::stop_sendmail();
+        my $err = sendmail::stop_sendmail();
+        die "Failed to stop Sendmail: $err" if ($err);
       }
     }
     $self->logsystem("killall -9 sendmail >/dev/null 2>&1");
