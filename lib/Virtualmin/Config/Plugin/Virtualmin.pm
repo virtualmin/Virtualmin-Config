@@ -118,6 +118,14 @@ sub actions {
       }
     }
 
+    # If the system has IPv6 support but no externally visible IPv6
+    # address, disable the default IPv6 address for new virtual servers
+    # to avoid a config check warning about it
+    if (virtual_server::supports_ip6() &&
+        !virtual_server::get_external_ip_address(1, 6)) {
+      $virtual_server::config{'ip6enabled'} = 0;
+    }
+
     # Enable DKIM at install time
     if (!$mini_stack && -r "/etc/opendkim.conf") {
       my $dkim = virtual_server::get_dkim_config();
