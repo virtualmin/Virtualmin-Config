@@ -1,3 +1,7 @@
+virtualmin-config (8.2.0) stable; urgency=medium
+
+  * Add Ubuntu 26.04 support, switch new installs to Nftables, and add various bugfixes
+
 virtualmin-config (8.1.6) stable; urgency=medium
 
   * Fix to clean files in custom temporary directory when using tmpfs filesystems
