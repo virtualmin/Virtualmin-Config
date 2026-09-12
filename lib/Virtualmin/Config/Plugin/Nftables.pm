@@ -41,13 +41,11 @@ sub actions {
       return;
     }
 
-    # Stop and disable competing firewall services so they cannot clobber
-    # the Webmin-managed ruleset. The distro nftables service is included,
-    # because Webmin installs its own boot action, and, e.g. on Debian the
-    # stock /etc/nftables.conf begins with 'flush ruleset' which would wipe
-    # our rules if it ran after them at boot
+    # Stop and disable firewall services that can replace the nftables
+    # ruleset managed through the standard service.
     foreign_require('init', 'init-lib.pl');
-    foreach my $service (qw(firewalld iptables netfilter-persistent ufw nftables)) {
+    my @services = qw(firewalld iptables netfilter-persistent ufw);
+    foreach my $service (@services) {
       if (init::action_status($service)) {
         $self->run_service_action('stop', $service);
         init::disable_at_boot($service);
@@ -55,15 +53,17 @@ sub actions {
     }
 
     my $err = nftables::save_profile_ruleset(
-      'profile_hosting',
+      nftables::profile_base_table_name('virtualmin'),
       'virtualmin',
       '*'
     );
     die "$err\n" if ($err);
 
-    nftables::create_nftables_init();
     $err = nftables::apply_restore();
     die "$err\n" if ($err);
+
+    # Enable boot loading only after the saved configuration applies.
+    nftables::enable_nftables_at_boot();
 
     $self->done(1);    # OK!
   };
