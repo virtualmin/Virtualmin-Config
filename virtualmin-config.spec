@@ -64,6 +64,8 @@ rm -rf $RPM_BUILD_ROOT
 /usr/libexec/webmin/virtual-server/config-system.pl
 
 %changelog
+* Tue Sep 29 2026 Ilia Ross <ilia@virtualmin.com> 8.3.0
+- Update nftables plugin for the system-managed configuration
 * Tue Sep 01 2026 Ilia Ross <ilia@virtualmin.com> 8.2.0
 - Fix to clean files in custom temporary directory when using tmpfs filesystems
 * Fri May 01 2026 Ilia Ross <ilia@virtualmin.com> 8.1.6
