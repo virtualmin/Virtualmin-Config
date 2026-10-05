@@ -46,6 +46,17 @@ sub actions {
       configure_btrfs_quotas($self, $dir);
       $res = 1;
     }
+    elsif ($type eq 'xfs') {
+      # XFS enables quotas at mount time. The short aliases avoid systemd's
+      # generic quota handling, which warns that XFS is unsupported.
+      delete @mount::options{qw(quota usrquota grpquota uqnoenforce gqnoenforce)};
+      $mount::options{'uquota'} = '';
+      $mount::options{'gquota'} = '';
+      if (exists($mount::options{'prjquota'})) {
+        # Preserve existing project quotas with their native short alias too.
+        $mount::options{'pquota'} = delete($mount::options{'prjquota'});
+      }
+    }
     elsif ($gconfig{'os_type'} =~ /-linux$/) {
       $mount::options{'usrquota'} = '';
       $mount::options{'grpquota'} = '';
@@ -69,7 +80,7 @@ sub actions {
       $mount::options{'quota'} = '';
     }
     else {
-#print STDERR "Don't know how to enable quotas on $gconfig{'real_os_type'} ($gconfig{'os_type'})\n";
+      # Don't know how to enable quotas on $gconfig{'real_os_type'}
     }
     if ($type eq 'btrfs') {
         # Btrfs was configured above and does not use mount quota options.
