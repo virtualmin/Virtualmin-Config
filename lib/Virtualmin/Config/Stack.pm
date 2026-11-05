@@ -16,7 +16,7 @@ sub common_modules {
     return (
         "Webmin",      "MySQL",        "Nftables",
         "Quotas",      "Shells",       "Virtualmin",
-        "Etckeeper",   "Apache",       "AWStats",
+        "Etckeeper",   "Apache",       "GoAccess",
         "Fail2ban",    "SSL",
     );
 }

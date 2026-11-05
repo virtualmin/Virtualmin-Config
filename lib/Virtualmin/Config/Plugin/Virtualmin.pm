@@ -75,7 +75,7 @@ sub actions {
 
     # Enable extra default modules
     my @plugins = split /\s+/, ($virtual_server::config{'plugins'} || '');
-    push(@plugins, 'virtualmin-awstats', 'virtualmin-htpasswd');
+    push(@plugins, 'virtualmin-goaccess', 'virtualmin-htpasswd');
     if ($virtual_server::virtualmin_pro) {
       push(@plugins, 'virtualmin-wp-workbench', 'virtualmin-podman');
     }
@@ -106,16 +106,6 @@ sub actions {
     # If system doesn't have Jailkit support, disable it
     if (!has_command('jk_init')) {
       $virtual_server::config{'jailkit_disabled'} = 1;
-    }
-
-    # If system doesn't have AWStats support, disable it
-    if (foreign_check("virtualmin-awstats")) {
-      my %awstats_config = foreign_config("virtualmin-awstats");
-      if ($awstats_config{'awstats'} && !-r $awstats_config{'awstats'}) {
-        my @plugins = split(/\s/, $virtual_server::config{'plugins'});
-        @plugins = grep { $_ ne 'virtualmin-awstats' } @plugins;
-        $virtual_server::config{'plugins'} = join(' ', @plugins);
-      }
     }
 
     # If the system has IPv6 support but no externally visible IPv6

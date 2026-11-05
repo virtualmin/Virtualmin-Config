@@ -167,7 +167,7 @@ jobs:
             --depends "perl(POSIX)" \
             --depends "perl(Time::HiRes)" \
             --depends "perl(Term::ANSIColor)" \
-            --depends wbm-virtual-server \
+            --depends webmin-virtual-server \
             --group "Development/Libraries" \
             --spec-files-depth 3 \
             --skip deb \

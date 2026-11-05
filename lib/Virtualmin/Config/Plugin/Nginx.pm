@@ -48,7 +48,7 @@ sub actions {
     }
     else {
       $vconfig{'plugins'}
-        = 'virtualmin-awstats virtualmin-nginx virtualmin-nginx-ssl';
+        = 'virtualmin-goaccess virtualmin-nginx virtualmin-nginx-ssl';
     }
     save_module_config(\%vconfig, "virtual-server");
 
